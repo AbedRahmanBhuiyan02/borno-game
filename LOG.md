@@ -182,3 +182,40 @@ temp files.)
 - Nothing was installed and drive C: was not used, except that the Claude app
   keeps the task file in its own folder
   (`C:\Users\...\.claude\scheduled-tasks\borno-hourly-push`).
+
+---
+
+## Extra verification without installing Unity (2026-10-18)
+You chose not to install Unity, so instead every risky Unity API call in
+`Game/` and `Editor/` was checked against **Unity's official C# source**
+(github.com/Unity-Technologies/UnityCsReference, branch `6000.0` = Unity 6
+LTS) and the official package docs. Read-only, nothing downloaded/installed.
+
+| API we use | Result |
+|------------|--------|
+| `Object.FindAnyObjectByType<T>()`, `Resources.GetBuiltinResource<T>` | ✅ found |
+| `Sprite.Create(tex, rect, pivot, ppu, extrude, meshType, border)` | ✅ exact overload |
+| `Texture2D.SetPixels32`, `Apply(bool, bool)` | ✅ |
+| `Input.simulateMouseWithTouches`, `GetTouch`, `GetMouseButton(Down)`, `GetKeyDown`, `mousePosition` | ✅ |
+| `LineRenderer.positionCount {get;set;}`, `SetPosition`, `GetPosition`, widths, colours, cap/corner vertices, `useWorldSpace` | ✅ |
+| `Renderer.enabled/sortingOrder/shadowCastingMode/receiveShadows/sharedMaterial` | ✅ |
+| `PlayerSettings.SetApplicationIdentifier/SetScriptingBackend(NamedBuildTarget, …)`, `companyName`, `productName`, `defaultInterfaceOrientation` | ✅ (old BuildTargetGroup versions are obsolete – we use the new ones) |
+| `PlayerSettings.Android.forceInternetPermission`, `targetArchitectures` | ✅ |
+| `EditorSettings.defaultBehaviorMode = Mode2D` | ✅ |
+| Serialized setting name `activeInputHandler` (0 = Old, 1 = New, 2 = Both) | ✅ matches Unity's Player Settings code |
+| `EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()`, `NewScene`, `SaveScene(scene, path)` | ✅ |
+| `EditorBuildSettings.scenes`, `EditorBuildSettingsScene(path, enabled)` | ✅ |
+| `AssetDatabase.LoadAllAssetsAtPath/LoadAssetAtPath/CreateAsset/SaveAssets/IsValidFolder/CreateFolder` | ✅ |
+| `EditorUtility.DisplayDialog`, `RevealInFinder`, `SerializedObject.FindProperty/ApplyModifiedProperties` | ✅ |
+| uGUI `Image.pixelsPerUnitMultiplier/preserveAspect/type/sprite` | ✅ (package docs 2.0) |
+| `EventSystem.current`, `IsPointerOverGameObject(int pointerId)` | ✅ |
+| Test Framework `LogAssert.ignoreFailingMessages` | ✅ |
+| Built-in font `"LegacyRuntime.ttf"` | ✅ used the same way in many Unity 6 projects on GitHub |
+
+Re-ran: Core tests **44 passed**, stub compile check **OK**. No code
+changes were needed.
+
+**Still unverified (needs real Unity):** that the project opens and imports
+cleanly, that the auto-generated package list contains Unity UI + Test
+Framework (if not: BLOCKERS.md has the fix), how the screens actually look,
+touch feel, and phone performance.

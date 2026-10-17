@@ -11,7 +11,9 @@ An hourly task commits + pushes new work automatically (see LOG.md).
   → **44 unit tests pass** (`Tools\run-core-tests.ps1`, no Unity needed).
 - The real `letters.json` is valid, and tracing each letter exactly gives
   3 stars (tested).
-- All scripts (Game, Editor, tests) **compile against fake Unity classes**
+- All scripts (Game, Editor, tests) **compile against fake Unity classes**,
+  and every risky Unity API we call was checked against Unity 6's official
+  C# source (table in LOG.md) – all found, no changes needed.
   (`Tools\compile-check-unity-scripts.ps1`).
 - Letter shapes rendered and checked by eye (`Tools\make-letter-preview.ps1`).
 
