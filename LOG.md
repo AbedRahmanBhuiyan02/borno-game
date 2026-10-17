@@ -104,3 +104,23 @@ temp files.)
 
 **You must do by hand**
 - Nothing for this step.
+
+---
+
+## Step 5 – Weak-letter tracking + adaptive repeat (2026-10-18)
+**Done**
+- `ProgressTracker.IsWeak / RecentAverage / GetWeakLetterIds` – a letter is
+  weak when the average of its last 5 tries is below 2 stars. Practising
+  removes the mark automatically (old tries drop out of the window).
+- `Core/AdaptiveLetterPicker.cs` – "lottery tickets": weak 4, new 2,
+  normal 1, just-played ×0.25. Random source is swappable (`IRandomSource`)
+  so tests are repeatable. No memory allocated per pick.
+
+**Tested**
+- `Tools/run-core-tests.ps1` → **44 passed, 0 failed** (weak rules, exact
+  ticket order with fake random numbers, 20 000-pick distribution: weak
+  letter ≈57%, just-played letter ≈20%).
+
+**You must do by hand**
+- Nothing for this step. (Tune the weights in `AdaptiveLetterPicker` /
+  `ProgressTracker.WeakAverageBelow` after watching real kids play.)

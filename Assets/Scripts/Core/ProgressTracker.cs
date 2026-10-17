@@ -9,6 +9,8 @@
 // It only changes the ProgressData object in memory. Saving to a file is
 // done by Game/ProgressStore.cs.
 
+using System.Collections.Generic;
+
 namespace Borno.Core
 {
     /// <summary>What happened because of one try (for the result screen).</summary>
@@ -64,6 +66,51 @@ namespace Borno.Core
             LetterProgress p = Find(letterId);
             return p == null ? 0 : p.attempts;
         }
+
+        // ------------------------------------------------------------------
+        // Weak letters
+        // ------------------------------------------------------------------
+
+        /// <summary>A letter is weak if its recent average is below this.</summary>
+        public const float WeakAverageBelow = 2.0f;
+
+        /// <summary>Average stars of the last few tries (0 if never played).</summary>
+        public float RecentAverage(string letterId)
+        {
+            LetterProgress p = Find(letterId);
+            if (p == null || p.recentStars.Count == 0) return 0f;
+            int sum = 0;
+            for (int i = 0; i < p.recentStars.Count; i++) sum += p.recentStars[i];
+            return (float)sum / p.recentStars.Count;
+        }
+
+        /// <summary>
+        /// True if the child played this letter and usually got fewer than
+        /// 2 stars lately. A letter that was never played is NOT weak (it is
+        /// just new). Getting better removes the "weak" mark automatically,
+        /// because only the last few tries count.
+        /// </summary>
+        public bool IsWeak(string letterId)
+        {
+            LetterProgress p = Find(letterId);
+            if (p == null || p.recentStars.Count == 0) return false;
+            return RecentAverage(letterId) < WeakAverageBelow;
+        }
+
+        /// <summary>Ids of all weak letters (makes a new list - not for every frame).</summary>
+        public List<string> GetWeakLetterIds()
+        {
+            List<string> result = new List<string>();
+            for (int i = 0; i < data.letters.Count; i++)
+            {
+                if (IsWeak(data.letters[i].letterId)) result.Add(data.letters[i].letterId);
+            }
+            return result;
+        }
+
+        // ------------------------------------------------------------------
+        // Recording a try
+        // ------------------------------------------------------------------
 
         /// <summary>Saves the result of one try (stars 0..3).</summary>
         public AttemptOutcome RecordAttempt(string letterId, int stars)
