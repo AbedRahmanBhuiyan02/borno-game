@@ -30,6 +30,9 @@ if ($LASTEXITCODE -ne 0) { Write-Host "COMPILE FAILED"; exit 1 }
 
 # The JSON check test reads the real letters file from this path
 $env:BORNO_LETTERS_JSON = Join-Path $root "Assets\Data\Resources\Letters\letters.json"
+# File tests write here (inside the project, not on drive C:)
+$env:BORNO_TEST_TMP = Join-Path $outDir "tmp"
+New-Item -ItemType Directory -Force $env:BORNO_TEST_TMP | Out-Null
 Write-Host "Running tests..."
 & $exe
 exit $LASTEXITCODE

@@ -79,3 +79,28 @@ temp files.)
   recordings `Assets/Audio/Resources/Sounds/Letters/<id>.wav` /
   `Sounds/Words/<word>.wav` (record your own voice = no licence problem).
   List each file in ASSETS.md.
+
+---
+
+## Step 4 – Stars, rewards, offline progress saving (2026-10-18)
+**Done**
+- `Core/ProgressData.cs` – what is saved: total stars, attempts, and per
+  letter: attempts, best stars, stars earned, last 5 results. No personal
+  data. `EnsureValid()` repairs old/hand-edited saves.
+- `Core/ProgressTracker.cs` – `RecordAttempt(letterId, stars)` updates
+  everything and reports new best / sticker unlocked.
+- `Core/RewardRules.cs` – stickers at 3, 10, 20, 35, 50, 75, 100 stars.
+- `Core/SafeFile.cs` – crash-safe save (write .tmp, keep .bak, rename).
+- `Game/ProgressStore.cs` – JSON in `Application.persistentDataPath/
+  borno_progress.json`; broken file → renamed `.bad`, backup used, never
+  crashes.
+
+**Tested**
+- `Tools/run-core-tests.ps1` → **36 passed, 0 failed** (tracker rules,
+  sticker unlock, clamping, repair of broken data, safe file write/backup
+  using a temp folder inside `Tools/.build`).
+- Unity-only `Tests/EditMode/Unity/ProgressStoreTests.cs` (JsonUtility round
+  trip) not run – needs Unity.
+
+**You must do by hand**
+- Nothing for this step.
