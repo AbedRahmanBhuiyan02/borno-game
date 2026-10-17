@@ -1,8 +1,9 @@
 # Good morning! – Borno night summary (2026-10-18)
 
 All 6 steps are written and committed **locally** in `D:\Projects\borno-game`
-(7 commits on `main`). **Nothing is pushed**, because the GitHub repo
-`AbedRahmanBhuiyan02/borno-game` does not exist yet (see BLOCKERS.md).
+(7 commits on `main`). **Pushed** to the private repo
+https://github.com/AbedRahmanBhuiyan02/borno-game (created after you said yes).
+An hourly task commits + pushes new work automatically (see LOG.md).
 
 ## ✅ What works (tested on this PC)
 - **Tracing check** (coverage % + precision % → 0–3 stars), **letter data**

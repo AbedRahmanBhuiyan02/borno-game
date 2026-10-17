@@ -166,3 +166,19 @@ temp files.)
    Bengali, OFL) to see Bangla letters instead of "ka", "kha"...
 5. Phone test: File → Build Settings → Android → Switch Platform → Build And
    Run (USB debugging on). Try a cheap phone if you can.
+
+---
+
+## GitHub + hourly auto-push (2026-10-18)
+- Created private repo https://github.com/AbedRahmanBhuiyan02/borno-game
+  (`gh repo create`, your existing login) and pushed all commits.
+- Added a scheduled task in the Claude desktop app: **"Borno: hourly
+  commit & push"** (every hour at about :14). It runs `git add -A`, refuses to
+  commit secret-looking files (.keystore, .jks, .env, ...) or files over
+  50 MB, commits as "Auto-save: hourly backup <time>", and pushes. It never
+  force-pushes; on a conflict it writes a note in BLOCKERS.md.
+- It only runs while the Claude app is open (a missed run happens on the
+  next launch). Change or stop it in the app's sidebar → Scheduled.
+- Nothing was installed and drive C: was not used, except that the Claude app
+  keeps the task file in its own folder
+  (`C:\Users\...\.claude\scheduled-tasks\borno-hourly-push`).

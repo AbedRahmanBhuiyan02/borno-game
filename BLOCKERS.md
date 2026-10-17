@@ -24,17 +24,9 @@
 - Pink lines in a phone build → run **Borno → Setup Project** again
   (creates the line material so its shader is included).
 
-## 2. GitHub repo `borno-game` does not exist
-- **Problem**: `gh repo view AbedRahmanBhuiyan02/borno-game` →
-  "Could not resolve to a Repository". Your account has no repo with that
-  name, so `git push` fails. I did **not** create a repo on your account
-  without asking.
-- **What I did instead**: every step is committed **locally** in
-  `D:\Projects\borno-game` (remote `origin` is already set).
-- **Your fix** (one time, in `D:\Projects\borno-game`):
-  ```
-  gh repo create AbedRahmanBhuiyan02/borno-game --private
-  git push -u origin main
-  ```
-  (Use `--public` instead of `--private` if you want it public. If your repo
-  has another name: `git remote set-url origin <url>` and push.)
+## 2. GitHub repo – SOLVED (2026-10-18)
+Created private repo https://github.com/AbedRahmanBhuiyan02/borno-game
+and pushed `main`. An hourly scheduled task in the Claude app
+("Borno: hourly commit & push") now commits new work and pushes it.
+If it ever finds a secret-looking file or a merge conflict, it stops and
+writes a note here instead of pushing.
