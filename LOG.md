@@ -48,3 +48,34 @@ temp files.)
 
 **You must do by hand**
 - Nothing extra yet (the board is used by the screens in Step 6).
+
+---
+
+## Step 3 – Letter content system (2026-10-18)
+**Done**
+- `Core/LetterData.cs` – `LetterData` (letter, romanized, example word,
+  picture key, letter/word audio keys, strokes), `LetterCatalog` with
+  `FindById`, `IndexOf` and `Validate()` (finds typos in the data).
+- `Data/Resources/Letters/letters.json` – 10 letters অ আ ই ঈ উ ক খ গ ঘ চ
+  with example words অজগর, আম, ইট, ঈগল, উট, কলা, খাতা, গাছ, ঘর, চশমা and
+  hand-drawn placeholder stroke shapes.
+- `Game/LetterDatabase.cs` – loads the JSON (JsonUtility), caches shapes,
+  loads pictures (Sprite or Texture2D) – missing files are OK.
+- `Game/SoundPlayer.cs` – plays letter/word audio by key, silent if missing.
+- `Tools/make-letter-preview.ps1` – draws all letter shapes into
+  `Tools/.build/letters-preview.html` so you can check them in a browser.
+
+**Tested**
+- `Tools/run-core-tests.ps1` → **24 passed, 0 failed**, including checks on
+  the REAL letters.json (valid, 10 letters in order, all slots filled, a
+  perfect trace of every letter gives 3 stars).
+- Rendered the preview page with headless Edge and looked at it: shapes are
+  recognisable placeholders (অ আ ক গ ঘ চ good; ই ঈ উ খ rough).
+- Unity-only test `Tests/EditMode/Unity/LetterJsonTests.cs` not run (no Unity).
+
+**You must do by hand**
+- Improve the stroke shapes (open the preview, edit points in letters.json).
+- Add pictures `Assets/Art/Resources/Pictures/<pictureKey>.png` and
+  recordings `Assets/Audio/Resources/Sounds/Letters/<id>.wav` /
+  `Sounds/Words/<word>.wav` (record your own voice = no licence problem).
+  List each file in ASSETS.md.

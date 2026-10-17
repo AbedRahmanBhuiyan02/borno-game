@@ -22,12 +22,14 @@ $exe = Join-Path $outDir "CoreTests.exe"
 $sources = @()
 $sources += Get-ChildItem (Join-Path $root "Assets\Scripts\Core") -Recurse -Filter *.cs | ForEach-Object { $_.FullName }
 $sources += Get-ChildItem (Join-Path $root "Assets\Tests\EditMode\Core") -Recurse -Filter *.cs | ForEach-Object { $_.FullName }
-$sources += Join-Path $root "Tools\MiniNUnit\MiniNUnit.cs"
+$sources += Get-ChildItem (Join-Path $root "Tools\MiniNUnit") -Filter *.cs | ForEach-Object { $_.FullName }
 
 Write-Host "Compiling $($sources.Count) files..."
-& $csc /nologo /warn:4 /target:exe /out:$exe $sources
+& $csc /nologo /warn:4 /codepage:65001 /target:exe /out:$exe /reference:System.Web.Extensions.dll $sources
 if ($LASTEXITCODE -ne 0) { Write-Host "COMPILE FAILED"; exit 1 }
 
+# The JSON check test reads the real letters file from this path
+$env:BORNO_LETTERS_JSON = Join-Path $root "Assets\Data\Resources\Letters\letters.json"
 Write-Host "Running tests..."
 & $exe
 exit $LASTEXITCODE
