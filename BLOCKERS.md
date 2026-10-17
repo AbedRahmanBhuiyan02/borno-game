@@ -13,6 +13,17 @@
   Installs → location). Then follow README section 1, and fix any red
   errors in the Console (tell me the exact error text next session).
 
+### If Unity shows errors on first open (likely fixes)
+- `The type or namespace 'UI' does not exist in 'UnityEngine'` →
+  Window → Package Manager → Unity Registry → install **Unity UI**.
+- Test scripts can't find `NUnit` / `UnityEngine.TestRunner` →
+  install **Test Framework** the same way.
+- `InvalidOperationException: You are trying to read Input using the
+  UnityEngine.Input class...` → run **Borno → Setup Project** (it switches
+  Active Input Handling to *Both*) and restart Unity.
+- Pink lines in a phone build → run **Borno → Setup Project** again
+  (creates the line material so its shader is included).
+
 ## 2. GitHub repo `borno-game` does not exist
 - **Problem**: `gh repo view AbedRahmanBhuiyan02/borno-game` →
   "Could not resolve to a Repository". Your account has no repo with that
