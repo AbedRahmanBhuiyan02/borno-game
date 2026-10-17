@@ -1,7 +1,6 @@
 # Good morning! – Borno night summary (2026-10-18)
 
-All 6 steps are written and committed **locally** in `D:\Projects\borno-game`
-(7 commits on `main`). **Pushed** to the private repo
+All 6 steps are written and committed in `D:\Projects\borno-game`. **Pushed** to the private repo
 https://github.com/AbedRahmanBhuiyan02/borno-game (created after you said yes).
 An hourly task commits + pushes new work automatically (see LOG.md).
 
@@ -24,9 +23,7 @@ An hourly task commits + pushes new work automatically (see LOG.md).
 - The 3 Unity-only tests in `Assets/Tests/EditMode/Unity/` were not run.
 
 ## 📝 Your to-do list
-1. **GitHub**: in `D:\Projects\borno-game` run
-   `gh repo create AbedRahmanBhuiyan02/borno-game --private` then
-   `git push -u origin main`.
+1. ~~GitHub~~ – done: private repo created and pushed; hourly auto-push is on.
 2. **Unity**: install Unity Hub + **Unity 6 LTS** with Android Build Support
    (install location can be on D:). Open the project (README §1).
 3. In Unity: **Borno → Setup Project (run once)**, open
