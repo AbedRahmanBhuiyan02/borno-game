@@ -124,3 +124,45 @@ temp files.)
 **You must do by hand**
 - Nothing for this step. (Tune the weights in `AdaptiveLetterPicker` /
   `ProgressTracker.WeakAverageBelow` after watching real kids play.)
+
+---
+
+## Step 6 – Screens wired together (2026-10-18)
+**Done**
+- `Game/BornoApp.cs` – the main script: loads data + progress, builds the
+  board and the screens, handles all buttons, scores, saves after every
+  try, Android back button, saves on pause/quit.
+- `Game/UI/UiFactory.cs` – builds Canvas/Text/Image/Button from code;
+  loads a Bangla font from `Resources/Fonts/BornoFont` if you add one.
+- `Game/UI/HomeScreen.cs` – title, total stars, 7 sticker badges, Play
+  (adaptive letter) and Letters buttons.
+- `Game/UI/LetterSelectScreen.cs` – scrollable 3-column grid made from
+  letters.json, best stars per letter, orange "!" badge on weak letters.
+- `Game/UI/TracingScreen.cs` – Back / letter / Sound, picture card (tap =
+  word sound), Clear / Done, result card with popping stars, Again / Home /
+  Next, "New sticker!" / "New best!".
+- `Game/UI/SafeArea.cs` (notch-safe), `Game/UI/PopIn.cs` (star animation).
+- `Editor/BornoSetup.cs` – menu **Borno → Setup Project (run once)**:
+  portrait, Android IL2CPP + ARM64, no internet permission, 2D mode, line
+  material, `Assets/Scenes/Main.unity`, Build Settings. Also
+  **Borno → Open Save Folder** and **Borno → Delete Saved Progress**.
+- `Tools/compile-check-unity-scripts.ps1` + `Tools/UnityStubs/` – rough
+  compile check of all scripts without Unity.
+
+**Tested**
+- `Tools/run-core-tests.ps1` → **44 passed, 0 failed**.
+- `Tools/compile-check-unity-scripts.ps1` → **OK** (32 files incl. Game,
+  Editor and Unity tests, against fake Unity classes). This catches mistakes
+  in our code but NOT wrong Unity API names – needs a real Unity check.
+- **Not run in Unity, not run on a phone** (Unity not installed).
+
+**You must do by hand**
+1. Install Unity 6 LTS (+ Android Build Support), open the project
+   (README §1), run **Borno → Setup Project**, press Play.
+2. Look at the Console. Red errors = tell me the exact text.
+3. Commit the generated `.meta` files, `Packages/`, `ProjectSettings/` and
+   `Assets/Scenes/Main.unity`.
+4. Optional: add `Assets/Art/Resources/Fonts/BornoFont.ttf` (Noto Sans
+   Bengali, OFL) to see Bangla letters instead of "ka", "kha"...
+5. Phone test: File → Build Settings → Android → Switch Platform → Build And
+   Run (USB debugging on). Try a cheap phone if you can.

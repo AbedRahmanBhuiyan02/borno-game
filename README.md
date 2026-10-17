@@ -109,16 +109,39 @@ compiler that ships with Windows:
 powershell -ExecutionPolicy Bypass -File Tools\run-core-tests.ps1
 ```
 
+Two more helper scripts (no Unity needed):
+
+| Script | What it does |
+|--------|--------------|
+| `Tools\compile-check-unity-scripts.ps1` | Rough compile check of ALL scripts against fake Unity classes (`Tools/UnityStubs`). Finds typos in our code; the real check is still Unity. |
+| `Tools\make-letter-preview.ps1` | Draws all letter shapes from letters.json into `Tools\.build\letters-preview.html` – open it in a browser. |
+
+## 7. How the screens work (Step 6)
+
+`BornoApp` (one GameObject in `Main.unity`) builds everything at start:
+
+```
+Home ──Play──────────────► Tracing (letter chosen by AdaptiveLetterPicker)
+  └──Letters──► Letter Select ──tap──► Tracing
+Tracing ──Done──► result card ──Again / Next / Home
+Android back button = go back one screen
+```
+
+- The UI is a Screen-Space-Overlay Canvas made in code (`Game/UI/*`).
+- The letter guide and the child's line are LineRenderers in the world
+  (`TracingBoard`), visible through the empty middle of the tracing screen.
+- After every try the progress is saved immediately.
+
 ## 6. Plan / roadmap
 
 | Step | What | Status |
 |------|------|--------|
 | 1 | Project setup, folders, .gitignore, README | done |
-| 2 | Tracing: input, LineRenderer, coverage/precision, stars, tests | see LOG.md |
-| 3 | Letter content for অ আ ই ঈ উ ক খ গ ঘ চ | see LOG.md |
-| 4 | Stars, rewards (stickers), offline progress (JSON) | see LOG.md |
-| 5 | Weak-letter tracking + adaptive repeat | see LOG.md |
-| 6 | Home, letter-select and tracing screens wired together | see LOG.md |
+| 2 | Tracing: input, LineRenderer, coverage/precision, stars, tests | done (logic tested, Unity part untested) |
+| 3 | Letter content for অ আ ই ঈ উ ক খ গ ঘ চ | done (placeholder shapes, no art/audio yet) |
+| 4 | Stars, rewards (stickers), offline progress (JSON) | done |
+| 5 | Weak-letter tracking + adaptive repeat | done |
+| 6 | Home, letter-select and tracing screens wired together | done (not yet run in Unity) |
 | later | 2 mini-games, parent view, speech check, Play Store prep | not started |
 
 Other files: `LOG.md` (diary of each step), `DECISIONS.md` (why things are

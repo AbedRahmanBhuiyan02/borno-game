@@ -43,6 +43,15 @@ these if you disagree.
   ScriptableObject. Each stroke is a flat `float[]` because `JsonUtility`
   cannot read nested arrays.
 
+- **Compile check without Unity**: `Tools/UnityStubs/UnityStubs.cs` is a
+  fake, empty copy of only the Unity classes we use, so the Windows compiler
+  can check our Game/Editor scripts. It is outside `Assets/` so Unity never
+  sees it. It can't prove the real Unity API matches.
+- **"Too short" drawings** (less than 15% of the box) are not saved as a
+  try – the child just gets "Trace the letter!" again.
+- **Next button** always uses the adaptive picker (also when the child came
+  from Letter Select), so weak letters keep coming back.
+
 ## Tracing rules
 - Sample spacing 0.02 of the box, tolerance radius 0.09 of the box (kids'
   fingers are big and small screens are small).
