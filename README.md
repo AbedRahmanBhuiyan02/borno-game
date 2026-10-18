@@ -17,23 +17,25 @@ No ads, no analytics, no tracking, no internet, no personal data
 
 ---
 
-## 1. Run it (3 steps)
+## 1. Run it
 
-1. Install **Unity Hub** + **Unity 6 LTS** (free Personal licence). For phone
-   builds also tick **Android Build Support** (with OpenJDK, SDK & NDK).
-   You can install to D: (Hub → Settings → Installs).
-2. Unity Hub → **Add → Add project from disk** → `D:\Projects\borno-game`.
-   The first import takes a few minutes. **The project sets itself up
-   automatically** (scene, settings, icon) and opens `Assets/Scenes/Main.unity`.
-   If Unity asks to restart because of "Active Input Handling", do it.
-3. Press **▶ Play**. Use the mouse like a finger.
+**On this PC (Unity 6000.0.85f1 is already installed in `D:\Unity`):**
+1. Double-click **`Open-Borno-in-Unity.bat`** in the project folder
+   (or Unity Hub → Projects → Add → Add project from disk →
+   `D:\Projects\borno-game`).
+2. Wait until Unity has opened (1–3 minutes).
+3. Press **▶ Play** at the top middle. Use the mouse like a finger.
+   Tip: in the Game view, choose a portrait size (e.g. 1080x1920) in the
+   resolution menu at its top, so it looks like a phone.
 
-Then commit the files Unity created (`*.meta`, `Packages/`,
-`ProjectSettings/`, `Main.unity`) – the hourly auto-push does this too.
+**On another PC:** install Unity Hub + **Unity 6000.0.85f1** (6.0 LTS), add
+the project from disk, open it, press Play. The first open sets everything
+up automatically (scene, settings, icon).
 
-**Phone:** Borno → **Build Android APK (test)** → `Builds/Borno.apk`, copy it
-to the phone and install (allow "unknown apps"), or connect the phone with
-USB debugging and use File → Build And Run.
+**On a phone:** first add **Android Build Support** in Unity Hub (Installs →
+gear next to 6000.0.85f1 → Add modules → Android Build Support; you accept
+Google's licence there). Then in Unity: **Borno → Build Android APK (test)**,
+copy `Builds\Borno.apk` to the phone and install it (allow "unknown apps").
 
 If something goes wrong, see `BLOCKERS.md` ("If Unity shows errors").
 
@@ -143,8 +145,12 @@ powershell -ExecutionPolicy Bypass -File Tools\make-letter-preview.ps1         #
 powershell -ExecutionPolicy Bypass -File Tools\make-placeholder-art.ps1        # re-draw pictures/icon
 ```
 
-In Unity: Window → General → Test Runner → EditMode → Run All (all tests,
-including the Unity-only ones).
+In Unity: Window → General → Test Runner → EditMode / PlayMode → Run All.
+Or all Unity checks from the command line (close Unity first):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File Tools\unity-check.ps1 -Unity "D:\Unity\Editors\6000.0.85f1\Editor\Editor\Unity.exe"
+```
 
 ## 8. Status
 
@@ -154,7 +160,8 @@ including the Unity-only ones).
 | 2 mini-games, parent page, Say it!, Play Store prep | done |
 | Placeholder pictures + icon | done (original, CC0) |
 | Voices, Bangla font, nicer letter shapes | **your part** – see guides |
-| Run in real Unity / on a phone | **not done yet** – Unity is not installed on the dev PC |
+| Run in real Unity | **done** – compiles with 0 errors / 0 warnings, 65 EditMode + 6 PlayMode tests pass |
+| Run on a phone | not yet – needs Android Build Support (your step, see section 1) |
 
 Other docs: `LOG.md` (diary), `DECISIONS.md` (why), `BLOCKERS.md`
 (problems + fixes), `ASSETS.md` (licences), `PLAY_STORE.md`,

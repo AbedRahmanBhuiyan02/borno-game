@@ -26,6 +26,7 @@ ExportedObj/
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
@@ -60,3 +61,7 @@ crashlytics-buildid.txt
 
 # Output of our own test script (Tools/run-core-tests.ps1)
 /Tools/.build/
+
+# Leftover scenes from an interrupted Unity test run
+/[Aa]ssets/InitTestScene*.unity
+/[Aa]ssets/InitTestScene*.unity.meta

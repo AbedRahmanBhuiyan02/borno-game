@@ -8,11 +8,11 @@
 #
 # Usage:
 #   powershell -ExecutionPolicy Bypass -File Tools\unity-check.ps1
-#   powershell -ExecutionPolicy Bypass -File Tools\unity-check.ps1 -Unity "D:\Unity\Editors\6000.0.85f1\Editor\Unity.exe"
+#   powershell -ExecutionPolicy Bypass -File Tools\unity-check.ps1 -Unity "<path to>\Unity.exe"
 # Close the project in the Unity editor first (one project = one Unity).
 
 param(
-    [string]$Unity = "D:\Unity\Editors\6000.0.85f1\Editor\Unity.exe",
+    [string]$Unity = "D:\Unity\Editors\6000.0.85f1\Editor\Editor\Unity.exe",
     [switch]$SkipPlayMode
 )
 

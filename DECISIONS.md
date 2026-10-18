@@ -8,11 +8,11 @@ these if you disagree.
   start folder `D:\Borno Project` was empty, so the web prototype code was
   **not available**; the tracing check was rebuilt from your description
   (coverage % + precision % → stars).
-- **Unity version**: Unity 6 LTS recommended. Unity is not installed on this
-  PC, so the project was written by hand. `Packages/manifest.json` and
-  `ProjectSettings/` are **not** included on purpose: Unity creates correct,
-  version-matching defaults on first open (hand-written package versions
-  could be wrong for your editor version and break the import).
+- **Unity version**: **6000.0.85f1 (Unity 6.0 LTS)** - installed on this PC
+  and used for all checks. `Packages/manifest.json` lists only 14 packages
+  (Unity UI 2.0.0, Test Framework 1.6.0, needed engine modules, Visual
+  Studio integration, 2D Sprite). Unity's default list was removed because
+  it adds Analytics, Purchasing and Services (not allowed in a kids app).
 - **GitHub repo name**: `https://github.com/AbedRahmanBhuiyan02/borno-game`
   (your account name from `gh auth status`). See BLOCKERS.md.
 - **Render pipeline**: Built-in (no URP package = smaller, simpler).

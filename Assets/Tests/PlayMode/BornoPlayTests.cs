@@ -33,6 +33,17 @@ namespace Borno.Tests
                 if (File.Exists(f)) File.Delete(f);
             ProgressStore.OverrideFilePath = saveFile;
 
+#if UNITY_EDITOR
+            // In the editor window: use a portrait phone screen so the
+            // screenshots look like a real phone.
+            if (!Application.isBatchMode)
+            {
+                UnityEditor.PlayModeWindow.SetCustomRenderingResolution(540, 960, "Borno portrait test");
+                yield return null;
+                yield return null;
+            }
+#endif
+
             app = new GameObject("BornoApp").AddComponent<BornoApp>();
             yield return null;
             yield return null;
@@ -77,6 +88,9 @@ namespace Borno.Tests
 
         private static IEnumerator Shot(string name)
         {
+            // In batch mode (command line, no window) "end of frame" never comes,
+            // so screenshots are only taken when the tests run in the editor window.
+            if (Application.isBatchMode) yield break;
             yield return new WaitForEndOfFrame();
             Directory.CreateDirectory(ShotDir);
             Texture2D tex = ScreenCapture.CaptureScreenshotAsTexture();

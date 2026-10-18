@@ -293,3 +293,39 @@ parent gate, settings) that also saves screenshots to
 accessors on BornoApp, `TracingBoard.AddTestStroke`, `TapOption`,
 `TapBalloon`, `TapChoice`, `ProgressStore.OverrideFilePath` so tests
 never touch the real save). Compile check OK, 62 Core tests pass.
+
+---
+
+## Unity installed and the game checked in REAL Unity (2026-10-18, evening)
+**Done**
+- Editor download finished (4.03 GB, ~10 h at ~100 KB/s; Unity signature
+  valid). Installed **Unity 6000.0.85f1** to
+  `D:\Unity\Editors\6000.0.85f1\Editor\Editor\Unity.exe` (the double
+  "Editor" is only a folder-name side effect; it works fine).
+- First import: compile errors because no Unity UI package was installed
+  (no `manifest.json`). Fixed with a slim `Packages/manifest.json`
+  (14 packages; Unity's default 51-package list with Analytics/Purchasing
+  was removed).
+- `BornoSetup.RunBatch` ran: portrait, `com.borno.alphabet`, version 0.2.0
+  (code 2), IL2CPP, ARMv7+ARM64, no internet permission, icon, `Main.unity`
+  in Build Settings. All Unity cloud services/analytics are **off**.
+- PlayMode test hung in batch mode (WaitForEndOfFrame) → fixed; screenshots
+  only in the editor window, which now uses a 540x960 portrait screen.
+- Added `Open-Borno-in-Unity.bat` (double-click to open the project).
+- Removed a leftover test scene and `borno-game.slnx` from git; ignored now.
+
+**Tested (real Unity 6000.0.85f1)**
+- Import + compile: **0 errors, 0 warnings**.
+- EditMode tests: **65 / 65 passed**.
+- PlayMode tests: **6 / 6 passed** (app starts on Home with 10 letters;
+  perfect trace = 3 stars + saved; scribble < 3 stars; Letter Match round =
+  3 stars; Balloon Pop round won; parent gate wrong/right answer; sound
+  toggle). No errors logged.
+- 12 portrait screenshots looked at (`Builds/TestScreenshots/`, not in git):
+  all screens lay out correctly.
+- Not tested: phone build (needs Android module), the `BORNO_SPEECH` build in
+  real Unity, real touch on a phone.
+
+**You must do by hand**
+- Play it: double-click `Open-Borno-in-Unity.bat`, press Play.
+- For the phone: add Android Build Support in Unity Hub (Google licence).
