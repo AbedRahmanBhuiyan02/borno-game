@@ -1,7 +1,7 @@
 // HomeScreen.cs
 // The first screen: title, total stars, sticker collection,
-// a big "Play" button (picks a letter for the child, weak letters more
-// often) and a "Letters" button (the child chooses a letter).
+// "Trace", "Letters" and "Games" buttons, and a small "Parents" button.
+// "Trace" picks a letter for the child (weak letters more often).
 
 using System;
 using Borno.Core;
@@ -14,6 +14,8 @@ namespace Borno.Game
     {
         public event Action PlayPressed;
         public event Action LettersPressed;
+        public event Action GamesPressed;
+        public event Action ParentsPressed;
 
         private readonly Text starCountText;
         private readonly Text nextGoalText;
@@ -60,13 +62,22 @@ namespace Borno.Game
             UiFactory.Place(nextGoalText.rectTransform, 0.05f, 0.51f, 0.95f, 0.56f);
 
             // --- buttons ---
-            Button play = UiFactory.CreateButton(Root, "PlayButton", "Play", UiFactory.Orange, 120,
+            Button play = UiFactory.CreateButton(Root, "PlayButton", "Trace", UiFactory.Orange, 120,
                 delegate { Raise(PlayPressed); });
-            UiFactory.Place((RectTransform)play.transform, 0.15f, 0.33f, 0.85f, 0.47f);
+            UiFactory.Place((RectTransform)play.transform, 0.15f, 0.34f, 0.85f, 0.48f);
 
-            Button letters = UiFactory.CreateButton(Root, "LettersButton", "Letters", UiFactory.Blue, 80,
+            Button letters = UiFactory.CreateButton(Root, "LettersButton", "Letters", UiFactory.Blue, 72,
                 delegate { Raise(LettersPressed); });
-            UiFactory.Place((RectTransform)letters.transform, 0.22f, 0.19f, 0.78f, 0.29f);
+            UiFactory.Place((RectTransform)letters.transform, 0.08f, 0.20f, 0.48f, 0.30f);
+
+            Button games = UiFactory.CreateButton(Root, "GamesButton", "Games", UiFactory.Green, 72,
+                delegate { Raise(GamesPressed); });
+            UiFactory.Place((RectTransform)games.transform, 0.52f, 0.20f, 0.92f, 0.30f);
+
+            // Small, quiet button for grown-ups (protected by a parent gate)
+            Button parents = UiFactory.CreateButton(Root, "ParentsButton", "Parents",
+                new Color(0.70f, 0.70f, 0.75f), 40, delegate { Raise(ParentsPressed); });
+            UiFactory.Place((RectTransform)parents.transform, 0.74f, 0.935f, 0.97f, 0.985f);
 
             Text footer = UiFactory.CreateText(Root, "Footer", "No ads - works offline", 36,
                 new Color(0.5f, 0.5f, 0.55f), false);

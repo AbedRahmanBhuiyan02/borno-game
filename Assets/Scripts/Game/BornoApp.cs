@@ -2,14 +2,17 @@
 // The "boss" script of the game. Put it on ONE empty GameObject in the
 // scene (the "Borno > Setup Project" menu does this for you). It:
 //   - loads letters.json and the saved progress,
-//   - builds the three screens and the tracing board,
+//   - builds all screens and the tracing board,
 //   - switches between screens when buttons are pressed,
-//   - scores a try, gives stars, saves progress,
+//   - scores tries / game rounds, gives stars, saves progress,
 //   - picks the next letter (weak letters more often).
 //
-// Flow:  Home --Play--> Tracing (letter picked for the child)
-//        Home --Letters--> Letter Select --tap a letter--> Tracing
-//        Tracing --Done--> result card --Again / Next / Home
+// Screens:
+//   Home --Trace----> Tracing (letter picked for the child)
+//        --Letters--> Letter Select --tap--> Tracing
+//        --Games----> Games menu --> Letter Match / Balloon Pop
+//        --Parents--> Parent gate (7 + 8 = ?) --> Parent view
+//   Android back button = go back one screen.
 
 using Borno.Core;
 using UnityEngine;
@@ -26,11 +29,17 @@ namespace Borno.Game
         private ProgressTracker progress;
         private AdaptiveLetterPicker picker;
         private SoundPlayer sound;
+        private VoiceListener voice;
         private TracingBoard board;
 
         private HomeScreen home;
         private LetterSelectScreen letterSelect;
         private TracingScreen tracing;
+        private GamesMenuScreen gamesMenu;
+        private LetterMatchScreen letterMatch;
+        private BalloonPopScreen balloonPop;
+        private ParentGateScreen parentGate;
+        private ParentScreen parentView;
 
         private LetterData currentLetter;
         private string lastPlayedId;
@@ -51,10 +60,13 @@ namespace Borno.Game
             database = new LetterDatabase();
             database.Load();
             progress = new ProgressTracker(ProgressStore.Load(), new RewardRules());
-            picker = new AdaptiveLetterPicker(progress, new SystemRandomSource());
+            SystemRandomSource random = new SystemRandomSource();
+            picker = new AdaptiveLetterPicker(progress, random);
 
-            // Sound
+            // Sound + microphone helper
             sound = gameObject.AddComponent<SoundPlayer>();
+            voice = gameObject.AddComponent<VoiceListener>();
+            ApplySettings();
 
             // Tracing board (world space, drawn by the camera)
             board = new GameObject("TracingBoard").AddComponent<TracingBoard>();
@@ -66,9 +78,15 @@ namespace Borno.Game
             RectTransform safe = UiFactory.Stretch(UiFactory.CreateRect(canvas.transform, "SafeArea"));
             safe.gameObject.AddComponent<SafeArea>();
 
+            LetterCatalog catalog = database.Catalog;
             home = new HomeScreen(safe, progress.Rewards);
-            letterSelect = new LetterSelectScreen(safe, database.Catalog);
+            letterSelect = new LetterSelectScreen(safe, catalog);
             tracing = new TracingScreen(safe);
+            gamesMenu = new GamesMenuScreen(safe);
+            letterMatch = new LetterMatchScreen(safe, new LetterQuiz(catalog, picker, random, progress), database, sound);
+            balloonPop = new BalloonPopScreen(safe, new BalloonRound(catalog, picker, random, progress), sound);
+            parentView = new ParentScreen(safe, catalog);
+            parentGate = new ParentGateScreen(safe, new ParentGate(random)); // last = drawn on top
             ConnectEvents();
 
             ShowHome();
@@ -99,14 +117,15 @@ namespace Borno.Game
             // Fallback (works in the editor; in a phone build the shader may be
             // missing, so please run "Borno > Setup Project" once).
             Debug.LogWarning("[Borno] Line material not found - run 'Borno > Setup Project'.");
-            Shader shader = Shader.Find("Sprites/Default");
-            return new Material(shader);
+            return new Material(Shader.Find("Sprites/Default"));
         }
 
         private void ConnectEvents()
         {
-            home.PlayPressed += OnPlayPressed;
+            home.PlayPressed += OnTracePressed;
             home.LettersPressed += ShowLetterSelect;
+            home.GamesPressed += ShowGamesMenu;
+            home.ParentsPressed += OpenParentGate;
 
             letterSelect.BackPressed += ShowHome;
             letterSelect.LetterChosen += OnLetterChosen;
@@ -116,16 +135,50 @@ namespace Borno.Game
             tracing.WordSoundPressed += PlayWordSound;
             tracing.ClearPressed += OnClearPressed;
             tracing.DonePressed += OnDonePressed;
-            tracing.AgainPressed += OnAgainPressed;
-            tracing.NextPressed += OnNextPressed;
-            tracing.HomePressed += ShowHome;
-
+            tracing.SayItPressed += OnSayItPressed;
+            tracing.Result.AgainPressed += OnAgainPressed;
+            tracing.Result.NextPressed += OnNextPressed;
+            tracing.Result.HomePressed += ShowHome;
             board.DrawingChanged += OnDrawingChanged;
+
+            gamesMenu.BackPressed += ShowHome;
+            gamesMenu.LetterMatchPressed += StartLetterMatch;
+            gamesMenu.BalloonPopPressed += StartBalloonPop;
+
+            letterMatch.BackPressed += OnGameBack;
+            letterMatch.RoundFinished += delegate (LetterQuiz q) { OnGameRoundFinished(letterMatch.Result, q.Stars, q.Mistakes); };
+            letterMatch.Result.AgainPressed += StartLetterMatch;
+            letterMatch.Result.HomePressed += ShowHome;
+
+            balloonPop.BackPressed += OnGameBack;
+            balloonPop.RoundFinished += delegate (BalloonRound r) { OnGameRoundFinished(balloonPop.Result, r.Stars, r.Mistakes); };
+            balloonPop.Result.AgainPressed += StartBalloonPop;
+            balloonPop.Result.HomePressed += ShowHome;
+
+            parentGate.Passed += ShowParentView;
+            parentGate.Cancelled += ShowHome;
+            parentView.BackPressed += ShowHome;
+            parentView.SettingsChanged += OnSettingsChanged;
+            parentView.ResetConfirmed += OnResetConfirmed;
         }
 
         // ------------------------------------------------------------------
         // Switching screens
         // ------------------------------------------------------------------
+
+        private void HideAll()
+        {
+            home.Hide();
+            letterSelect.Hide();
+            tracing.Hide();
+            gamesMenu.Hide();
+            letterMatch.Hide();
+            balloonPop.Hide();
+            parentGate.Hide();
+            parentView.Hide();
+            board.InputEnabled = false;
+            board.SetVisible(false);
+        }
 
         private void ShowHome()
         {
@@ -141,6 +194,12 @@ namespace Borno.Game
             letterSelect.Show();
         }
 
+        private void ShowGamesMenu()
+        {
+            HideAll();
+            gamesMenu.Show();
+        }
+
         private void StartLetter(LetterData letter)
         {
             if (letter == null) return; // no letters loaded
@@ -150,6 +209,8 @@ namespace Borno.Game
             tracing.Show();
             tracing.ShowLetter(letter, database.Catalog.IndexOf(letter.id),
                                database.GetPicture(letter), sound.Has(letter.letterAudioKey));
+            tracing.SetSayItVisible(VoiceListener.IsAvailable && progress.Settings.sayItOn);
+            tracing.SetSayItLabel("Say it!");
 
             // fit the board into the empty middle part of the tracing screen
             float bottom, top;
@@ -163,20 +224,39 @@ namespace Borno.Game
             PlayLetterSound();
         }
 
-        private void HideAll()
+        private void StartLetterMatch()
         {
-            home.Hide();
-            letterSelect.Hide();
-            tracing.Hide();
-            board.InputEnabled = false;
-            board.SetVisible(false);
+            HideAll();
+            letterMatch.Show();
+            letterMatch.StartRound();
+        }
+
+        private void StartBalloonPop()
+        {
+            HideAll();
+            balloonPop.Show();
+            balloonPop.StartRound();
+        }
+
+        private void OpenParentGate()
+        {
+            HideAll();
+            home.Show(); // the gate is drawn on top of the home screen
+            parentGate.Open();
+        }
+
+        private void ShowParentView()
+        {
+            HideAll();
+            parentView.Refresh(progress);
+            parentView.Show();
         }
 
         // ------------------------------------------------------------------
-        // Button handlers
+        // Tracing
         // ------------------------------------------------------------------
 
-        private void OnPlayPressed()
+        private void OnTracePressed()
         {
             cameFromLetterSelect = false;
             StartLetter(picker.Pick(database.Catalog, lastPlayedId));
@@ -218,12 +298,13 @@ namespace Borno.Game
             {
                 // A real try: save it (also 0-star tries, they mark weak letters)
                 outcome = progress.RecordAttempt(currentLetter.id, result.Stars);
-                ProgressStore.Save(progress.Data);
+                Save();
                 lastPlayedId = currentLetter.id;
                 recorded = true;
             }
 
             tracing.ShowResult(result, outcome, recorded);
+            if (result.Stars >= 2) sound.PlayFx(Fx.Hooray);
             if (result.Stars > 0) PlayWordSound(); // reward: hear the example word
         }
 
@@ -239,6 +320,17 @@ namespace Borno.Game
             StartLetter(picker.Pick(database.Catalog, lastPlayedId));
         }
 
+        private void OnSayItPressed()
+        {
+            if (voice.IsListening) return;
+            tracing.SetSayItLabel("Listening...");
+            voice.Listen(delegate (bool spoke)
+            {
+                tracing.SetSayItLabel(spoke ? "Great!" : "Say it!");
+                if (spoke) sound.PlayFx(Fx.Correct);
+            });
+        }
+
         private void PlayLetterSound()
         {
             if (currentLetter != null) sound.Play(currentLetter.letterAudioKey);
@@ -247,6 +339,53 @@ namespace Borno.Game
         private void PlayWordSound()
         {
             if (currentLetter != null) sound.Play(currentLetter.wordAudioKey);
+        }
+
+        // ------------------------------------------------------------------
+        // Mini-games
+        // ------------------------------------------------------------------
+
+        private void OnGameRoundFinished(ResultPopup popup, int stars, int mistakes)
+        {
+            AttemptOutcome outcome = progress.AddGameStars(stars);
+            Save();
+            string detail = mistakes == 0 ? "No mistakes!" : "Mistakes: " + mistakes;
+            string extra = outcome.UnlockedSticker ? "New sticker!" : "+" + stars + " stars";
+            popup.Show(ResultPopup.TitleFor(stars), stars, detail, extra, false);
+        }
+
+        private void OnGameBack()
+        {
+            Save(); // answers given so far are kept
+            ShowGamesMenu();
+        }
+
+        // ------------------------------------------------------------------
+        // Parent view
+        // ------------------------------------------------------------------
+
+        private void OnSettingsChanged()
+        {
+            ApplySettings();
+            Save();
+        }
+
+        private void OnResetConfirmed()
+        {
+            progress.ResetProgress();
+            lastPlayedId = null;
+            Save();
+            parentView.Refresh(progress);
+        }
+
+        private void ApplySettings()
+        {
+            sound.Muted = !progress.Settings.soundOn;
+        }
+
+        private void Save()
+        {
+            ProgressStore.Save(progress.Data);
         }
 
         // ------------------------------------------------------------------
@@ -263,18 +402,19 @@ namespace Borno.Game
                 if (tracing.IsResultVisible) ShowHome();
                 else OnTracingBack();
             }
-            else if (letterSelect.IsVisible) ShowHome();
+            else if (letterMatch.IsVisible || balloonPop.IsVisible) OnGameBack();
+            else if (letterSelect.IsVisible || gamesMenu.IsVisible || parentView.IsVisible || parentGate.IsVisible) ShowHome();
             else Application.Quit();
         }
 
         private void OnApplicationPause(bool paused)
         {
-            if (paused && progress != null) ProgressStore.Save(progress.Data);
+            if (paused && progress != null) Save();
         }
 
         private void OnApplicationQuit()
         {
-            if (progress != null) ProgressStore.Save(progress.Data);
+            if (progress != null) Save();
         }
     }
 }

@@ -20,8 +20,15 @@ $sources += Get-ChildItem (Join-Path $root "Assets\Tests") -Recurse -Filter *.cs
 $sources += Join-Path $root "Tools\UnityStubs\UnityStubs.cs"
 $sources += Join-Path $root "Tools\MiniNUnit\MiniNUnit.cs"   # fake NUnit for the test files
 
-Write-Host "Compile-checking $($sources.Count) files against Unity stubs..."
-$dll = Join-Path $outDir "UnityCheck.dll"
-& $csc /nologo /warn:4 /codepage:65001 /target:library /out:$dll $sources
-if ($LASTEXITCODE -ne 0) { Write-Host "COMPILE CHECK FAILED"; exit 1 }
+# Check twice: a normal build, and a build WITH the microphone feature
+# (BORNO_SPEECH) on Android, so both versions of VoiceListener are checked.
+$variants = @("", "/define:BORNO_SPEECH;UNITY_ANDROID")
+foreach ($v in $variants) {
+    $label = if ($v) { $v } else { "default build" }
+    Write-Host "Compile-checking $($sources.Count) files against Unity stubs ($label)..."
+    $dll = Join-Path $outDir "UnityCheck.dll"
+    if ($v) { & $csc /nologo /warn:4 /codepage:65001 /target:library /out:$dll $v $sources }
+    else     { & $csc /nologo /warn:4 /codepage:65001 /target:library /out:$dll $sources }
+    if ($LASTEXITCODE -ne 0) { Write-Host "COMPILE CHECK FAILED ($label)"; exit 1 }
+}
 Write-Host "Compile check OK"

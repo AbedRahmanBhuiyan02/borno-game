@@ -59,7 +59,7 @@ namespace Borno.Core
         public bool soundOn = true;
 
         /// <summary>Show the "Say it!" button (only if the app was built with the microphone feature).</summary>
-        public bool sayItOn = true;
+        public bool sayItOn = false; // off until a parent switches it on
     }
 
     [Serializable]

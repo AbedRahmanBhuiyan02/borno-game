@@ -73,7 +73,6 @@ namespace Borno.Game
             int count = catalog.Count;
             tileStars = new Image[count][];
             weakBadges = new GameObject[count];
-            bool bangla = UiFactory.HasBanglaFont;
 
             for (int i = 0; i < count; i++)
             {
@@ -81,10 +80,10 @@ namespace Borno.Game
                 Button tile = UiFactory.CreateButton(content, "Tile_" + letter.id, null, UiFactory.TileColor(i), 0,
                     delegate { if (LetterChosen != null) LetterChosen(letter); });
 
-                Text big = UiFactory.CreateText(tile.transform, "Letter", UiFactory.LetterLabel(letter),
-                    bangla ? 170 : 110, Color.white, bangla);
-                big.fontStyle = bangla ? FontStyle.Normal : FontStyle.Bold;
-                UiFactory.Place(big.rectTransform, 0f, 0.28f, 1f, 1f);
+                // the letter: font text if available, otherwise drawn from its strokes
+                RectTransform letterArea = UiFactory.Place(UiFactory.CreateRect(tile.transform, "LetterArea"),
+                                                           0.1f, 0.28f, 0.9f, 0.97f);
+                new LetterView(letterArea, "Letter", Color.white, 170).Set(letter);
 
                 tileStars[i] = UiFactory.CreateStarRow(tile.transform, "Stars", 0.12f, 0.06f, 0.88f, 0.28f);
 

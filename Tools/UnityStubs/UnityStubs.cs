@@ -15,6 +15,7 @@ namespace UnityEngine
         public string name;
         public static T FindAnyObjectByType<T>() where T : Object { return null; }
         public static implicit operator bool(Object o) { return o != null; }
+        public static void Destroy(Object o) { }
     }
 
     public class Component : Object
@@ -22,6 +23,7 @@ namespace UnityEngine
         public GameObject gameObject;
         public Transform transform;
         public string tag;
+        public T GetComponentInChildren<T>() { return default(T); }
     }
 
     public class Behaviour : Component { public bool enabled; }
@@ -44,11 +46,13 @@ namespace UnityEngine
         public Vector3 position;
         public Vector3 localScale;
         public void SetParent(Transform parent, bool worldPositionStays) { }
+        public void SetAsLastSibling() { }
     }
 
     public sealed class RectTransform : Transform
     {
         public Vector2 anchorMin, anchorMax, offsetMin, offsetMax, pivot, sizeDelta, anchoredPosition;
+        public Rect rect;
         public void GetWorldCorners(Vector3[] fourCornersArray) { }
     }
 
@@ -103,6 +107,8 @@ namespace UnityEngine
         public Rect(float x, float y, float w, float h) { position = new Vector2(x, y); size = new Vector2(w, h); }
         public Vector2 position;
         public Vector2 size;
+        public float width { get { return size.x; } }
+        public float height { get { return size.y; } }
         public static bool operator ==(Rect a, Rect b) { return false; }
         public static bool operator !=(Rect a, Rect b) { return true; }
         public override bool Equals(object o) { return false; }
@@ -123,6 +129,10 @@ namespace UnityEngine
         public static float Sin(float f) { return 0; }
         public static float Cos(float f) { return 0; }
         public static int RoundToInt(float f) { return 0; }
+        public static float Lerp(float a, float b, float t) { return a; }
+        public static float Ceil(float f) { return f; }
+        public static float Sqrt(float f) { return f; }
+        public static int Min(int a, int b) { return a; }
     }
 
     public enum CameraClearFlags { Skybox = 1, SolidColor = 2, Depth = 3, Nothing = 4 }
@@ -173,7 +183,7 @@ namespace UnityEngine
         public static void LogError(object m) { }
     }
 
-    public class Time { public static float unscaledDeltaTime; }
+    public class Time { public static float unscaledDeltaTime, deltaTime; }
 
     public class Resources
     {
@@ -213,6 +223,7 @@ namespace UnityEngine
     {
         public Vector4 border;
         public static Sprite Create(Texture2D t, Rect r, Vector2 pivot) { return null; }
+        public static Sprite Create(Texture2D t, Rect r, Vector2 pivot, float ppu) { return null; }
         public static Sprite Create(Texture2D t, Rect r, Vector2 pivot, float ppu, uint extrude,
                                     SpriteMeshType meshType, Vector4 border) { return null; }
     }
@@ -246,7 +257,20 @@ namespace UnityEngine
         public Color color;
     }
 
-    public class AudioClip : Object { }
+    public class AudioClip : Object
+    {
+        public static AudioClip Create(string name, int lengthSamples, int channels, int frequency, bool stream) { return null; }
+        public bool SetData(float[] data, int offsetSamples) { return true; }
+        public bool GetData(float[] data, int offsetSamples) { return true; }
+    }
+
+    public sealed class Microphone
+    {
+        public static string[] devices;
+        public static AudioClip Start(string deviceName, bool loop, int lengthSec, int frequency) { return null; }
+        public static void End(string deviceName) { }
+        public static int GetPosition(string deviceName) { return 0; }
+    }
     public sealed class AudioListener : Behaviour { }
     public sealed class AudioSource : Behaviour
     {
@@ -363,6 +387,12 @@ namespace UnityEngine.UI
     }
 
     public class GraphicRaycaster : UIBehaviour { }
+
+    public class VerticalLayoutGroup : UIBehaviour
+    {
+        public float spacing;
+        public bool childControlHeight, childControlWidth, childForceExpandHeight, childForceExpandWidth;
+    }
     public class RectMask2D : UIBehaviour { }
 
     public class ScrollRect : UIBehaviour
@@ -467,5 +497,15 @@ namespace UnityEditor.SceneManagement
         public static bool SaveCurrentModifiedScenesIfUserWantsTo() { return true; }
         public static Scene NewScene(NewSceneSetup s, NewSceneMode m) { return new Scene(); }
         public static bool SaveScene(Scene scene, string path) { return true; }
+    }
+}
+
+namespace UnityEngine.Android
+{
+    public struct Permission
+    {
+        public const string Microphone = "android.permission.RECORD_AUDIO";
+        public static bool HasUserAuthorizedPermission(string permission) { return false; }
+        public static void RequestUserPermission(string permission) { }
     }
 }

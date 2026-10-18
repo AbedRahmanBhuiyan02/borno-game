@@ -3,7 +3,7 @@
 //   top:    Back button, the letter, Sound button
 //   below:  picture card + example word (tap the card to hear the word)
 //   middle: EMPTY - the TracingBoard (world space) shows through here
-//   bottom: Clear and Done buttons
+//   bottom: Clear, (Say it!), Done
 //   popup:  the result card with stars and Again / Home / Next
 //
 // This class only shows things and reports button presses (events).
@@ -23,27 +23,25 @@ namespace Borno.Game
         public event Action WordSoundPressed;
         public event Action ClearPressed;
         public event Action DonePressed;
-        public event Action AgainPressed;
-        public event Action NextPressed;
-        public event Action HomePressed;
+        public event Action SayItPressed;
 
-        private readonly Text letterText;
+        private readonly LetterView letterView;
         private readonly Text wordText;
         private readonly Text wordEnglishText;
         private readonly Image pictureCard;
         private readonly Image pictureImage;
         private readonly Text pictureFallbackText;
         private readonly Button soundButton;
+        private readonly Button clearButton;
         private readonly Button doneButton;
+        private readonly Button sayItButton;
+        private readonly Text sayItLabel;
         private readonly RectTransform boardArea;
 
-        private readonly GameObject resultPanel;
-        private readonly Image[] resultStars;
-        private readonly Text resultTitle;
-        private readonly Text resultDetail;
-        private readonly Text resultExtra;
-
         private readonly Vector3[] corners = new Vector3[4]; // re-used, no garbage
+
+        /// <summary>The result card (its Again/Home/Next events are used by BornoApp).</summary>
+        public ResultPopup Result { get; private set; }
 
         public TracingScreen(Transform parent) : base(parent, "TracingScreen")
         {
@@ -55,9 +53,8 @@ namespace Borno.Game
                 delegate { Raise(BackPressed); });
             UiFactory.Place((RectTransform)back.transform, 0.03f, 0.905f, 0.27f, 0.97f);
 
-            letterText = UiFactory.CreateText(Root, "Letter", "", 130, UiFactory.DarkText, true);
-            letterText.fontStyle = FontStyle.Bold;
-            UiFactory.Place(letterText.rectTransform, 0.30f, 0.89f, 0.70f, 0.985f);
+            RectTransform letterArea = UiFactory.Place(UiFactory.CreateRect(Root, "LetterArea"), 0.38f, 0.895f, 0.62f, 0.985f);
+            letterView = new LetterView(letterArea, "Letter", UiFactory.DarkText, 130);
 
             soundButton = UiFactory.CreateButton(Root, "SoundButton", "Sound", UiFactory.Blue, 56,
                 delegate { Raise(LetterSoundPressed); });
@@ -88,61 +85,24 @@ namespace Borno.Game
             boardArea = UiFactory.Place(UiFactory.CreateRect(Root, "BoardArea"), 0.02f, 0.14f, 0.98f, 0.73f);
 
             // --- bottom bar ---
-            Button clear = UiFactory.CreateButton(Root, "ClearButton", "Clear", UiFactory.Red, 70,
+            clearButton = UiFactory.CreateButton(Root, "ClearButton", "Clear", UiFactory.Red, 70,
                 delegate { Raise(ClearPressed); });
-            UiFactory.Place((RectTransform)clear.transform, 0.05f, 0.025f, 0.45f, 0.115f);
-
             doneButton = UiFactory.CreateButton(Root, "DoneButton", "Done", UiFactory.Green, 70,
                 delegate { Raise(DonePressed); });
-            UiFactory.Place((RectTransform)doneButton.transform, 0.55f, 0.025f, 0.95f, 0.115f);
+            sayItButton = UiFactory.CreateButton(Root, "SayItButton", "Say it!", UiFactory.Orange, 56,
+                delegate { Raise(SayItPressed); });
+            sayItLabel = sayItButton.GetComponentInChildren<Text>();
+            SetSayItVisible(false);
 
-            // --- result popup (hidden until Done) ---
-            Image dim = UiFactory.CreateImage(Root, "ResultPanel", null, new Color(0f, 0f, 0f, 0.55f));
-            dim.raycastTarget = true; // blocks the board and buttons behind it
-            resultPanel = dim.gameObject;
-
-            Image resultCard = UiFactory.CreateImage(dim.transform, "Card", SpriteFactory.RoundedBox(), Color.white);
-            UiFactory.Place(resultCard.rectTransform, 0.07f, 0.27f, 0.93f, 0.75f);
-            Transform c = resultCard.transform;
-
-            resultTitle = UiFactory.CreateText(c, "Title", "", 96, UiFactory.Orange, false);
-            resultTitle.fontStyle = FontStyle.Bold;
-            UiFactory.Place(resultTitle.rectTransform, 0.05f, 0.80f, 0.95f, 0.96f);
-
-            resultStars = UiFactory.CreateStarRow(c, "Stars", 0.10f, 0.50f, 0.90f, 0.80f);
-            for (int i = 0; i < resultStars.Length; i++)
-            {
-                PopIn pop = resultStars[i].gameObject.AddComponent<PopIn>();
-                pop.delay = 0.15f + i * 0.2f; // stars pop one after another
-            }
-
-            resultDetail = UiFactory.CreateText(c, "Detail", "", 40, new Color(0.45f, 0.45f, 0.5f), false);
-            UiFactory.Place(resultDetail.rectTransform, 0.05f, 0.39f, 0.95f, 0.48f);
-
-            resultExtra = UiFactory.CreateText(c, "Extra", "", 56, UiFactory.Purple, false);
-            resultExtra.fontStyle = FontStyle.Bold;
-            UiFactory.Place(resultExtra.rectTransform, 0.05f, 0.27f, 0.95f, 0.38f);
-
-            Button again = UiFactory.CreateButton(c, "AgainButton", "Again", UiFactory.Blue, 56,
-                delegate { Raise(AgainPressed); });
-            UiFactory.Place((RectTransform)again.transform, 0.04f, 0.05f, 0.32f, 0.22f);
-
-            Button home = UiFactory.CreateButton(c, "HomeButton", "Home", UiFactory.Purple, 56,
-                delegate { Raise(HomePressed); });
-            UiFactory.Place((RectTransform)home.transform, 0.36f, 0.05f, 0.64f, 0.22f);
-
-            Button next = UiFactory.CreateButton(c, "NextButton", "Next", UiFactory.Green, 56,
-                delegate { Raise(NextPressed); });
-            UiFactory.Place((RectTransform)next.transform, 0.68f, 0.05f, 0.96f, 0.22f);
-
-            resultPanel.SetActive(false);
+            // --- result card (hidden until Done) ---
+            Result = new ResultPopup(Root, "Next");
         }
 
         /// <summary>Fills in the letter, word and picture for a new letter.</summary>
         public void ShowLetter(LetterData letter, int letterIndex, Sprite picture, bool hasLetterSound)
         {
             bool bangla = UiFactory.HasBanglaFont;
-            UiFactory.SetText(letterText, UiFactory.LetterLabel(letter), bangla);
+            letterView.Set(letter);
             UiFactory.SetText(wordText, UiFactory.WordLabel(letter), bangla);
             wordEnglishText.text = bangla ? letter.exampleWordEnglish : "";
 
@@ -155,7 +115,7 @@ namespace Borno.Game
             // Dim the sound button when there is no recording yet
             ((Image)soundButton.targetGraphic).color = hasLetterSound ? UiFactory.Blue : UiFactory.Grey;
 
-            HideResult();
+            Result.Hide();
             SetDoneInteractable(false);
         }
 
@@ -164,37 +124,49 @@ namespace Borno.Game
             doneButton.interactable = interactable;
         }
 
+        /// <summary>Shows or hides the "Say it!" button and re-arranges the bottom bar.</summary>
+        public void SetSayItVisible(bool visible)
+        {
+            sayItButton.gameObject.SetActive(visible);
+            if (visible)
+            {
+                UiFactory.Place((RectTransform)clearButton.transform, 0.03f, 0.025f, 0.32f, 0.115f);
+                UiFactory.Place((RectTransform)sayItButton.transform, 0.355f, 0.025f, 0.645f, 0.115f);
+                UiFactory.Place((RectTransform)doneButton.transform, 0.68f, 0.025f, 0.97f, 0.115f);
+            }
+            else
+            {
+                UiFactory.Place((RectTransform)clearButton.transform, 0.05f, 0.025f, 0.45f, 0.115f);
+                UiFactory.Place((RectTransform)doneButton.transform, 0.55f, 0.025f, 0.95f, 0.115f);
+            }
+        }
+
+        /// <summary>Changes the "Say it!" label (e.g. "Listening..." / "I heard you!").</summary>
+        public void SetSayItLabel(string label)
+        {
+            if (sayItLabel != null) sayItLabel.text = label;
+        }
+
         /// <summary>Shows the result card. "recorded" = false when the drawing was too short.</summary>
         public void ShowResult(TraceResult result, AttemptOutcome outcome, bool recorded)
         {
             int stars = result.TooShort ? 0 : result.Stars;
-            UiFactory.SetStars(resultStars, stars);
-
-            if (result.TooShort) resultTitle.text = "Trace the letter!";
-            else if (stars == 3) resultTitle.text = "Excellent!";
-            else if (stars == 2) resultTitle.text = "Great job!";
-            else if (stars == 1) resultTitle.text = "Good try!";
-            else resultTitle.text = "Let's try again!";
+            string title = result.TooShort ? "Trace the letter!" : ResultPopup.TitleFor(stars);
 
             // Small numbers for parents
-            resultDetail.text = result.TooShort
+            string detail = result.TooShort
                 ? "Follow the grey lines from the green dots."
                 : "Covered " + Mathf.RoundToInt(result.Coverage * 100f) + "%   -   On the line "
                   + Mathf.RoundToInt(result.Precision * 100f) + "%";
 
-            if (recorded && outcome.UnlockedSticker) resultExtra.text = "New sticker!";
-            else if (recorded && outcome.IsNewBest && stars > 0) resultExtra.text = "New best!";
-            else resultExtra.text = "";
+            string extra = "";
+            if (recorded && outcome.UnlockedSticker) extra = "New sticker!";
+            else if (recorded && outcome.IsNewBest && stars > 0) extra = "New best!";
 
-            resultPanel.SetActive(true); // also starts the PopIn star animations
+            Result.Show(title, stars, detail, extra, true);
         }
 
-        public void HideResult()
-        {
-            resultPanel.SetActive(false);
-        }
-
-        public bool IsResultVisible { get { return resultPanel.activeSelf; } }
+        public bool IsResultVisible { get { return Result.IsVisible; } }
 
         /// <summary>
         /// Where the empty board area is, as fractions of the screen height
