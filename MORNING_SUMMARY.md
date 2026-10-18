@@ -11,7 +11,7 @@
 ## ▶️ How to play it now
 1. Double-click **`Open-Borno-in-Unity.bat`** in `D:\Projects\borno-game`.
 2. Wait until Unity is open (1–3 min).
-3. Press **▶ Play** (top middle). Use the mouse like a finger.
+3. Click **Borno → Play Game** (top menu). Use the mouse like a finger.
    Tip: set the Game view to a portrait size (e.g. 1080x1920).
 
 ## What is in the game

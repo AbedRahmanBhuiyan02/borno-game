@@ -24,7 +24,8 @@ No ads, no analytics, no tracking, no internet, no personal data
    (or Unity Hub → Projects → Add → Add project from disk →
    `D:\Projects\borno-game`).
 2. Wait until Unity has opened (1–3 minutes).
-3. Press **▶ Play** at the top middle. Use the mouse like a finger.
+3. Click **Borno → Play Game** in the top menu (or press **▶ Play**).
+   Use the mouse like a finger. Simple guide: `HOW_TO_PLAY.md`.
    Tip: in the Game view, choose a portrait size (e.g. 1080x1920) in the
    resolution menu at its top, so it looks like a phone.
 
@@ -43,6 +44,7 @@ If something goes wrong, see `BLOCKERS.md` ("If Unity shows errors").
 
 | Menu | What it does |
 |------|--------------|
+| Play Game | Opens `Main.unity` and starts the game (click again to stop) |
 | Setup Project (run once) | Portrait, Android IL2CPP/64-bit, no internet, icon, version, line material, `Main.unity`, Build Settings. Runs automatically the first time. |
 | Open Save Folder | Shows where progress is saved on the PC |
 | Delete Saved Progress | Start from zero (for testing) |

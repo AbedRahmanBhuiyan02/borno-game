@@ -329,3 +329,14 @@ never touch the real save). Compile check OK, 62 Core tests pass.
 **You must do by hand**
 - Play it: double-click `Open-Borno-in-Unity.bat`, press Play.
 - For the phone: add Android Build Support in Unity Hub (Google licence).
+
+---
+
+## First real play by you (2026-10-19)
+- Problem: Unity opened an empty "Untitled" scene the first time, so Play
+  showed nothing. Fixed: `BornoAutoSetup` now opens `Main.unity` when Unity
+  starts with an empty scene, and the new menu **Borno → Play Game** opens
+  the game scene and starts it.
+- You tested it: **Borno → Play Game started the game.** Unity's log showed
+  no errors.
+- Added `HOW_TO_PLAY.md` (simple steps).
