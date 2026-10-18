@@ -315,7 +315,8 @@ namespace UnityEngine.Rendering
 
 namespace UnityEngine.SceneManagement
 {
-    public struct Scene { }
+    public struct Scene { public string path { get { return null; } } public bool isDirty { get { return false; } } }
+    public class SceneManager { public static int sceneCount { get { return 1; } } public static Scene GetActiveScene() { return new Scene(); } }
 }
 
 namespace UnityEngine.Events
@@ -439,7 +440,7 @@ namespace UnityEditor
 {
     using UnityEngine;
 
-    public sealed class MenuItem : System.Attribute { public MenuItem(string path) { } }
+    public sealed class MenuItem : System.Attribute { public MenuItem(string path) { } public MenuItem(string path, bool validate, int priority) { } }
 
     public enum EditorBehaviorMode { Mode3D, Mode2D }
     public sealed class EditorSettings { public static EditorBehaviorMode defaultBehaviorMode; }
@@ -537,6 +538,7 @@ namespace UnityEditor
         public static CallbackFunction delayCall;
         public static bool isPlayingOrWillChangePlaymode;
         public static bool isCompiling;
+        public static bool isPlaying;
     }
 
     public enum IconKind { Any = -1, Application = 0, Settings = 1, Notification = 2, Spotlight = 3, Store = 4 }
@@ -606,4 +608,14 @@ namespace UnityEngine.TestTools
     public class UnityTestAttribute : System.Attribute { }
     public class UnitySetUpAttribute : System.Attribute { }
     public class UnityTearDownAttribute : System.Attribute { }
+}
+
+// ----- APIs used by BornoAutoSetup -----
+namespace UnityEditor
+{
+    public sealed class SessionState
+    {
+        public static bool GetBool(string key, bool defaultValue) { return defaultValue; }
+        public static void SetBool(string key, bool value) { }
+    }
 }
