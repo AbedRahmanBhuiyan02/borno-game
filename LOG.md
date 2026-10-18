@@ -219,3 +219,51 @@ changes were needed.
 cleanly, that the auto-generated package list contains Unity UI + Test
 Framework (if not: BLOCKERS.md has the fix), how the screens actually look,
 touch feel, and phone performance.
+
+---
+
+## Steps 7–13 – "Complete the whole project" (2026-10-18)
+You asked to finish everything, but chose **no font download** and **no
+Unity install**. So everything that does not need Unity was built:
+
+**Done**
+- **Core rules** (`Core/Games/*`, `ParentGate`, save format v2): Letter
+  Match quiz, Balloon Pop round, game stars, parent gate, settings, mini-game
+  answers count towards weak letters, v1 → v2 save upgrade.
+- **Bangla letters without a font**: `StrokeRasterizer` + `LetterSprites`
+  draw each letter from its strokes; `LetterView` uses the font instead if
+  you add one.
+- **Mini-game 1 – Letter Match** (`LetterMatchScreen`), **mini-game 2 –
+  Balloon Pop** (`BalloonPopScreen`, pooled balloons), **Games menu**.
+- **Parent gate + parent page** (stats per letter, sound, say-it, reset).
+- **"Say it!"** (`VoiceListener`): voice detection only, behind the
+  `BORNO_SPEECH` define, off by default, nothing stored.
+- **Sound effects** synthesised in code (`SoundFx`); `SoundPlayer` mute.
+- **Shared UI**: `ResultPopup`, `UiTimer`, `UpdateHook`; Home now has Trace /
+  Letters / Games / Parents.
+- **Placeholder art + icon** (`Tools/make-placeholder-art.ps1`, CC0).
+- **Open-and-play**: `BornoAutoSetup` (auto setup on first open),
+  `BornoTextureImport` (pictures → sprites), icon + version in setup,
+  **Build APK / AAB** menu (`BornoBuild`).
+- **Play Store prep**: `PLAY_STORE.md`, `PRIVACY_POLICY.md`,
+  `RECORDING_GUIDE.md`; README, ASSETS, DECISIONS updated.
+
+**Tested**
+- `Tools/run-core-tests.ps1` → **62 passed, 0 failed** (adds quiz, balloon,
+  parent gate, settings upgrade, rasterizer tests, and a check that every
+  pictureKey has a PNG).
+- `Tools/compile-check-unity-scripts.ps1` → **OK for both** the normal build
+  and the `BORNO_SPEECH` + Android build (54 files).
+- Every new Unity API (AudioClip.Create/SetData/GetData, Microphone,
+  Android Permission, SetIcons, TextureImporter, AssetPostprocessor,
+  BuildPipeline/BuildReport, EditorApplication.delayCall, OpenScene,
+  isBatchMode, FindAssets...) was checked in UnityCsReference 6000.0.
+- Placeholder pictures and icon looked at in a contact sheet.
+- **Still not run in real Unity or on a phone.**
+
+**You must do by hand**
+1. Install Unity 6 LTS, open the project – it sets itself up – press Play.
+2. Record the 20 voice files (`RECORDING_GUIDE.md`).
+3. Optional: add the Noto Sans Bengali font; improve the ই ঈ উ খ shapes.
+4. Before publishing: package name, keystore, privacy-policy URL and
+   contact email (`PLAY_STORE.md`).
