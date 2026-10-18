@@ -92,6 +92,20 @@ namespace Borno.Tests
         }
 
         [Test]
+        public void EveryPictureKey_HasAPngFile()
+        {
+            LetterCatalog c = LoadCatalog();
+            string json = Environment.GetEnvironmentVariable("BORNO_LETTERS_JSON");
+            // .../Assets/Data/Resources/Letters/letters.json -> .../Assets
+            string assets = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(json), "..", "..", ".."));
+            for (int i = 0; i < c.Count; i++)
+            {
+                string png = Path.Combine(assets, "Art", "Resources", c.Get(i).pictureKey.Replace('/', Path.DirectorySeparatorChar) + ".png");
+                Assert.IsTrue(File.Exists(png), "missing " + png);
+            }
+        }
+
+        [Test]
         public void TracingTheGuideExactly_GivesThreeStars_ForEveryLetter()
         {
             // Sanity check of the data: a perfect trace must always win.

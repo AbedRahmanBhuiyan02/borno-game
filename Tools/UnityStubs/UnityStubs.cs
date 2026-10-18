@@ -223,6 +223,7 @@ namespace UnityEngine
     public sealed class Sprite : Object
     {
         public Vector4 border;
+        public Rect rect;
         public static Sprite Create(Texture2D t, Rect r, Vector2 pivot) { return null; }
         public static Sprite Create(Texture2D t, Rect r, Vector2 pivot, float ppu) { return null; }
         public static Sprite Create(Texture2D t, Rect r, Vector2 pivot, float ppu, uint extrude,
@@ -260,6 +261,7 @@ namespace UnityEngine
 
     public class AudioClip : Object
     {
+        public float length;
         public static AudioClip Create(string name, int lengthSamples, int channels, int frequency, bool stream) { return null; }
         public bool SetData(float[] data, int offsetSamples) { return true; }
         public bool GetData(float[] data, int offsetSamples) { return true; }

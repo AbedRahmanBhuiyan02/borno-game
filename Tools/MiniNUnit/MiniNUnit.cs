@@ -53,6 +53,7 @@ namespace NUnit.Framework
         public static void IsFalse(bool condition, string message) { if (condition) throw new AssertionException(message); }
         public static void IsNull(object o) { if (o != null) throw new AssertionException("Expected null"); }
         public static void IsNotNull(object o) { if (o == null) throw new AssertionException("Expected not null"); }
+        public static void IsNotNull(object o, string message) { if (o == null) throw new AssertionException(message); }
 
         public static void Greater(double a, double b) { if (!(a > b)) throw new AssertionException(a + " is not > " + b); }
         public static void GreaterOrEqual(double a, double b) { if (!(a >= b)) throw new AssertionException(a + " is not >= " + b); }
