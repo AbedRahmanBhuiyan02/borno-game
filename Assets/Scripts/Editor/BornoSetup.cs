@@ -42,6 +42,12 @@ namespace Borno.EditorTools
             Run(false);
         }
 
+        /// <summary>For command-line use: Unity.exe -batchmode -executeMethod Borno.EditorTools.BornoSetup.RunBatch</summary>
+        public static void RunBatch()
+        {
+            Run(true);
+        }
+
         /// <summary>
         /// Does the whole setup. silent = true: no questions or pop-ups
         /// (used for the automatic first-time setup), an existing scene is kept.
