@@ -84,17 +84,38 @@ namespace Borno.Core
             return (float)sum / p.recentStars.Count;
         }
 
+        /// <summary>Mini-game answers count only after this many recent answers...</summary>
+        public const int MinQuizAnswersForWeak = 3;
+
+        /// <summary>...and the letter is weak if fewer than this share were right.</summary>
+        public const float WeakQuizAccuracyBelow = 0.6f;
+
+        /// <summary>Share of recent mini-game answers that were right (0..1), or -1 if none.</summary>
+        public float RecentQuizAccuracy(string letterId)
+        {
+            LetterProgress p = Find(letterId);
+            if (p == null || p.recentQuiz.Count == 0) return -1f;
+            int right = 0;
+            for (int i = 0; i < p.recentQuiz.Count; i++) right += p.recentQuiz[i];
+            return (float)right / p.recentQuiz.Count;
+        }
+
         /// <summary>
-        /// True if the child played this letter and usually got fewer than
-        /// 2 stars lately. A letter that was never played is NOT weak (it is
-        /// just new). Getting better removes the "weak" mark automatically,
-        /// because only the last few tries count.
+        /// True if the child finds this letter hard:
+        ///   - tracing: the last few tries average fewer than 2 stars, OR
+        ///   - mini-games: fewer than 60% of the last few answers were right.
+        /// A letter that was never played is NOT weak (it is just new).
+        /// Getting better removes the "weak" mark automatically, because only
+        /// the last few tries count.
         /// </summary>
         public bool IsWeak(string letterId)
         {
             LetterProgress p = Find(letterId);
-            if (p == null || p.recentStars.Count == 0) return false;
-            return RecentAverage(letterId) < WeakAverageBelow;
+            if (p == null) return false;
+            if (p.recentStars.Count > 0 && RecentAverage(letterId) < WeakAverageBelow) return true;
+            if (p.recentQuiz.Count >= MinQuizAnswersForWeak &&
+                RecentQuizAccuracy(letterId) < WeakQuizAccuracyBelow) return true;
+            return false;
         }
 
         /// <summary>Ids of all weak letters (makes a new list - not for every frame).</summary>
@@ -124,14 +145,7 @@ namespace Borno.Core
             if (stars < 0) stars = 0;
             if (stars > StarRating.MaxStars) stars = StarRating.MaxStars;
 
-            LetterProgress p = Find(letterId);
-            if (p == null)
-            {
-                p = new LetterProgress();
-                p.letterId = letterId;
-                data.letters.Add(p);
-            }
-
+            LetterProgress p = GetOrCreate(letterId);
             p.attempts++;
             p.starsEarned += stars;
             outcome.IsNewBest = stars > p.bestStars;
@@ -147,6 +161,60 @@ namespace Borno.Core
             outcome.TotalStars = data.totalStars;
             outcome.StickersAfter = StickersUnlocked;
             return outcome;
+        }
+
+        // ------------------------------------------------------------------
+        // Mini-games and settings
+        // ------------------------------------------------------------------
+
+        public SettingsData Settings { get { return data.settings; } }
+
+        /// <summary>Remembers one mini-game answer about a letter (right or wrong).</summary>
+        public void RecordQuizAnswer(string letterId, bool correct)
+        {
+            if (string.IsNullOrEmpty(letterId)) return;
+            LetterProgress p = GetOrCreate(letterId);
+            if (correct) p.quizCorrect++;
+            else p.quizWrong++;
+            p.recentQuiz.Add(correct ? 1 : 0);
+            while (p.recentQuiz.Count > RecentWindow) p.recentQuiz.RemoveAt(0);
+        }
+
+        /// <summary>Adds the stars of a finished mini-game round (0..3).</summary>
+        public AttemptOutcome AddGameStars(int stars)
+        {
+            if (stars < 0) stars = 0;
+            if (stars > StarRating.MaxStars) stars = StarRating.MaxStars;
+
+            AttemptOutcome outcome = new AttemptOutcome();
+            outcome.StickersBefore = StickersUnlocked;
+            data.gameRoundsPlayed++;
+            data.totalStars += stars;
+            outcome.StarsAdded = stars;
+            outcome.TotalStars = data.totalStars;
+            outcome.StickersAfter = StickersUnlocked;
+            return outcome;
+        }
+
+        /// <summary>Forgets all progress (for the parent view). Settings are kept.</summary>
+        public void ResetProgress()
+        {
+            data.letters.Clear();
+            data.totalStars = 0;
+            data.totalAttempts = 0;
+            data.gameRoundsPlayed = 0;
+        }
+
+        private LetterProgress GetOrCreate(string letterId)
+        {
+            LetterProgress p = Find(letterId);
+            if (p == null)
+            {
+                p = new LetterProgress();
+                p.letterId = letterId;
+                data.letters.Add(p);
+            }
+            return p;
         }
     }
 }

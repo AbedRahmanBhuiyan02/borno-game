@@ -77,6 +77,35 @@ namespace Borno.Core
         }
 
         /// <summary>
+        /// Squared distance from point P to the NEAREST stroke in the set
+        /// (float.MaxValue if the set is empty).
+        /// </summary>
+        public static float MinDistanceSq(StrokeSet set, float px, float py)
+        {
+            float best = float.MaxValue;
+            for (int s = 0; s < set.StrokeCount; s++)
+            {
+                int start = set.GetStrokeStart(s);
+                int len = set.GetStrokeLength(s);
+                if (len == 1)
+                {
+                    float dx = px - set.GetX(start);
+                    float dy = py - set.GetY(start);
+                    float d1 = dx * dx + dy * dy;
+                    if (d1 < best) best = d1;
+                    continue;
+                }
+                for (int i = start + 1; i < start + len; i++)
+                {
+                    float d = DistanceSqToSegment(px, py,
+                        set.GetX(i - 1), set.GetY(i - 1), set.GetX(i), set.GetY(i));
+                    if (d < best) best = d;
+                }
+            }
+            return best;
+        }
+
+        /// <summary>
         /// How many sample points Resample() will need at most.
         /// Use this to size the output arrays.
         /// </summary>
