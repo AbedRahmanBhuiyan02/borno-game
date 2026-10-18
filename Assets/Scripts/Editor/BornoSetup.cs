@@ -3,13 +3,16 @@
 //
 //   Borno > Setup Project (run once)
 //       - portrait mode, Android settings (IL2CPP, 64-bit, no internet)
-//       - 2D editor mode
+//       - app name, version, icon (Assets/Art/Icon/borno_icon.png)
+//       - 2D editor mode, pictures imported as sprites
 //       - makes the line material  Assets/Art/Resources/Materials/BornoLine.mat
 //       - makes the scene          Assets/Scenes/Main.unity  (camera + BornoApp)
 //         and adds it to File > Build Settings
+//     (BornoAutoSetup runs this automatically the first time the project opens.)
 //
 //   Borno > Open Save Folder         shows where progress is saved
 //   Borno > Delete Saved Progress    start again from zero (for testing)
+//   Borno > Build ...                see BornoBuild.cs
 
 using System.IO;
 using Borno.Game;
@@ -23,19 +26,33 @@ namespace Borno.EditorTools
 {
     public static class BornoSetup
     {
-        private const string ScenePath = "Assets/Scenes/Main.unity";
+        public const string ScenePath = "Assets/Scenes/Main.unity";
+        public const string PicturesFolder = "Assets/Art/Resources/Pictures";
         private const string MaterialFolder = "Assets/Art/Resources/Materials";
         private const string MaterialPath = MaterialFolder + "/BornoLine.mat";
+        private const string IconPath = "Assets/Art/Icon/borno_icon.png";
         private const string AndroidPackageName = "com.borno.alphabet"; // change before publishing!
+        private const string Version = "0.2.0";
+        private const int AndroidVersionCode = 2; // +1 for every Play Store upload
 
         [MenuItem("Borno/Setup Project (run once)")]
-        public static void SetupProject()
+        public static void SetupProjectMenu()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            Run(false);
+        }
 
+        /// <summary>
+        /// Does the whole setup. silent = true: no questions or pop-ups
+        /// (used for the automatic first-time setup), an existing scene is kept.
+        /// </summary>
+        public static void Run(bool silent)
+        {
             bool restartNeeded = ApplyProjectSettings();
             CreateLineMaterial();
-            bool sceneMade = CreateMainScene();
+            ReimportPicturesAsSprites();
+            SetIcon();
+            bool sceneMade = CreateMainScene(silent);
             AssetDatabase.SaveAssets();
 
             string message = "Done!\n\n" +
@@ -43,7 +60,8 @@ namespace Borno.EditorTools
                 (restartNeeded ? "IMPORTANT: 'Active Input Handling' was changed to 'Both'. " +
                                  "Please restart Unity.\n\n" : "") +
                 "Next: commit the new files (*.meta, ProjectSettings, Packages) to git.";
-            EditorUtility.DisplayDialog("Borno setup", message, "OK");
+            Debug.Log("[Borno] Setup: " + message.Replace("\n\n", " ").Replace("\n", " "));
+            if (!silent || restartNeeded) EditorUtility.DisplayDialog("Borno setup", message, "OK");
         }
 
         /// <summary>Returns true if Unity must be restarted.</summary>
@@ -53,6 +71,7 @@ namespace Borno.EditorTools
 
             PlayerSettings.companyName = "Borno";
             PlayerSettings.productName = "Borno";
+            PlayerSettings.bundleVersion = Version;
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
 
             // Android: unique id, IL2CPP + 64-bit (required by Google Play),
@@ -61,6 +80,7 @@ namespace Borno.EditorTools
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
             PlayerSettings.Android.forceInternetPermission = false;
+            PlayerSettings.Android.bundleVersionCode = AndroidVersionCode;
 
             return FixInputHandling();
         }
@@ -96,14 +116,38 @@ namespace Borno.EditorTools
             AssetDatabase.CreateAsset(mat, MaterialPath);
         }
 
-        private static bool CreateMainScene()
+        /// <summary>Pictures imported before setup may be plain textures; re-import them as sprites.</summary>
+        private static void ReimportPicturesAsSprites()
         {
-            if (File.Exists(ScenePath) &&
-                !EditorUtility.DisplayDialog("Borno setup", ScenePath + " already exists. Replace it?",
-                                             "Replace", "Keep mine"))
+            if (!AssetDatabase.IsValidFolder(PicturesFolder)) return;
+            string[] guids = AssetDatabase.FindAssets("t:Texture2D", new[] { PicturesFolder });
+            foreach (string guid in guids)
             {
-                AddSceneToBuild();
-                return false;
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (importer != null && BornoTextureImport.ApplyPictureSettings(importer))
+                    importer.SaveAndReimport();
+            }
+        }
+
+        private static void SetIcon()
+        {
+            Texture2D icon = AssetDatabase.LoadAssetAtPath<Texture2D>(IconPath);
+            if (icon == null) return;
+            PlayerSettings.SetIcons(NamedBuildTarget.Unknown, new[] { icon }, IconKind.Any);
+        }
+
+        private static bool CreateMainScene(bool silent)
+        {
+            if (File.Exists(ScenePath))
+            {
+                bool replace = !silent && EditorUtility.DisplayDialog("Borno setup",
+                    ScenePath + " already exists. Replace it?", "Replace", "Keep mine");
+                if (!replace)
+                {
+                    AddSceneToBuild();
+                    return false;
+                }
             }
 
             EnsureFolder("Assets/Scenes");

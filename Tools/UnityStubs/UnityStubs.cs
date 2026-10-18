@@ -173,6 +173,7 @@ namespace UnityEngine
     {
         public static int targetFrameRate;
         public static string persistentDataPath;
+        public static bool isBatchMode;
         public static void Quit() { }
     }
 
@@ -442,7 +443,8 @@ namespace UnityEditor
 
     public sealed class PlayerSettings : Object
     {
-        public static string companyName, productName;
+        public static string companyName, productName, bundleVersion;
+        public static void SetIcons(Build.NamedBuildTarget t, Texture2D[] icons, IconKind kind) { }
         public static UIOrientation defaultInterfaceOrientation;
         public static void SetApplicationIdentifier(Build.NamedBuildTarget t, string id) { }
         public static void SetScriptingBackend(Build.NamedBuildTarget t, ScriptingImplementation s) { }
@@ -450,6 +452,8 @@ namespace UnityEditor
         {
             public static AndroidArchitecture targetArchitectures;
             public static bool forceInternetPermission;
+            public static int bundleVersionCode;
+            public static bool useCustomKeystore;
         }
     }
 
@@ -467,6 +471,8 @@ namespace UnityEditor
         public static T LoadAssetAtPath<T>(string p) where T : Object { return null; }
         public static void CreateAsset(Object o, string p) { }
         public static void SaveAssets() { }
+        public static string[] FindAssets(string filter, string[] folders) { return null; }
+        public static string GUIDToAssetPath(string guid) { return null; }
         public static bool IsValidFolder(string p) { return true; }
         public static string CreateFolder(string parent, string name) { return ""; }
     }
@@ -484,7 +490,7 @@ namespace UnityEditor
 
 namespace UnityEditor.Build
 {
-    public struct NamedBuildTarget { public static readonly NamedBuildTarget Android; }
+    public struct NamedBuildTarget { public static readonly NamedBuildTarget Android, Unknown; }
 }
 
 namespace UnityEditor.SceneManagement
@@ -497,6 +503,7 @@ namespace UnityEditor.SceneManagement
         public static bool SaveCurrentModifiedScenesIfUserWantsTo() { return true; }
         public static Scene NewScene(NewSceneSetup s, NewSceneMode m) { return new Scene(); }
         public static bool SaveScene(Scene scene, string path) { return true; }
+        public static Scene OpenScene(string path) { return new Scene(); }
     }
 }
 
@@ -508,4 +515,70 @@ namespace UnityEngine.Android
         public static bool HasUserAuthorizedPermission(string permission) { return false; }
         public static void RequestUserPermission(string permission) { }
     }
+}
+
+// ----- editor APIs used by the setup / build / import tools -----
+namespace UnityEditor
+{
+    using UnityEngine;
+
+    public sealed class InitializeOnLoadAttribute : System.Attribute { }
+
+    public sealed class EditorApplication
+    {
+        public delegate void CallbackFunction();
+        public static CallbackFunction delayCall;
+        public static bool isPlayingOrWillChangePlaymode;
+        public static bool isCompiling;
+    }
+
+    public enum IconKind { Any = -1, Application = 0, Settings = 1, Notification = 2, Spotlight = 3, Store = 4 }
+    public enum TextureImporterType { Default = 0, NormalMap = 1, GUI = 2, Sprite = 8 }
+    public enum BuildTarget { Android = 13 }
+    public enum BuildTargetGroup { Unknown = 0, Android = 7 }
+    [System.Flags] public enum BuildOptions { None = 0 }
+
+    public class AssetImporter : Object
+    {
+        public static AssetImporter GetAtPath(string path) { return null; }
+        public void SaveAndReimport() { }
+    }
+
+    public class TextureImporter : AssetImporter
+    {
+        public TextureImporterType textureType;
+        public bool mipmapEnabled;
+        public bool alphaIsTransparency;
+        public int maxTextureSize;
+    }
+
+    public class AssetPostprocessor
+    {
+        public string assetPath;
+        public AssetImporter assetImporter;
+    }
+
+    public struct BuildPlayerOptions
+    {
+        public string[] scenes { get; set; }
+        public string locationPathName { get; set; }
+        public BuildTargetGroup targetGroup { get; set; }
+        public BuildTarget target { get; set; }
+        public BuildOptions options { get; set; }
+    }
+
+    public class BuildPipeline
+    {
+        public static Build.Reporting.BuildReport BuildPlayer(BuildPlayerOptions o) { return null; }
+    }
+
+    public class EditorUserBuildSettings { public static bool buildAppBundle; }
+
+}
+
+namespace UnityEditor.Build.Reporting
+{
+    public enum BuildResult { Unknown = 0, Succeeded = 1, Failed = 2, Cancelled = 3 }
+    public struct BuildSummary { public BuildResult result { get { return BuildResult.Unknown; } } public ulong totalSize { get { return 0; } } }
+    public class BuildReport : UnityEngine.Object { public BuildSummary summary { get { return new BuildSummary(); } } }
 }
