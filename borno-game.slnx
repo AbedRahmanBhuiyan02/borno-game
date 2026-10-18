@@ -1,0 +1,7 @@
+﻿<Solution>
+  <Project Path="Borno.Game.csproj" />
+  <Project Path="Borno.Tests.EditMode.csproj" />
+  <Project Path="Borno.Core.csproj" />
+  <Project Path="Borno.Editor.csproj" />
+  <Project Path="Borno.Tests.PlayMode.csproj" />
+</Solution>
