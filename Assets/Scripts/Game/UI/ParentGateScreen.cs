@@ -16,6 +16,16 @@ namespace Borno.Game
         public event Action Cancelled;
 
         private readonly ParentGate gate;
+        private readonly Button[] choiceButtons = new Button[ParentGate.ChoiceCount];
+
+        /// <summary>The question (read by the automatic play test).</summary>
+        public ParentGate Gate { get { return gate; } }
+
+        /// <summary>Taps answer button i (for the play test).</summary>
+        public void TapChoice(int i)
+        {
+            choiceButtons[i].onClick.Invoke();
+        }
         private readonly Text question;
         private readonly Text[] choiceLabels = new Text[ParentGate.ChoiceCount];
 
@@ -50,6 +60,7 @@ namespace Borno.Game
                 float x = 0.05f + i * 0.23f;
                 UiFactory.Place((RectTransform)b.transform, x, 0.26f, x + 0.20f, 0.46f);
                 choiceLabels[i] = b.GetComponentInChildren<Text>();
+                choiceButtons[i] = b;
             }
 
             Button cancel = UiFactory.CreateButton(c, "Cancel", "Cancel", UiFactory.Grey, 52,

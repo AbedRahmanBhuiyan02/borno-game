@@ -267,3 +267,29 @@ Unity install**. So everything that does not need Unity was built:
 3. Optional: add the Noto Sans Bengali font; improve the ই ঈ উ খ shapes.
 4. Before publishing: package name, keystore, privacy-policy URL and
    contact email (`PLAY_STORE.md`).
+
+---
+
+## Installing Unity (2026-10-18, in progress)
+- You asked me to install Unity. Downloads come only from Unity's official
+  servers into `D:\Unity\_downloads\` (new folder):
+  - Unity Hub 3.22.3 (184 MB, signature checked: Unity Technologies SF),
+    installed silently to `D:\Unity\Hub`.
+  - Unity Editor **6000.0.85f1** (Unity 6.0 LTS, 4.03 GB) – downloading.
+    (6.0 LTS = the version all API checks were done against.)
+  - Android Build Support – later, only needed for the APK.
+- **Drive C:** the Hub installer adds its usual Start-menu shortcut and
+  registry entries on C:, and Hub keeps its settings in
+  `%APPDATA%\UnityHub`. The Unity programs themselves are on D:.
+- A `winget show` query auto-accepted the Microsoft Store *source*
+  terms (needed just to look up the Hub package); nothing was installed
+  through winget.
+- Your connection is ~265 KB/s, so the editor download takes ~4 hours.
+
+**New while waiting:** `Tests/PlayMode/BornoPlayTests.cs` – an automatic
+"play the whole game" test (trace, scribble, Letter Match, Balloon Pop,
+parent gate, settings) that also saves screenshots to
+`Builds/TestScreenshots/`. Small test hooks were added (read-only screen
+accessors on BornoApp, `TracingBoard.AddTestStroke`, `TapOption`,
+`TapBalloon`, `TapChoice`, `ProgressStore.OverrideFilePath` so tests
+never touch the real save). Compile check OK, 62 Core tests pass.

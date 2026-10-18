@@ -13,9 +13,16 @@ namespace Borno.Game
     {
         public const string FileName = "borno_progress.json";
 
+        /// <summary>Tests set this so they never touch the real save file.</summary>
+        public static string OverrideFilePath;
+
         public static string FilePath
         {
-            get { return System.IO.Path.Combine(Application.persistentDataPath, FileName); }
+            get
+            {
+                if (!string.IsNullOrEmpty(OverrideFilePath)) return OverrideFilePath;
+                return System.IO.Path.Combine(Application.persistentDataPath, FileName);
+            }
         }
 
         /// <summary>

@@ -36,6 +36,15 @@ namespace Borno.Game
 
         public ResultPopup Result { get; private set; }
 
+        /// <summary>The quiz rules (read by the automatic play test).</summary>
+        public LetterQuiz Quiz { get { return quiz; } }
+
+        /// <summary>Taps answer button i, exactly like a finger would (for the play test).</summary>
+        public void TapOption(int i)
+        {
+            optionButtons[i].onClick.Invoke();
+        }
+
         public LetterMatchScreen(Transform parent, LetterQuiz quiz, LetterDatabase database, SoundPlayer sound)
             : base(parent, "LetterMatchScreen")
         {

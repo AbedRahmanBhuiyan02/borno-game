@@ -45,6 +45,20 @@ namespace Borno.Game
         private string lastPlayedId;
         private bool cameFromLetterSelect;
 
+        // Read-only access for the automatic play test (Tests/PlayMode).
+        public ProgressTracker Progress { get { return progress; } }
+        public LetterDatabase Database { get { return database; } }
+        public LetterData CurrentLetter { get { return currentLetter; } }
+        public TracingBoard Board { get { return board; } }
+        public HomeScreen Home { get { return home; } }
+        public LetterSelectScreen LetterSelect { get { return letterSelect; } }
+        public TracingScreen Tracing { get { return tracing; } }
+        public GamesMenuScreen GamesMenu { get { return gamesMenu; } }
+        public LetterMatchScreen LetterMatch { get { return letterMatch; } }
+        public BalloonPopScreen BalloonPop { get { return balloonPop; } }
+        public ParentGateScreen ParentGateUi { get { return parentGate; } }
+        public ParentScreen ParentView { get { return parentView; } }
+
         // ------------------------------------------------------------------
         // Start-up
         // ------------------------------------------------------------------

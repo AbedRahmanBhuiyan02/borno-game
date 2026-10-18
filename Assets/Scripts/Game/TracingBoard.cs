@@ -117,6 +117,26 @@ namespace Borno.Game
 
         public bool HasDrawing { get { return drawing != null && drawing.PointCount > 0; } }
 
+        /// <summary>
+        /// For the automatic play test: draws a stroke from box points
+        /// (x1, y1, x2, y2, ...) as if a finger had traced it.
+        /// </summary>
+        public void AddTestStroke(float[] flatBoxPoints)
+        {
+            if (drawing == null || flatBoxPoints == null || flatBoxPoints.Length < 2) return;
+            if (!drawing.BeginStroke()) return;
+            currentStroke = drawing.StrokeCount - 1;
+            LineRenderer line = InkLine(currentStroke);
+            if (line != null)
+            {
+                line.positionCount = 0;
+                line.enabled = true;
+            }
+            for (int i = 0; i + 1 < flatBoxPoints.Length; i += 2)
+                AddBoxPoint(new Vector2(flatBoxPoints[i], flatBoxPoints[i + 1]));
+            EndStroke();
+        }
+
         /// <summary>Shows a new letter and clears the old drawing.</summary>
         public void ShowLetter(StrokeSet shape)
         {

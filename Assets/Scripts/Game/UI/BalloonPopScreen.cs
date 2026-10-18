@@ -55,6 +55,25 @@ namespace Borno.Game
 
         public ResultPopup Result { get; private set; }
 
+        /// <summary>The round rules (read by the automatic play test).</summary>
+        public BalloonRound Round { get { return round; } }
+
+        /// <summary>
+        /// For the play test: taps the first flying balloon that shows (or does
+        /// not show) the target letter, like a finger would. False if none.
+        /// </summary>
+        public bool TapBalloon(bool withTarget)
+        {
+            for (int i = 0; i < PoolSize; i++)
+            {
+                if (!active[i] || popTime[i] > 0f) continue;
+                if ((letterOf[i] == round.Target) != withTarget) continue;
+                balloons[i].GetComponent<Button>().onClick.Invoke();
+                return true;
+            }
+            return false;
+        }
+
         public BalloonPopScreen(Transform parent, BalloonRound round, SoundPlayer sound)
             : base(parent, "BalloonPopScreen")
         {

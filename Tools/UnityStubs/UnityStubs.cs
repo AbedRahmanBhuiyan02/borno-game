@@ -14,6 +14,7 @@ namespace UnityEngine
     {
         public string name;
         public static T FindAnyObjectByType<T>() where T : Object { return null; }
+        public static T[] FindObjectsByType<T>(FindObjectsSortMode mode) where T : Object { return null; }
         public static implicit operator bool(Object o) { return o != null; }
         public static void Destroy(Object o) { }
     }
@@ -24,6 +25,7 @@ namespace UnityEngine
         public Transform transform;
         public string tag;
         public T GetComponentInChildren<T>() { return default(T); }
+        public T GetComponent<T>() { return default(T); }
     }
 
     public class Behaviour : Component { public bool enabled; }
@@ -31,12 +33,13 @@ namespace UnityEngine
 
     public sealed class GameObject : Object
     {
+        public static GameObject Find(string name) { return null; }
         public GameObject() { }
         public GameObject(string name) { }
         public GameObject(string name, params Type[] components) { }
         public Transform transform;
         public string tag;
-        public bool activeSelf;
+        public bool activeSelf, activeInHierarchy;
         public T AddComponent<T>() where T : Component { return null; }
         public void SetActive(bool value) { }
     }
@@ -174,6 +177,7 @@ namespace UnityEngine
         public static int targetFrameRate;
         public static string persistentDataPath;
         public static bool isBatchMode;
+        public static string dataPath, temporaryCachePath;
         public static void Quit() { }
     }
 
@@ -218,6 +222,7 @@ namespace UnityEngine
         public Texture2D(int w, int h, TextureFormat f, bool mipChain) { }
         public void SetPixels32(Color32[] colors) { }
         public void Apply(bool updateMipmaps, bool makeNoLongerReadable) { }
+        public byte[] EncodeToPNG() { return null; }
     }
 
     public sealed class Sprite : Object
@@ -316,7 +321,7 @@ namespace UnityEngine.SceneManagement
 namespace UnityEngine.Events
 {
     public delegate void UnityAction();
-    public class UnityEvent { public void AddListener(UnityAction call) { } }
+    public class UnityEvent { public void AddListener(UnityAction call) { } public void Invoke() { } }
 }
 
 namespace UnityEngine.EventSystems
@@ -583,4 +588,22 @@ namespace UnityEditor.Build.Reporting
     public enum BuildResult { Unknown = 0, Succeeded = 1, Failed = 2, Cancelled = 3 }
     public struct BuildSummary { public BuildResult result { get { return BuildResult.Unknown; } } public ulong totalSize { get { return 0; } } }
     public class BuildReport : UnityEngine.Object { public BuildSummary summary { get { return new BuildSummary(); } } }
+}
+
+// ----- APIs used by the PlayMode test -----
+namespace UnityEngine
+{
+    public enum FindObjectsSortMode { None, InstanceID }
+    public class YieldInstruction { }
+    public sealed class WaitForEndOfFrame : YieldInstruction { }
+    public class CustomYieldInstruction { }
+    public class WaitForSecondsRealtime : CustomYieldInstruction { public WaitForSecondsRealtime(float time) { } }
+    public static class ScreenCapture { public static Texture2D CaptureScreenshotAsTexture() { return null; } }
+}
+
+namespace UnityEngine.TestTools
+{
+    public class UnityTestAttribute : System.Attribute { }
+    public class UnitySetUpAttribute : System.Attribute { }
+    public class UnityTearDownAttribute : System.Attribute { }
 }
