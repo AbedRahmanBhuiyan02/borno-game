@@ -1,67 +1,24 @@
-# ---------------------------------------------------------------
-# Unity .gitignore for Borno
-# Unity re-creates all of these folders/files by itself, so they
-# must NOT go into git (they are big and machine-specific).
-# ---------------------------------------------------------------
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
-/[Mm]emoryCaptures/
-/[Rr]ecordings/
-
-# .meta files ARE important - keep them (they hold asset GUIDs)
-!/[Aa]ssets/**/*.meta
-
-# IDE / editor files
-.vs/
+# Editor / OS files
 .vscode/
 .idea/
-.gradle/
-.consulo/
-ExportedObj/
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Leftovers from the old Unity version (if Unity ever opens this folder again)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Bb]uilds/
 *.csproj
-*.unityproj
 *.sln
 *.slnx
-*.suo
-*.tmp
-*.user
-*.userprefs
-*.pidb
-*.booproj
-*.svd
-*.pdb
-*.mdb
-*.opendb
-*.VC.db
-*.pidb.meta
-*.pdb.meta
-*.mdb.meta
-sysinfo.txt
-crashlytics-buildid.txt
 
-# Build outputs
-*.apk
-*.aab
-*.unitypackage
-/[Aa]ssets/[Ss]treamingAssets/aa.meta
-/[Aa]ssets/[Ss]treamingAssets/aa/*
-
-# Secrets - NEVER commit these (Android signing keys, env files)
+# Secrets - never commit these
 *.keystore
 *.jks
 *.p12
 *.pem
 .env
 *.env
-
-# Output of our own test script (Tools/run-core-tests.ps1)
-/Tools/.build/
-
-# Leftover scenes from an interrupted Unity test run
-/[Aa]ssets/InitTestScene*.unity
-/[Aa]ssets/InitTestScene*.unity.meta

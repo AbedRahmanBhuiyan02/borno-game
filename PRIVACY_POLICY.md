@@ -1,46 +1,25 @@
-# Privacy Policy – Borno
+# Privacy – Borno
 
-_Last updated: 2026-10-18_
+_Last updated: 2026-10-25_
 
-Borno is a learning game for young children (ages 3–6) that teaches the
-Bangla alphabet. We built it to be safe for children.
+Borno is a learning game for young children (ages 3–6). It runs completely
+inside the web browser.
 
-## What we collect
-**Nothing.** Borno does not collect, store on a server, share or sell any
-personal information. The app has:
+**Borno collects nothing.** It has no ads, no analytics or tracking, no
+accounts, no log-in, no purchases, and it does not connect to the internet
+or to any external service.
 
-- **no internet access** (it does not even request the internet permission),
-- **no ads**,
-- **no analytics, tracking or crash-reporting services**,
-- **no accounts, log-ins, names, ages, photos or contacts**,
-- **no in-app purchases**.
+**Saved on the device only:**
+- Game progress (stars, which letters were practised and how well) and two
+  settings, in the browser's local storage.
+- Voice recordings a parent makes on the parent page (optional), in the
+  browser's IndexedDB. They are only played back inside the game.
 
-## What is stored on the device
-To remember the child's progress, Borno keeps a small file **only on the
-device** (inside the app's private storage). It contains game data only:
-stars earned, which letters were practised and how well, and two settings
-(sound on/off, "Say it!" on/off). It is deleted when the app is uninstalled,
-and a parent can delete it at any time in the parent page ("Reset progress").
+Nothing is sent anywhere. A parent can delete the progress on the parent page
+("Delete all progress"); clearing the browser's site data removes everything.
 
-## Microphone ("Say it!" – optional)
-Some versions of Borno include an optional "Say it!" button. Only if a
-parent switches it on in the parent page, and Android's permission prompt
-is accepted, the app listens for 2 seconds to check **that** the child
-spoke. The sound is only measured in memory and immediately thrown away.
-It is **never recorded to a file, never stored and never sent anywhere**.
-Builds without this feature do not request the microphone permission.
+**Microphone:** only used when a parent taps 🎤 on the parent page, and only
+after the browser asks for permission. Recordings are 2 seconds long and stay
+in this browser.
 
-## Parent area
 The parent page is protected by a simple "grown-ups only" question.
-
-## Children's privacy
-Borno is designed to comply with the Google Play Families Policy and
-children's privacy laws such as COPPA and GDPR-K: we do not collect personal
-information from children.
-
-## Changes
-If this policy changes, the new version will be published at the same
-address with a new date.
-
-## Contact
-Questions: **&lt;your contact email&gt;**  _(replace before publishing)_

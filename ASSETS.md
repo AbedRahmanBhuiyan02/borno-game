@@ -1,30 +1,19 @@
 # Assets and licences
 
-Rule: only original work or clearly free assets (CC0, SIL OFL, etc.).
-Every file under `Assets/Art` and `Assets/Audio` must be listed here with
-its source and licence **before** it is committed.
-
-## Assets currently in the project
+Rule: only original work or clearly free assets (CC0, SIL OFL, ...). Every
+file in `assets/` must be listed here with its source and licence.
 
 | File(s) | Source | Licence |
 |---------|--------|---------|
-| `Art/Resources/Pictures/*.png` (ojogor, aam, it, igol, ut, kola, khata, gach, ghor, choshma) | Drawn from basic shapes by `Tools/make-placeholder-art.ps1`, made for this project | Original, CC0 (free for any use) |
-| `Art/Icon/borno_icon.png` | Drawn by `Tools/make-placeholder-art.ps1` (shapes only, no font) | Original, CC0 |
-| Letter stroke shapes in `Data/Resources/Letters/letters.json` | Written by hand for this project | Original, CC0 |
-| Letter pictures on buttons/tiles/balloons | Drawn at runtime from the stroke data (`LetterSprites.cs`) | Original |
-| Stars, circles, rounded boxes | Generated at runtime (`SpriteFactory.cs`) | Original |
-| Sound effects (pop, chime, bonk, hooray, tap) | Synthesised at runtime from sine waves (`SoundFx.cs`) | Original |
+| `assets/images/*.png` (ojogor, aam, it, igol, ut, kola, khata, gach, ghor, choshma) | Drawn from basic shapes by `tools/make-placeholder-art.ps1`, made for this project | Original, CC0 |
+| `assets/images/icon.png` | Same script (shapes only, no font) | Original, CC0 |
+| Backup letter shapes (`strokes` in `assets/letters.js`) | Written by hand for this project | Original, CC0 |
+| Sound effects (pop, chime, …) | Generated in the browser with the Web Audio API (`script.js`) | Original |
 
-**No fonts and no voice recordings are included yet.** The game works
-without them: letters are drawn from their strokes, labels use Unity's
-built-in font, and missing voices are simply silent.
-
-## To add (by you)
-
-| What | Where | Recommended source | Licence |
-|------|-------|--------------------|---------|
-| Bangla font | `Art/Resources/Fonts/BornoFont.ttf` | **Noto Sans Bengali** – fonts.google.com/noto/specimen/Noto+Sans+Bengali | SIL Open Font License 1.1 |
-| Letter + word voices | `Audio/Resources/Sounds/Letters/`, `.../Words/` | Record your own (see `RECORDING_GUIDE.md`) | Own work |
-| Nicer pictures | same names in `Art/Resources/Pictures/` | Your own drawings, or Kenney.nl (CC0) | CC0 / own |
-
-When you add a file, add a row to the first table.
+**Not included (on purpose):**
+- **Fonts** – the game uses the Bangla font already installed on the device
+  (Nirmala UI on Windows, Noto Sans Bengali on Android, Kohinoor Bangla on
+  iPhone). Nothing is downloaded.
+- **Voice recordings** – parents record their own voice in the game (stored
+  only in the browser), or add files to `assets/sounds/` (list them here,
+  e.g. "recorded by … for this project – own work").

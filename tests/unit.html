@@ -1,0 +1,32 @@
+<!doctype html>
+<!--
+  unit.html – automatic checks of the game rules (no clicking needed).
+  Open this file in a browser: the page shows PASS/FAIL for every check.
+  The game screens are NOT shown here; only the logic in script.js is tested.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Borno tests – running…</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 20px; }
+    .pass { color: #1a7f37; } .fail { color: #c62828; font-weight: bold; }
+    pre { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Borno – automatic checks</h1>
+  <p id="summary">Running…</p>
+  <pre id="log"></pre>
+  <script>
+    // show script errors on the page too
+    window.BORNO_ERRORS = [];
+    window.addEventListener('error', function (e) {
+      window.BORNO_ERRORS.push((e.message || 'error') + ' (' + (e.filename || '') + ':' + (e.lineno || '') + ')');
+    });
+  </script>
+  <script src="../assets/letters.js"></script>
+  <script src="../script.js"></script>
+  <script src="unit.js"></script>
+</body>
+</html>

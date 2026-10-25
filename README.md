@@ -1,170 +1,113 @@
-# Borno (বর্ণ) – Bangla alphabet game for kids
+# বর্ণ Borno – Bangla alphabet game for kids (web version)
 
-Borno is an **offline Android game** (Unity 2D, C#) that helps children aged
-3–6 learn the Bangla alphabet:
+A small, offline web game that helps children aged 3–6 learn the Bangla
+alphabet. Plain **HTML + CSS + JavaScript** – no game engine, no build
+tools, no internet, no external services.
 
-- ✏️ **Trace** a letter with a finger → 1 to 3 stars (coverage + precision check)
-- 🔤 **Letter Match** mini-game – which letter does the word start with?
-- 🎈 **Balloon Pop** mini-game – pop the balloons with the right letter
-- 🧠 **Weak letters come back more often** (tracing and mini-game mistakes)
-- ⭐ Stars and 7 stickers to collect, saved offline
-- 👪 **Parent page** behind a "grown-ups only" question: progress per letter,
-  sound on/off, reset
-- 🗣️ Optional **"Say it!"** (microphone, off by default – see below)
+- ✏️ **Trace** a letter with a finger (or mouse) → 1 to 3 stars
+- 🔤 **Letters** – pick any of the 10 letters: অ আ ই ঈ উ ক খ গ ঘ চ
+- 🖼️ **Letter Match** – which letter does the word start with?
+- 🎈 **Balloon Pop** – pop the balloons with the right letter
+- 🧠 Letters the child finds hard come back more often
+- ⭐ Stars and 7 stickers, saved in the browser
+- 👪 **Parent page** (behind a "7 + 8 = ?" question): progress, sound on/off,
+  **record your own voice** for every letter and word, reset
 
-No ads, no analytics, no tracking, no internet, no personal data
-(Google Play Families Policy). Made for low and mid-range phones.
+No ads, no tracking, no accounts, no data leaves the device.
 
 ---
 
-## 1. Run it
+## How to run (pick one)
 
-**On this PC (Unity 6000.0.85f1 is already installed in `D:\Unity`):**
-1. Double-click **`Open-Borno-in-Unity.bat`** in the project folder
-   (or Unity Hub → Projects → Add → Add project from disk →
-   `D:\Projects\borno-game`).
-2. Wait until Unity has opened (1–3 minutes).
-3. Click **Borno → Play Game** in the top menu (or press **▶ Play**).
-   Use the mouse like a finger. Simple guide: `HOW_TO_PLAY.md`.
-   Tip: in the Game view, choose a portrait size (e.g. 1080x1920) in the
-   resolution menu at its top, so it looks like a phone.
+### A. Easiest – just open the file (computer)
+1. Open the folder `D:\Projects\borno-game`.
+2. Double-click **`index.html`**. It opens in your browser (Chrome, Edge or
+   Firefox). That's it – play!
 
-**On another PC:** install Unity Hub + **Unity 6000.0.85f1** (6.0 LTS), add
-the project from disk, open it, press Play. The first open sets everything
-up automatically (scene, settings, icon).
+Everything works this way, without internet.
 
-**On a phone:** first add **Android Build Support** in Unity Hub (Installs →
-gear next to 6000.0.85f1 → Add modules → Android Build Support; you accept
-Google's licence there). Then in Unity: **Borno → Build Android APK (test)**,
-copy `Builds\Borno.apk` to the phone and install it (allow "unknown apps").
+### B. With a tiny web server (needed for the phone)
+If Python is installed, in the project folder run:
 
-If something goes wrong, see `BLOCKERS.md` ("If Unity shows errors").
-
-## 2. Menu "Borno" in Unity
-
-| Menu | What it does |
-|------|--------------|
-| Play Game | Opens `Main.unity` and starts the game (click again to stop) |
-| Setup Project (run once) | Portrait, Android IL2CPP/64-bit, no internet, icon, version, line material, `Main.unity`, Build Settings. Runs automatically the first time. |
-| Open Save Folder | Shows where progress is saved on the PC |
-| Delete Saved Progress | Start from zero (for testing) |
-| Build Android APK (test) | `Builds/Borno.apk` for your own phone |
-| Build Android App Bundle (Play Store) | `Builds/Borno.aab`, needs your keystore – see `PLAY_STORE.md` |
-
-## 3. How the code is organised
-
-```
-Assets/
-  Scripts/
-    Core/      Pure C#, NO Unity code -> unit-tested without Unity
-               TracingScorer, StarRating, StrokeSet, Geometry, LetterData,
-               ProgressData/Tracker, RewardRules, SafeFile,
-               AdaptiveLetterPicker, ParentGate, StrokeRasterizer,
-               Games/LetterQuiz, Games/BalloonRound, Games/GameStars
-    Game/      Unity scripts: BornoApp (the boss), TracingBoard (finger +
-               lines), LetterDatabase, ProgressStore, SoundPlayer, SoundFx,
-               LetterSprites, VoiceListener, SpriteFactory
-    Game/UI/   Screens built from code: Home, LetterSelect, Tracing,
-               GamesMenu, LetterMatch, BalloonPop, ParentGate, Parent,
-               + ResultPopup, LetterView, UiFactory, SafeArea, PopIn, ...
-    Editor/    Borno menu: setup, auto-setup, builds, picture import
-  Tests/EditMode/Core    unit tests (also run without Unity)
-  Tests/EditMode/Unity   tests that need Unity (JsonUtility, Resources)
-  Data/Resources/Letters/letters.json   <- ALL letter content
-  Art/Resources/Pictures/   word pictures (placeholders included)
-  Art/Icon/                 app icon
-  Audio/Resources/Sounds/   letter + word voices (you record them)
-Tools/        helper scripts that work WITHOUT Unity (see section 7)
+```bash
+python -m http.server 8000
 ```
 
-**Why Core and Game?** Core has no `using UnityEngine`, so the rules can be
-compiled and tested on any PC. Game only *uses* Core: it reads touches,
-draws and shows buttons.
+- On the same computer open <http://localhost:8000>.
+- On a **phone in the same Wi-Fi**: open `http://<computer-IP>:8000`
+  (find the IP with `ipconfig`, e.g. `http://192.168.0.105:8000`).
+  Tip: in the phone browser menu choose **"Add to Home screen"**.
 
-**Screens flow** (all in one scene, switched on/off by `BornoApp`):
+(No Python? Install it from python.org, or use option A on the computer.)
 
+## How to play
+| Screen | What to do |
+|--------|-----------|
+| Home | **লিখি / Trace** = trace a letter · **অ আ / Letters** = choose a letter · **🎈 Games** · small **👪 Parents** button |
+| Tracing | Trace the grey letter, then press **✔ Done** → stars. **🧽 Clear** erases. Tap the letter or 🔊 to hear it, tap the picture to hear the word |
+| Letter Match | Tap the letter the word starts with |
+| Balloon Pop | Pop only the balloons with the letter shown at the top |
+| Parents | Answer the sum, see progress, record voices, switch sound off, reset |
+
+## Sounds (letters and words)
+The pop / chime sound effects are made by code and always work. For the
+**letter and word voices** the game uses, in this order:
+1. **Your own recordings** – Parents page → *Record letter sounds* → tap 🎤
+   and speak (2 seconds). Saved only in this browser on this device.
+2. **Sound files** you put in `assets/sounds/` and name in `assets/letters.js`
+   (`letterSound: "assets/sounds/letters/ka.mp3"`).
+3. A **Bangla voice built into the device** (many Android phones have one) –
+   only if it works offline.
+
+If none of these exists the game is silent and shows a small hint once.
+
+## Project files
 ```
-Home ──Trace──────────► Tracing (letter chosen by AdaptiveLetterPicker)
-  ├──Letters──► Letter Select ──tap──► Tracing
-  ├──Games────► Games ──► Letter Match / Balloon Pop
-  └──Parents──► "7 + 8 = ?" ──► Parent page
-Tracing ──Done──► result card ──Again / Next / Home
-Android back button = one screen back
-```
-
-## 4. How tracing is checked
-
-Every letter is a few **strokes** (lists of points in a 0..1 box). On
-**Done**:
-
-1. Sample dots are placed every 2% along the letter and along the drawing.
-2. **Coverage %** = letter dots that have the child's line near them.
-3. **Precision %** = the child's dots that are near the letter.
-4. Stars: ⭐⭐⭐ coverage ≥ 85% and precision ≥ 80%; ⭐⭐ ≥ 60% and ≥ 60%;
-   ⭐ coverage ≥ 25%; otherwise "Try again".
-
-Scribbling everywhere → high coverage, low precision. Tracing a tiny piece →
-high precision, low coverage. You need both.
-
-## 5. Adding a letter (no code change)
-
-Add a block to `Assets/Data/Resources/Letters/letters.json`:
-
-```json
-{
-  "id": "ja", "letter": "জ", "romanized": "ja",
-  "exampleWord": "জবা", "exampleWordEnglish": "hibiscus",
-  "pictureKey": "Pictures/joba",
-  "letterAudioKey": "Sounds/Letters/ja", "wordAudioKey": "Sounds/Words/joba",
-  "strokes": [ { "points": [0.1, 0.85, 0.9, 0.85] } ]
-}
-```
-
-`points` = `x1, y1, x2, y2, ...` (0..1, (0,0) bottom-left), one block per
-finger stroke. Then add `Pictures/joba.png` and the two sounds. Run
-`Tools\make-letter-preview.ps1` to see the shape. The letter appears in
-the Letters grid, both mini-games and the parent page automatically.
-
-## 6. Bangla text, voices and the microphone
-
-- **No font is included** (licence rule). Letters are drawn from their
-  stroke data instead, so they always show. Add Noto Sans Bengali (SIL OFL)
-  as `Assets/Art/Resources/Fonts/BornoFont.ttf` to also show Bangla words.
-- **Voices:** record them yourself – `RECORDING_GUIDE.md` lists the 20 files.
-- **"Say it!"** checks only *that* the child spoke (no word recognition –
-  offline Bangla speech recognition is too big for cheap phones). It is
-  compiled in only when you add the scripting define **`BORNO_SPEECH`**
-  (Project Settings → Player → Other Settings → Scripting Define Symbols).
-  Without it the app never asks for the microphone. With it, a parent must
-  switch it on in the parent page.
-
-## 7. Checks you can run without Unity (Windows)
-
-```powershell
-powershell -ExecutionPolicy Bypass -File Tools\run-core-tests.ps1              # 62 unit tests
-powershell -ExecutionPolicy Bypass -File Tools\compile-check-unity-scripts.ps1 # rough compile check
-powershell -ExecutionPolicy Bypass -File Tools\make-letter-preview.ps1         # letter shapes -> HTML
-powershell -ExecutionPolicy Bypass -File Tools\make-placeholder-art.ps1        # re-draw pictures/icon
+index.html          the page: all screens (home, tracing, games, parents...)
+style.css           the look: colours, big buttons, phone + computer layout
+script.js           all game logic (tracing check, stars, games, sounds...)
+sw.js               optional: keeps the game working offline when it is
+                    opened from a web server (option B / a website)
+assets/
+  letters.js        ALL letter content (letter, word, picture, sounds)
+  images/           pictures for the words + app icon (icon.png)
+  sounds/letters/   optional voice files for letters   (empty for now)
+  sounds/words/     optional voice files for words      (empty for now)
+tests/
+  unit.html         automatic checks of the game rules – open in a browser
+  e2e.html          plays the whole game automatically (see notes in file)
+tools/
+  make-placeholder-art.ps1   (Windows) re-draws the simple pictures
 ```
 
-In Unity: Window → General → Test Runner → EditMode / PlayMode → Run All.
-Or all Unity checks from the command line (close Unity first):
+**How the tracing check works** (in `script.js`, section 3): the letter and
+the child's line are drawn into small black-and-white pictures.
+- **coverage %** = how much of the letter the child's line covers
+- **precision %** = how much of the child's line is on the letter
+- ⭐⭐⭐ = both ≥ 80% · ⭐⭐ = both ≥ 60% · ⭐ = coverage ≥ 25% · otherwise "try again"
+- a drawing more than 2.5× longer than the letter counts as scribbling → max ⭐
 
-```powershell
-powershell -ExecutionPolicy Bypass -File Tools\unity-check.ps1 -Unity "D:\Unity\Editors\6000.0.85f1\Editor\Editor\Unity.exe"
-```
+The letters are drawn with the Bangla font that is already on the device
+(Windows: Nirmala UI, Android: Noto Sans Bengali, iPhone: Kohinoor Bangla).
+If a device has no Bangla font, simple backup shapes from `letters.js` are
+used instead (try it with `index.html?strokes=1`).
 
-## 8. Status
+## Adding a letter
+Copy one block in `assets/letters.js`, change `id`, `letter`, `word`,
+`english`, `picture`, and put the picture in `assets/images/`. No other
+change needed – the letter appears in tracing, the grid, both games and the
+parent page.
 
-| Part | Status |
-|------|--------|
-| Steps 1–6 (setup, tracing, letters, stars/saving, weak letters, screens) | done |
-| 2 mini-games, parent page, Say it!, Play Store prep | done |
-| Placeholder pictures + icon | done (original, CC0) |
-| Voices, Bangla font, nicer letter shapes | **your part** – see guides |
-| Run in real Unity | **done** – compiles with 0 errors / 0 warnings, 65 EditMode + 6 PlayMode tests pass |
-| Run on a phone | not yet – needs Android Build Support (your step, see section 1) |
+## Checking for errors
+- Open **`tests/unit.html`** in your browser → it must say **✅ ALL PASSED**.
+- If something looks wrong in the game, press **F12** (Console tab) and look
+  for red messages – send them to me.
 
-Other docs: `LOG.md` (diary), `DECISIONS.md` (why), `BLOCKERS.md`
-(problems + fixes), `ASSETS.md` (licences), `PLAY_STORE.md`,
-`PRIVACY_POLICY.md`, `RECORDING_GUIDE.md`, `MORNING_SUMMARY.md`.
+Things that are normal / not errors:
+- No voice when you tap 🔊 → record one on the Parents page (see above).
+- Recording says "not possible here" → use Chrome/Edge/Firefox and open the
+  game on that device itself (option A or `localhost`). Browsers only allow
+  the microphone there, not over `http://192.168…`.
+- Progress is per browser: Chrome and Edge each keep their own stars.
+
+The old Unity version is kept in git as the tag `unity-version`.

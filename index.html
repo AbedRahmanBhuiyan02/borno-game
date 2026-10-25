@@ -1,0 +1,186 @@
+<!doctype html>
+<!--
+  index.html – the page that holds the whole game.
+  Every screen is a <section class="screen">. script.js shows one at a time.
+  Open this file in a browser to play (no internet needed).
+-->
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ff9a3c">
+  <meta name="description" content="Borno – learn the Bangla alphabet by tracing letters. For children aged 3–6. Works offline.">
+  <title>বর্ণ – Borno</title>
+  <link rel="icon" type="image/png" href="assets/images/icon.png">
+  <link rel="apple-touch-icon" href="assets/images/icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ HOME ============ -->
+  <section id="screen-home" class="screen">
+    <button class="btn parents-btn" data-action="parents">👪 Parents</button>
+    <div>
+      <h1 class="title">বর্ণ</h1>
+      <p class="subtitle">Borno · বাংলা বর্ণ শিখি</p>
+    </div>
+    <div>
+      <div class="star-count"><span>⭐</span><span id="home-stars">0</span></div>
+      <div id="sticker-row" class="sticker-row"></div>
+      <p id="next-sticker" class="small"></p>
+    </div>
+    <div class="menu">
+      <button class="btn big-btn orange" data-action="trace"><span class="emoji">✏️</span> <span class="bn">লিখি</span> <small>Trace</small></button>
+      <div class="menu-row">
+        <button class="btn big-btn blue" data-action="letters"><span class="bn">অ আ</span> <small>Letters</small></button>
+        <button class="btn big-btn green" data-action="games"><span class="emoji">🎈</span> <small>Games</small></button>
+      </div>
+    </div>
+    <p class="small">No ads · no internet needed</p>
+  </section>
+
+  <!-- ============ LETTER SELECT ============ -->
+  <section id="screen-letters" class="screen">
+    <div class="topbar">
+      <button class="btn back-btn" data-action="home">⬅ Back</button>
+      <h2 class="bn">বর্ণ</h2>
+      <span class="spacer"></span>
+    </div>
+    <div id="letter-grid" class="letter-grid"></div>
+  </section>
+
+  <!-- ============ TRACING ============ -->
+  <section id="screen-trace" class="screen">
+    <div class="topbar">
+      <button class="btn back-btn" data-action="trace-back">⬅ Back</button>
+      <button id="trace-letter" class="big-letter" data-action="say-letter" aria-label="Hear the letter">অ</button>
+      <button class="btn sound-btn" data-action="say-letter" aria-label="Hear the letter">🔊</button>
+    </div>
+    <button class="word-card" data-action="say-word" aria-label="Hear the word">
+      <img id="trace-picture" src="assets/images/ojogor.png" alt="">
+      <span>
+        <span id="trace-word" class="word">অজগর</span><br>
+        <span id="trace-english" class="english">python</span>
+      </span>
+    </button>
+    <div id="board-wrap" class="board-wrap">
+      <canvas id="board" aria-label="Trace the letter here"></canvas>
+      <div id="trace-hint" class="hint">✋ Trace the letter with your finger</div>
+    </div>
+    <div class="controls">
+      <button class="btn red" data-action="clear">🧽 Clear</button>
+      <button id="done-btn" class="btn green" data-action="done" disabled>✔ Done</button>
+    </div>
+  </section>
+
+  <!-- ============ GAMES MENU ============ -->
+  <section id="screen-games" class="screen">
+    <div class="topbar">
+      <button class="btn back-btn" data-action="home">⬅ Back</button>
+      <h2>Games</h2>
+      <span class="spacer"></span>
+    </div>
+    <div class="games-list">
+      <button class="btn game-card blue" data-action="match">🖼️ Letter Match <small>Find the first letter</small></button>
+      <button class="btn game-card pink" data-action="balloon">🎈 Balloon Pop <small>Pop the right letter</small></button>
+    </div>
+  </section>
+
+  <!-- ============ LETTER MATCH ============ -->
+  <section id="screen-match" class="screen">
+    <div class="topbar">
+      <button class="btn back-btn" data-action="games">⬅ Back</button>
+      <div id="match-dots" class="dots"></div>
+    </div>
+    <button id="match-prompt" class="prompt" data-action="say-match" aria-label="Hear the word">
+      <img id="match-picture" src="assets/images/aam.png" alt="">
+      <span id="match-word" class="word"></span>
+      <span class="question">Which letter does it start with?</span>
+    </button>
+    <div id="match-options" class="options"></div>
+  </section>
+
+  <!-- ============ BALLOON POP ============ -->
+  <section id="screen-balloon" class="screen">
+    <div class="topbar">
+      <button class="btn back-btn" data-action="games">⬅ Back</button>
+      <span class="spacer"></span>
+      <span class="pop-label">Pop</span>
+      <button id="balloon-target" class="btn target" data-action="say-target">ক</button>
+      <span class="spacer"></span>
+    </div>
+    <div id="balloon-progress" class="balloon-progress"></div>
+    <div id="field" class="field"></div>
+  </section>
+
+  <!-- ============ PARENT PAGE ============ -->
+  <section id="screen-parent" class="screen">
+    <div class="topbar">
+      <button class="btn back-btn" data-action="home">⬅ Back</button>
+      <h2>For parents</h2>
+      <span class="spacer"></span>
+    </div>
+    <div class="parent-body">
+      <section>
+        <h3>Progress</h3>
+        <p id="parent-summary"></p>
+        <div id="parent-letters"></div>
+      </section>
+      <section>
+        <h3>Settings</h3>
+        <div class="settings">
+          <button id="sound-toggle" class="btn blue" data-action="toggle-sound">🔊 Sound: On</button>
+          <button id="voice-toggle" class="btn teal" data-action="toggle-voice">🗣️ Device voice: On</button>
+          <p id="voice-status" class="small"></p>
+        </div>
+      </section>
+      <section>
+        <h3>Record letter sounds</h3>
+        <p class="small">Record your own voice for each letter and word (2 seconds each).
+          Recordings stay only in this browser on this device.</p>
+        <p id="rec-status" class="small"></p>
+        <div id="rec-list"></div>
+      </section>
+      <section>
+        <h3>Reset</h3>
+        <button id="reset-btn" class="btn red" data-action="reset">Delete all progress</button>
+      </section>
+      <p class="privacy">Borno has no ads, no accounts and no internet connection. It
+        collects no data. Progress and recordings are saved only in this browser.</p>
+    </div>
+  </section>
+
+  <!-- ============ PARENT GATE (pop-up) ============ -->
+  <div id="gate" class="overlay hidden">
+    <div class="card">
+      <h3>Grown-ups only</h3>
+      <p class="small">Please answer to open the parent page:</p>
+      <div id="gate-q" class="gate-q">7 + 8 = ?</div>
+      <div id="gate-choices" class="gate-choices"></div>
+      <div class="card-buttons"><button class="btn grey" data-action="home">Cancel</button></div>
+    </div>
+  </div>
+
+  <!-- ============ RESULT CARD (pop-up) ============ -->
+  <div id="result" class="overlay hidden">
+    <div class="card">
+      <h3 id="result-title">Excellent!</h3>
+      <div class="result-stars"><span>★</span><span>★</span><span>★</span></div>
+      <p id="result-detail" class="result-detail"></p>
+      <p id="result-extra" class="result-extra"></p>
+      <div class="card-buttons">
+        <button class="btn blue" data-action="again">↻ Again</button>
+        <button class="btn purple" data-action="result-home">🏠 Home</button>
+        <button id="result-next" class="btn green" data-action="next">Next ➜</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" role="status"></div>
+</div>
+
+<script src="assets/letters.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -340,3 +340,36 @@ never touch the real save). Compile check OK, 62 Core tests pass.
 - You tested it: **Borno → Play Game started the game.** Unity's log showed
   no errors.
 - Added `HOW_TO_PLAY.md` (simple steps).
+
+---
+
+## Converted to a plain web game (2026-10-25)
+You asked for a browser game instead of Unity: HTML/CSS/JS, no engine, no
+external APIs, offline, kid-friendly, responsive.
+
+**Done**
+- Tagged the Unity version (`unity-version`, pushed) and removed all Unity
+  files (Assets/, Packages/, ProjectSettings/, Tools/, Unity docs and the
+  generated Library/Temp/.csproj/.vscode files).
+- New files: `index.html`, `style.css`, `script.js`, `sw.js`,
+  `assets/letters.js`, `assets/images/` (the 10 CC0 pictures + icon),
+  `assets/sounds/` (empty), `tests/unit.html|js`, `tests/e2e.html|js`,
+  `tools/make-placeholder-art.ps1` (paths updated).
+- Features: tracing with stars (checked against the real font letter),
+  letter grid, Letter Match, Balloon Pop, weak-letter repeat, stars +
+  stickers in localStorage, parent gate + parent page, **voice recording on
+  the parent page**, synthesised sound effects, phone back button support,
+  works without a Bangla font (backup strokes).
+- Bug found by the tests and fixed: scribbling over the whole board got 1–2
+  stars → new "scribble" rule (drawing > 2.5× letter length = max 1 star).
+- Bug found by the tests and fixed: balloon animation did not start in an
+  embedded frame → timer backup for requestAnimationFrame.
+
+**Tested (headless Microsoft Edge on this PC)**
+- `tests/unit.html`: **42/42 passed** (perfect trace of every font letter =
+  3★ with 97–100% coverage; scribble ≤ 1★; progress, picker, games, gate).
+- `tests/e2e.html`: **39/39** phone size, **39/39** desktop size, **38/38**
+  without Bangla font. No JavaScript errors.
+- Screenshots of all screens (phone + desktop) checked by eye.
+- Not tested: real phones, real finger feel, microphone recording (needs a
+  person to allow the microphone), Firefox/Safari (only Edge = Chromium).

@@ -1,0 +1,32 @@
+<!doctype html>
+<!--
+  e2e.html – plays the WHOLE game automatically, like a child would:
+  traces letters, plays both mini-games, opens the parent page.
+  The game runs in the frame; PASS/FAIL lines appear below it.
+
+  Options (add to the address):
+    ?size=desktop      use a 1280x800 frame instead of a 390x844 phone
+    ?stop=match        stop at a screen (home, trace, traced, result, letters,
+                       match, balloon, gate, parent) – used for screenshots
+
+  Chrome/Edge block frames from local files. Start the browser with
+  --allow-file-access-from-files, or run "python -m http.server" in the
+  project folder and open http://localhost:8000/tests/e2e.html
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Borno e2e – running…</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    iframe { border: 0; display: block; }
+    #log { padding: 10px; white-space: pre-wrap; font-size: 13px; }
+    .pass { color: #1a7f37; } .fail { color: #c62828; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <iframe id="game" title="Borno"></iframe>
+  <div id="log"></div>
+  <script src="e2e.js"></script>
+</body>
+</html>
