@@ -91,3 +91,60 @@ in git under the tag `unity-version`.)
   `?size=desktop`; `?stop=<screen>` for screenshots.
 - The balloon animation uses requestAnimationFrame **plus a timer backup**,
   because some browsers pause animation frames in hidden/embedded frames.
+
+---
+
+## Version 0.4.0 – learning features and engineering (2026-10-25)
+
+**Code split (C13).** `script.js` became 8 files in `js/`. They are classic
+scripts sharing one object `window.Borno`, loaded in a fixed order by
+`index.html`. *Why not JavaScript modules (`import`)?* Browsers block modules
+when `index.html` is opened directly from the disk, and "double-click to
+play" must keep working.
+
+**Data as .js, not .json** (`reading.js`, `voices.js`, `strokes.js`): browsers
+also block reading .json files from the disk.
+
+**Tracing levels.** 1 thick guide → 2 faint guide → 3 from memory. A try with
+2+ stars at the current level opens the next one; the level never goes down
+(a bad day should not take away progress). Level 3 shows the letter for
+1.8 s, then hides it on the board, in the top bar and in the word.
+
+**Review timing (medals).** Boxes 0–3 with waits of 1, 3 and 7 days
+(🥉🥈🥇). A good try moves a letter up only when it is due, so ten tries in
+one afternoon do not skip the waiting. A weak try (0–1 ★) moves it one box
+down and makes it due now. Letters that are learned and not due get few
+"lottery tickets" (0.3), due letters 3, weak letters 4, new letters 2.
+
+**Stroke order.** Three sources: teacher recording on this device → shipped
+`assets/strokes.js` → automatic strokes from the letter's centre line. The
+automatic strokes are good enough to *show* how to write a letter but are
+not the real Bangla stroke order, so the order is **only checked for
+teacher strokes**. Wrong order or direction lowers ⭐⭐⭐ to ⭐⭐, never more –
+small children should not lose stars for a wrong start.
+
+**Voice pack.** Recordings stay in IndexedDB; "Download voices.js" puts
+them (as data URLs) into one .js file that can be added to `assets/` and
+works from the disk. 120 clips × 2 s is roughly 2–4 MB – acceptable.
+
+**কার game.** Four choices with the **same consonant** and different signs,
+so the child must look at the sign. Consonants that join irregularly
+(ঙ ঞ ণ ড় ঢ় য় ৎ ং ঃ ঁ) are left out. **শব্দ বানাও:** 20 words of 1–3 pieces
+plus 2 extra pieces; the pieces must join to the word (tested).
+
+**Numbers ০–৯** are in `letters.js` with `group: 'number'` and a `count`
+for the counting pictures, but are **not** part of the letter learning
+order (`B.ALPHABET` excludes them). "Next" goes ০ → ১ → … in order.
+
+**Offline cache (C15).** `sw.js` is now "network first, cache as backup
+after 3 s". Before, a new version needed a hand-changed cache number;
+forgetting it meant phones kept the old game. The e2e test checks that the
+cache list contains every file `index.html` loads.
+
+**CI (C14).** GitHub Actions on ubuntu: syntax check with `node --check`,
+then the same test pages in headless Chrome (`tests/run-tests.sh`). The
+colour emoji font is installed because the tests check emoji pictures.
+
+**Device check (C16)** measures inside the game (tracing check time,
+animation frames per second, memory, features) – a real phone is still
+needed for touch feel, heat and battery (see `TESTING_ON_PHONE.md`).

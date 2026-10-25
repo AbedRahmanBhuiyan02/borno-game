@@ -1,13 +1,15 @@
 <!doctype html>
 <!--
   e2e.html – plays the WHOLE game automatically, like a child would:
-  traces letters, plays both mini-games, opens the parent page.
+  traces letters at all 3 levels, plays all 4 mini-games, opens the
+  parent page, the recording session and teacher mode.
   The game runs in the frame; PASS/FAIL lines appear below it.
 
   Options (add to the address):
     ?size=desktop      use a 1280x800 frame instead of a 390x844 phone
-    ?stop=match        stop at a screen (home, trace, traced, result, letters,
-                       match, balloon, gate, parent) – used for screenshots
+    ?stop=match        stop at a screen (home, watch, trace, traced, result, level2,
+                       level3, letters, numbers, games, match, kar, words, balloon,
+                       gate, parent, device, record, teach) – used for screenshots
 
   Chrome/Edge block frames from local files. Start the browser with
   --allow-file-access-from-files, or run "python -m http.server" in the
@@ -27,6 +29,8 @@
 <body>
   <iframe id="game" title="Borno"></iframe>
   <div id="log"></div>
+  <!-- the offline file list from sw.js, to check it is complete -->
+  <script src="../sw.js"></script>
   <script src="helpers.js"></script>
   <script src="e2e.js"></script>
 </body>

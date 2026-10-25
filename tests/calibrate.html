@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
   calibrate.html – helps to choose the tracing settings (font weight and
-  tolerance in script.js). For each setting it shows:
+  tolerance in js/core.js). For each setting it shows:
     perfect  how many of the 50 letters get 3 stars when traced perfectly
     wobble   ... when the trace is 3.5% off to the side
     WRONG    how often tracing a DIFFERENT letter still gets 3 stars (should be rare)
@@ -13,14 +13,24 @@ body { font-family: system-ui, sans-serif; }</style></head>
 <body><h1>Borno – tracing calibration</h1><pre id="out">running… (about a minute)</pre>
 <script src="../assets/letters.js"></script>
 <script src="../assets/strings.js"></script>
-<script src="../script.js"></script>
+<script src="../assets/reading.js"></script>
+<script src="../assets/voices.js"></script>
+<script src="../assets/strokes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/progress.js"></script>
+<script src="../js/games.js"></script>
+<script src="../js/sound.js"></script>
+<script src="../js/board.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/parent.js"></script>
+<script src="../js/main.js"></script>
 <script src="helpers.js"></script>
 <script>
 (function () {
   var B = window.Borno, H = window.BornoTest, out = [];
   var configs = [[400, 0.055], [500, 0.05], [500, 0.055], [500, 0.06]];
   B.ready.then(function () {
-    var L = B.LETTERS, sub = L.slice(0, 20);
+    var L = B.ALPHABET, sub = L.slice(0, 20);
     configs.forEach(function (cfg) {
       B.setLetterWeight(cfg[0]);
       B.SCORE.tolerance = cfg[1];

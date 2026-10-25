@@ -1,18 +1,19 @@
 /*
   letters.js – ALL letter content of Borno: the 50 letters of the Bangla
-  alphabet (11 স্বরবর্ণ vowels + 39 ব্যঞ্জনবর্ণ consonants).
+  alphabet (11 স্বরবর্ণ vowels + 39 ব্যঞ্জনবর্ণ consonants) and the numbers ০–৯.
   The order here is the order the child learns them in.
 
   Fields:
     id          short unique name (Latin letters, no spaces). Voice recordings
                 made on the parent page are saved under this id.
     letter      the Bangla letter
-    group       "vowel" or "consonant"
+    group       "vowel", "consonant" or "number"
     name        how to say it, in Latin letters (for parents)
     word        example word in Bangla. If it STARTS with the letter, the
                 letter is also used in the "first letter" game.
     english     the word in English (for parents)
     emoji       the picture for the word (emoji are built into every phone)
+    count       optional: show the emoji this many times (for counting numbers)
     picture     optional picture file instead of the emoji, e.g. "assets/images/aam.png"
     letterSound optional sound file, e.g. "assets/sounds/letters/ka.mp3" ("" = none)
     wordSound   optional sound file, e.g. "assets/sounds/words/kola.mp3" ("" = none)
@@ -75,5 +76,17 @@ window.BORNO_LETTERS = [
   { id: "khta", letter: "ৎ", group: "consonant", name: "khondo to",          word: "শরৎ",    english: "autumn",       emoji: "🍂", letterSound: "", wordSound: "" },
   { id: "anu",  letter: "ং", group: "consonant", name: "onushshar",          word: "রং",     english: "colour",       emoji: "🎨", letterSound: "", wordSound: "" },
   { id: "bis",  letter: "ঃ", group: "consonant", name: "bishorgo",           word: "দুঃখ",   english: "sad",          emoji: "😢", letterSound: "", wordSound: "" },
-  { id: "chan", letter: "ঁ", group: "consonant", name: "chondrobindu",       word: "চাঁদ",    english: "moon",         emoji: "🌙", letterSound: "", wordSound: "" }
+  { id: "chan", letter: "ঁ", group: "consonant", name: "chondrobindu",       word: "চাঁদ",    english: "moon",         emoji: "🌙", letterSound: "", wordSound: "" },
+
+  // ---------------- সংখ্যা – numbers 0-9 (count = how many pictures to show) ----------------
+  { id: "n0", letter: "০", group: "number", name: "shunno (0)", word: "শূন্য", english: "zero",  emoji: "⭕",            letterSound: "", wordSound: "" },
+  { id: "n1", letter: "১", group: "number", name: "ek (1)",     word: "এক",    english: "one",   emoji: "🍎", count: 1, letterSound: "", wordSound: "" },
+  { id: "n2", letter: "২", group: "number", name: "dui (2)",    word: "দুই",   english: "two",   emoji: "🍎", count: 2, letterSound: "", wordSound: "" },
+  { id: "n3", letter: "৩", group: "number", name: "tin (3)",    word: "তিন",   english: "three", emoji: "🍎", count: 3, letterSound: "", wordSound: "" },
+  { id: "n4", letter: "৪", group: "number", name: "char (4)",   word: "চার",   english: "four",  emoji: "🍎", count: 4, letterSound: "", wordSound: "" },
+  { id: "n5", letter: "৫", group: "number", name: "pach (5)",   word: "পাঁচ",   english: "five",  emoji: "🍎", count: 5, letterSound: "", wordSound: "" },
+  { id: "n6", letter: "৬", group: "number", name: "chhoy (6)",  word: "ছয়",   english: "six",   emoji: "🍎", count: 6, letterSound: "", wordSound: "" },
+  { id: "n7", letter: "৭", group: "number", name: "sat (7)",    word: "সাত",   english: "seven", emoji: "🍎", count: 7, letterSound: "", wordSound: "" },
+  { id: "n8", letter: "৮", group: "number", name: "at (8)",     word: "আট",    english: "eight", emoji: "🍎", count: 8, letterSound: "", wordSound: "" },
+  { id: "n9", letter: "৯", group: "number", name: "noy (9)",    word: "নয়",   english: "nine",  emoji: "🍎", count: 9, letterSound: "", wordSound: "" }
 ];

@@ -405,3 +405,43 @@ You chose improvements #1, #2 and #6.
 - `tests/e2e.html` **42/42** phone and desktop, twice each (incl. language
   switch, Bangla digits, 50 tiles, both games, parent page).
 - Screenshots of all screens checked by eye (Bangla text, emoji, marks).
+
+---
+
+## Learning features + engineering → version 0.4.0 (2026-10-25)
+You asked for list A (1–7) and C (13–16).
+
+**Done**
+- A1 `TESTING_WITH_CHILDREN.md`: consent, no names/photos, 15-minute
+  session plan, observation sheet, parent questions, 1-week learning check.
+- A2 Recording session (parent page): all 120 clips one by one, ✔ for
+  recorded ones, download `voices.js` for every device.
+- A3 Stroke order: 👀 Watch button + automatic demo the first time;
+  teacher mode to record the order (download `strokes.js`); numbered start
+  dots; wrong order = max ⭐⭐.
+- A4 Three tracing levels (thick → faint → from memory).
+- A5 কার game and শব্দ বানাও (20 words).
+- A6 Numbers ০–৯ with counting pictures.
+- A7 Review timing 1 → 3 → 7 days with 🥉🥈🥇.
+- C13 `script.js` → 8 files in `js/`.
+- C14 GitHub Actions runs all tests on every push; `tests/run-tests.ps1` /
+  `tests/run-tests.sh` run them locally.
+- C15 Version 0.4.0 + `CHANGELOG.md`; offline cache updates by itself.
+- C16 `TESTING_ON_PHONE.md` + 📱 device check on the parent page.
+- Parent page also shows play time per day.
+
+**Problems found by the tests and fixed**
+- Automatic strokes dropped every closed loop (০, the loop of ক, ব, র …):
+  the line simplifier treated "start = end" as a zero-length line.
+- Pressing 👀 during the level-3 "look first" pause left the board locked.
+- The voice store could wait forever where the browser never answers
+  (now gives up after 3 s).
+- Level 3 still showed the letter in the top bar and the word → hidden now.
+
+**Tested (headless Microsoft Edge on this PC, `tests/run-tests.ps1`)**
+- `tests/unit.html` **106/106**.
+- `tests/e2e.html` **86/86** phone size and **86/86** desktop size (all three
+  levels, watch, numbers, all 4 games, parent page, recording session,
+  teacher mode, device check, reset; no JavaScript errors). Ran 5 times.
+- Screenshots of the new screens (phone size) checked by eye.
+- Not tested: real phone/finger, microphone recording, Firefox/Safari.

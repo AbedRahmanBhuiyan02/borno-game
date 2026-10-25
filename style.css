@@ -58,6 +58,9 @@ html, body {
 
 .bn { font-family: var(--bangla); }
 .hidden { display: none !important; }
+.invisible { visibility: hidden; }
+.left, .small.left { text-align: left; }
+.pre { white-space: pre-line; }
 .small { font-size: 15px; color: var(--muted); margin: 4px 0; text-align: center; }
 
 /* ---------- screens ---------- */
@@ -196,6 +199,12 @@ span.mark-high, .big-letter.mark-high { display: inline-block; transform: transl
 .mini-stars { font-size: 16px; letter-spacing: 1px; }
 .mini-stars .on { color: var(--gold); }
 .mini-stars .off { color: rgba(255, 255, 255, 0.5); }
+.tile .medal { position: absolute; top: 4px; left: 6px; font-family: var(--emoji); font-size: 18px; }
+/* numbers: show the right count of apples, small and wrapped */
+.pic.counting { display: inline-flex; flex-wrap: wrap; justify-content: center; max-width: 100%; }
+.tile .pic.counting { font-size: 10px; max-width: 70%; }
+.word-card .pic.counting { font-size: 18px; }
+.prompt .pic.big.counting { font-size: min(9vw, 40px); max-width: 80%; }
 .weak-badge {
   position: absolute; top: -6px; right: -6px;
   width: 28px; height: 28px; border-radius: 50%;
@@ -258,7 +267,21 @@ span.mark-high, .big-letter.mark-high { display: inline-block; transform: transl
   pointer-events: none;
 }
 .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.controls .btn { min-height: 64px; font-size: 24px; }
+.controls.three { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.controls .btn { min-height: 64px; font-size: 24px; padding: 8px 10px; }
+.controls.three .btn { font-size: clamp(17px, 5vw, 24px); }
+.level-badge {
+  background: var(--card);
+  color: var(--purple);
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-weight: 800;
+  font-size: 16px;
+  white-space: nowrap;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08);
+}
+.level-badge.level-2 { color: var(--blue); }
+.level-badge.level-3 { color: var(--green); }
 
 /* ---------- result card ---------- */
 .overlay {
@@ -295,9 +318,9 @@ span.mark-high, .big-letter.mark-high { display: inline-block; transform: transl
 .card-buttons .btn { flex: 1; min-width: 96px; }
 
 /* ---------- games menu ---------- */
-.game-card { min-height: 150px; flex-direction: column; font-size: 32px; border-radius: 30px; }
-.game-card small { font-size: 17px; font-weight: 600; }
-.games-list { flex: 1; display: grid; gap: 18px; align-content: center; }
+.game-card { min-height: 130px; flex-direction: column; font-size: clamp(22px, 6vw, 30px); border-radius: 30px; text-align: center; }
+.game-card small { font-size: 15px; font-weight: 600; }
+.games-list { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: center; }
 
 /* ---------- letter match ---------- */
 .dots { display: flex; gap: 8px; justify-content: center; flex: 1; }
@@ -330,6 +353,41 @@ span.mark-high, .big-letter.mark-high { display: inline-block; transform: transl
 .option.right { background: var(--green); }
 .option.wrong { background: var(--grey); }
 .option img.glyph-img { width: 55%; }
+
+/* ---------- কার game ---------- */
+.kar-sum { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.kar-part {
+  font-family: var(--bangla);
+  font-size: clamp(48px, 14vw, 80px);
+  line-height: 1.2;
+  min-width: 1.2em;
+  text-align: center;
+  color: var(--blue);
+}
+.kar-part.sign { color: var(--pink); }
+.kar-part.q { color: var(--muted); }
+.kar-op { font-size: 36px; font-weight: 800; color: var(--muted); }
+
+/* ---------- build a word ---------- */
+.slots { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.slot {
+  min-width: 84px;
+  min-height: 84px;
+  padding: 0 8px;
+  border-radius: 20px;
+  border: 4px dashed #c4c9d8;
+  display: grid;
+  place-items: center;
+  font-family: var(--bangla);
+  font-size: 46px;
+  background: #fff;
+}
+.slot.filled { border-style: solid; border-color: var(--green); color: var(--green); }
+.slot.finished { background: #e7f8ec; animation: star-pop 0.4s ease; }
+.word-tiles { flex: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; align-content: center; }
+.word-tile { width: min(30%, 150px); min-height: 90px; font-family: var(--bangla); font-size: 44px; background: var(--orange); }
+.word-tile.used { visibility: hidden; }
+.word-tile.wiggle { animation: wiggle 0.35s; }
 
 /* ---------- balloon pop ---------- */
 .target {
@@ -417,6 +475,48 @@ span.mark-high, .big-letter.mark-high { display: inline-block; transform: transl
 .rec-buttons .btn.recording { background: var(--red); animation: blink 0.8s infinite; }
 @keyframes blink { 50% { opacity: 0.6; } }
 .privacy { font-size: 13px; color: var(--muted); }
+pre.small { font-family: var(--ui); background: #f5f6fa; border-radius: 12px; padding: 0 10px; margin: 0; }
+pre.small:not(:empty) { padding: 8px 10px; }
+
+/* ---------- recording session ---------- */
+.counter { font-weight: 800; color: var(--muted); min-width: 64px; text-align: right; }
+.session-card {
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.08);
+}
+.session-item { display: flex; flex-direction: column; align-items: center; }
+.session-glyph { font-family: var(--bangla); font-size: clamp(90px, 30vw, 160px); line-height: 1.1; }
+.session-word { font-family: var(--bangla); font-size: 48px; font-weight: 700; }
+.session-state { font-size: 32px; color: var(--green); min-height: 40px; }
+.session-buttons { display: grid; grid-template-columns: 1fr 1.4fr 1fr 1fr; gap: 8px; }
+.session-buttons .btn { font-size: 18px; padding: 6px 8px; }
+.big-rec { min-height: 72px; }
+.btn.recording { background: var(--red); animation: blink 0.8s infinite; }
+
+/* ---------- teacher mode ---------- */
+.teach-select {
+  font: inherit;
+  font-family: var(--bangla);
+  font-size: 22px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  border: 2px solid var(--grey);
+  background: #fff;
+}
+#teach-board {
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.08);
+  touch-action: none;
+}
 
 /* ---------- small message at the bottom ---------- */
 #toast {
@@ -442,6 +542,10 @@ span.mark-high, .big-letter.mark-high { display: inline-block; transform: transl
 @media (min-width: 700px) {
   .menu { max-width: 560px; }
   .letter-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+}
+@media (max-width: 360px) {
+  .games-list { grid-template-columns: 1fr; }
+  .game-card { min-height: 90px; }
 }
 @media (max-height: 640px) {
   .title { font-size: 56px; }

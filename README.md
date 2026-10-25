@@ -4,19 +4,32 @@ A small, offline web game that helps children aged 3–6 learn the Bangla
 alphabet. Plain **HTML + CSS + JavaScript** – no game engine, no build
 tools, no internet, no external services.
 
-- 🔤 **All 50 letters**: 11 স্বরবর্ণ (vowels) + 39 ব্যঞ্জনবর্ণ (consonants),
-  each with an example word and picture (অ – অজগর 🐍, ক – কলা 🍌, …)
-- ✏️ **লিখি / Trace** a letter with a finger (or mouse) → 1 to 3 stars
-- 📚 Letters open **step by step**: a child starts with অ আ ই ঈ উ ঊ; every
-  letter learned (2+ stars) opens the next one
-- 🖼️ **প্রথম বর্ণ / Letter Match** – which letter does the word start with?
-- 🎈 **বেলুন ফাটাও / Balloon Pop** – pop the balloons with the right letter
-- 🧠 Letters the child finds hard come back more often
-- ⭐ Stars and 7 stickers, saved in the browser
-- 🇧🇩 **Bangla interface** (with Bangla numbers ০১২…) – 🌐 button switches to English
-- 🔠 Round, child-friendly font **Baloo Da 2** included – same letters on every device
-- 👪 **Parent page** (behind a "৭ + ৮ = ?" question): progress, sound on/off,
-  language, **record your own voice** for every letter and word, reset
+**Version 0.4.0** – see [CHANGELOG.md](CHANGELOG.md) for what changed.
+
+### For the child
+- 🔤 **All 50 letters** (11 স্বরবর্ণ + 39 ব্যঞ্জনবর্ণ) and the **numbers ০–৯**,
+  each with a word and a picture (অ – অজগর 🐍, ক – কলা 🍌, ৩ – তিন 🍎🍎🍎)
+- ✏️ **লিখি / Trace** with a finger in **3 levels** per letter:
+  1. thick grey letter (+ green numbered start dots when a teacher recorded the order)
+  2. faint letter
+  3. from memory – the letter is shown for a moment, then hidden
+- 👀 **দেখো / Watch**: the letter is written slowly in front of the child
+  (automatically the very first time a letter is traced)
+- 🥉🥈🥇 **Medals** with review timing: a letter comes back after 1 day,
+  then 3 days, then 1 week
+- 📚 Letters open **step by step** (start with অ আ ই ঈ উ ঊ); hard letters come back more often
+- 4 mini-games: 🖼️ **প্রথম বর্ণ** (first letter), 🎈 **বেলুন ফাটাও** (balloon pop),
+  ➕ **কার** (ক + া = কা), 🧩 **শব্দ বানাও** (build মা, কলা, বাড়ি … from pieces)
+- ⭐ Stars and 7 stickers · 🇧🇩 Bangla interface (🌐 switches to English)
+
+### For parents and teachers (behind a "৭ + ৮ = ?" question)
+- Progress per letter (level, medal, stars), weak letters, **play time per day**
+- 🎤 **Recording session**: walks through all 120 clips (60 letters + 60 words),
+  then **download `voices.js`** so every device has your voice
+- ✍️ **Teacher mode**: write each letter in the correct stroke order once,
+  then **download `strokes.js`** – the game then checks the order
+- 📱 **Device check**: is this phone fast enough?
+- Sound / voice / language switches, reset, version number
 
 No ads, no tracking, no accounts, no data leaves the device.
 
@@ -29,8 +42,6 @@ No ads, no tracking, no accounts, no data leaves the device.
 2. Double-click **`index.html`**. It opens in your browser (Chrome, Edge or
    Firefox). That's it – play!
 
-Everything works this way, without internet.
-
 ### B. With a tiny web server (needed for the phone)
 If Python is installed, in the project folder run:
 
@@ -42,76 +53,111 @@ python -m http.server 8000
 - On a **phone in the same Wi-Fi**: open `http://<computer-IP>:8000`
   (find the IP with `ipconfig`, e.g. `http://192.168.0.105:8000`).
   Tip: in the phone browser menu choose **"Add to Home screen"**.
-
-(No Python? Install it from python.org, or use option A on the computer.)
+- When the game is opened from a web server it also keeps a copy for offline
+  use (`sw.js`). New versions arrive automatically the next time it is opened
+  with internet – nothing to change by hand.
 
 ## How to play
 | Screen | What to do |
 |--------|-----------|
-| Home | **লিখি** = the game picks a letter to trace · **বর্ণমালা** = choose any of the 50 letters · **খেলা** = games · **👪 অভিভাবক** = parents · **🌐** = Bangla/English |
-| Tracing | Trace the grey letter, then press **✔ হয়েছে (Done)** → stars. **🧽 মুছি (Clear)** erases. Tap the letter or 🔊 to hear it, tap the picture to hear the word |
+| Home | **লিখি** = the game picks a letter · **বর্ণমালা** = choose any letter or number · **খেলা** = games · **👪 অভিভাবক** = parents · **🌐** = Bangla/English |
+| Tracing | Trace the letter, press **✔ হয়েছে** → stars. **🧽 মুছি** erases, **👀 দেখো** shows how to write it. The badge at the top shows the level (স্তর ১/২/৩) and medal |
 | প্রথম বর্ণ | Tap the letter the word starts with |
 | বেলুন ফাটাও | Pop only the balloons with the letter shown at the top |
-| অভিভাবক | Answer the sum, see progress, record voices, sound/language, reset |
+| কার | Which syllable do the letter and the sign make? (ক + ি = কি) |
+| শব্দ বানাও | Tap the pieces in the right order to build the word in the picture |
+| অভিভাবক | Answer the sum → progress, recording session, teacher mode, device check, settings, reset |
 
-## Sounds (letters and words)
+## Voices (letters and words)
 The pop / chime sound effects are made by code and always work. For the
 **letter and word voices** the game uses, in this order:
-1. **Your own recordings** – Parents page → *Record letter sounds* → tap 🎤
-   and speak (2 seconds). Saved only in this browser on this device.
-2. **Sound files** you put in `assets/sounds/` and name in `assets/letters.js`
+1. **Recordings made on this device** – Parents → *Recording session*.
+2. **`assets/voices.js`** – recordings shipped with the game. Make it with the
+   recording session → **Download voices.js** → put the file into `assets/`
+   (replace the old one). Then every device plays your voice.
+3. **Sound files** in `assets/sounds/` named in `assets/letters.js`
    (`letterSound: "assets/sounds/letters/ka.mp3"`).
-3. A **Bangla voice built into the device** (many Android phones have one) –
-   only if it works offline.
+4. A **Bangla voice built into the device** – only if it works offline.
 
 If none of these exists the game is silent and shows a small hint once.
 
+## Stroke order (teacher mode)
+Parents → **Teacher mode** → choose a letter → write it with the right
+strokes in the right order → **Save**. On this device the game now shows
+green numbered start dots (level 1) and gives ⭐⭐ instead of ⭐⭐⭐ when the
+order is wrong. **Download strokes.js** and put it into `assets/` to ship the
+order to every device. Letters without a teacher recording use an automatic
+"watch" animation, but their order is not checked.
+
 ## Project files
 ```
-index.html          the page: all screens (home, tracing, games, parents...)
+index.html          the page: all screens
 style.css           the look: colours, big buttons, phone + computer layout
-script.js           all game logic (tracing check, stars, games, sounds...)
-sw.js               optional: keeps the game working offline when it is
-                    opened from a web server (option B / a website)
+sw.js               optional offline copy when opened from a web server
+js/                 the game code, one file per part (loaded in this order):
+  core.js           shared helpers, letter drawing, tracing score, stroke order
+  progress.js       what is saved; levels, medals, review timing, next letter
+  games.js          rules of the 4 mini-games and the parent question
+  sound.js          sound effects, voices, recording, voices.js export
+  board.js          the drawing board (tracing + teacher mode, watch animation)
+  ui.js             the child's screens (home, letters, tracing, games)
+  parent.js         parent page, recording session, teacher mode, device check
+  main.js           start-up: connects every button to its action
 assets/
-  letters.js        ALL 50 letters (letter, word, emoji picture, sounds)
-  strings.js        ALL texts of the game in Bangla and English
+  letters.js        the 50 letters + 10 numbers (word, emoji, sounds)
+  reading.js        the 10 vowel signs (কার) and the 20 words for শব্দ বানাও
+  strings.js        ALL texts in Bangla and English
+  voices.js         recorded voices shipped with the game (empty for now)
+  strokes.js        teacher stroke order shipped with the game (empty for now)
   fonts/            Baloo Da 2 font + its licence (OFL.txt)
   images/icon.png   app icon
-  sounds/letters/   optional voice files for letters   (empty for now)
-  sounds/words/     optional voice files for words      (empty for now)
 tests/
-  unit.html         automatic checks of the game rules – open in a browser
+  unit.html         automatic checks of the rules – open in a browser
   e2e.html          plays the whole game automatically (see notes in file)
   calibrate.html    helps choose the tracing settings (see DECISIONS.md)
-  helpers.js        shared code for the test pages
+  run-tests.ps1     runs all tests on Windows (Edge)
+  run-tests.sh      runs all tests on Linux/macOS (Chrome) – also used on GitHub
+.github/workflows/tests.yml   GitHub runs all tests on every push
+CHANGELOG.md                  what changed in each version
+TESTING_WITH_CHILDREN.md      how to test with 3–5 children + observation sheet
+TESTING_ON_PHONE.md           checklist for a cheap phone
 ```
 
-**How the tracing check works** (in `script.js`, section 3): the letter and
-the child's line are drawn into small black-and-white pictures.
+**How the tracing check works** (`js/core.js`, "tracing score" part): the
+letter and the child's line are drawn into small black-and-white pictures.
 - **coverage %** = how much of the letter the child's line covers
 - **precision %** = how much of the child's line is on the letter
 - ⭐⭐⭐ = both ≥ 80% · ⭐⭐ = both ≥ 60% · ⭐ = coverage ≥ 25% · otherwise "try again"
 - a drawing more than 2.5× longer than the letter counts as scribbling → max ⭐
+- with a teacher's stroke order: wrong order or direction → max ⭐⭐
 
-## Changing letters or texts
-- **Letters:** edit one line in `assets/letters.js` (word, English, emoji).
-  To add a picture file instead of the emoji, put it in `assets/images/` and
-  add `picture: "assets/images/name.png"` to that letter.
+## Changing letters, words or texts
+- **Letters / numbers:** edit one line in `assets/letters.js`.
+- **Words for শব্দ বানাও:** edit `assets/reading.js` – the pieces must join
+  to the word (the tests check this).
 - **Texts:** edit `assets/strings.js` (Bangla `bn` and English `en`).
-- No other change needed – everything appears in tracing, the letter grid,
-  both games and the parent page.
 
 ## Checking for errors
-- Open **`tests/unit.html`** in your browser → it must say **✅ ALL PASSED**.
+- Quick: open **`tests/unit.html`** in your browser → **✅ ALL PASSED**.
+- Everything (Windows):
+  ```bash
+  powershell -ExecutionPolicy Bypass -File tests\run-tests.ps1
+  ```
+- **Automatically on GitHub:** every push runs all tests. On the project's
+  GitHub page a green ✔ next to the commit means all passed; a red ✘ means
+  something broke (click it to see which check failed).
 - If something looks wrong in the game, press **F12** (Console tab) and look
-  for red messages – send them to me.
+  for red messages.
+
+## Releasing a new version
+1. Change `B.VERSION` in `js/core.js` (e.g. `0.4.0` → `0.5.0`).
+2. Add a section at the top of `CHANGELOG.md`.
+3. Run the tests, commit, push. Phones pick up the new files automatically.
 
 Things that are normal / not errors:
 - No voice when you tap 🔊 → record one on the Parents page (see above).
-- Recording says "not possible here" → use Chrome/Edge/Firefox and open the
-  game on that device itself (option A or `localhost`). Browsers only allow
-  the microphone there, not over `http://192.168…`.
+- Recording says "not possible here" → open the game on that device itself
+  (option A or `localhost`). Browsers only allow the microphone there.
 - Progress is per browser: Chrome and Edge each keep their own stars.
 
 The old Unity version is kept in git as the tag `unity-version`.

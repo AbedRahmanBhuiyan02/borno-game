@@ -1,0 +1,27 @@
+# Runs all automatic tests on GitHub every time code is pushed.
+# The result shows as a green ✔ or red ✘ next to each commit on GitHub
+# (tab "Actions"). Nothing is uploaded anywhere else.
+name: tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install a colour emoji font (the game shows emoji pictures)
+        run: sudo apt-get update -q && sudo apt-get install -y -q fonts-noto-color-emoji
+
+      - name: Check every JavaScript file for syntax errors
+        run: for f in js/*.js assets/*.js sw.js tests/*.js; do node --check "$f" || exit 1; done
+
+      - name: Run the tests in Chrome (unit + whole game on phone and desktop size)
+        run: sh tests/run-tests.sh

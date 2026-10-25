@@ -1,9 +1,9 @@
 <!doctype html>
 <!--
   index.html – the page that holds the whole game.
-  Every screen is a <section class="screen">; script.js shows one at a time.
-  Texts marked data-i18n="key" are filled in from assets/strings.js
-  (Bangla or English). Open this file in a browser to play – no internet needed.
+  Every screen is a <section class="screen">; the js/ files show one at a time.
+  Texts marked data-i18n="key" come from assets/strings.js (Bangla/English).
+  Open this file in a browser to play – no internet needed.
 -->
 <html lang="bn">
 <head>
@@ -60,6 +60,7 @@
     <div class="topbar">
       <button class="btn back-btn" data-action="trace-back">⬅ <span data-i18n="back">ফিরি</span></button>
       <button id="trace-letter" class="big-letter" data-action="say-letter" aria-label="Hear the letter">অ</button>
+      <span id="trace-level" class="level-badge">স্তর ১</span>
       <button class="btn sound-btn" data-action="say-letter" aria-label="Hear the letter">🔊</button>
     </div>
     <button class="word-card" data-action="say-word" aria-label="Hear the word">
@@ -71,10 +72,11 @@
     </button>
     <div id="board-wrap" class="board-wrap">
       <canvas id="board" aria-label="Trace the letter here"></canvas>
-      <div id="trace-hint" class="hint" data-i18n="hint">✋ আঙুল দিয়ে বর্ণটি লেখো</div>
+      <div id="trace-hint" class="hint">✋ আঙুল দিয়ে বর্ণটি লেখো</div>
     </div>
-    <div class="controls">
+    <div class="controls three">
       <button class="btn red" data-action="clear">🧽 <span data-i18n="clear">মুছি</span></button>
+      <button class="btn orange" data-action="watch">👀 <span data-i18n="watch">দেখো</span></button>
       <button id="done-btn" class="btn green" data-action="done" disabled>✔ <span data-i18n="done">হয়েছে</span></button>
     </div>
   </section>
@@ -95,6 +97,14 @@
         <span>🎈 <span data-i18n="balloon">বেলুন ফাটাও</span></span>
         <small data-i18n="balloonHint">ঠিক বর্ণের বেলুন ফাটাও</small>
       </button>
+      <button class="btn game-card purple" data-action="kar">
+        <span>➕ <span data-i18n="kar">কার</span></span>
+        <small data-i18n="karHint">বর্ণ আর কার জুড়ে পড়ো</small>
+      </button>
+      <button class="btn game-card teal" data-action="words">
+        <span>🧩 <span data-i18n="words">শব্দ বানাও</span></span>
+        <small data-i18n="wordsHint">টুকরো জুড়ে শব্দ বানাও</small>
+      </button>
     </div>
   </section>
 
@@ -110,6 +120,40 @@
       <span class="question" data-i18n="matchQ">শব্দটি কোন বর্ণ দিয়ে শুরু?</span>
     </button>
     <div id="match-options" class="options"></div>
+  </section>
+
+  <!-- ============ কার (vowel signs) ============ -->
+  <section id="screen-kar" class="screen">
+    <div class="topbar">
+      <button class="btn back-btn" data-action="games">⬅ <span data-i18n="back">ফিরি</span></button>
+      <div id="kar-dots" class="dots"></div>
+    </div>
+    <div class="prompt kar-prompt">
+      <div class="kar-sum">
+        <span id="kar-consonant" class="kar-part">ক</span>
+        <span class="kar-op">+</span>
+        <span id="kar-sign" class="kar-part sign">া</span>
+        <span class="kar-op">=</span>
+        <span class="kar-part q">?</span>
+      </div>
+      <span class="question" data-i18n="karQ">জুড়লে কী হয়?</span>
+    </div>
+    <div id="kar-options" class="options"></div>
+  </section>
+
+  <!-- ============ শব্দ বানাও (build a word) ============ -->
+  <section id="screen-words" class="screen">
+    <div class="topbar">
+      <button class="btn back-btn" data-action="games">⬅ <span data-i18n="back">ফিরি</span></button>
+      <div id="words-dots" class="dots"></div>
+    </div>
+    <button class="prompt" data-action="say-words" aria-label="Hear the word">
+      <span id="words-picture" class="pic big">🍌</span>
+      <span id="words-english" class="question">banana</span>
+      <span class="question" data-i18n="wordsQ">ছবির শব্দটা বানাও</span>
+    </button>
+    <div id="words-slots" class="slots"></div>
+    <div id="words-tiles" class="word-tiles"></div>
   </section>
 
   <!-- ============ BALLOON POP ============ -->
@@ -136,7 +180,24 @@
       <section>
         <h3 data-i18n="progress">অগ্রগতি</h3>
         <p id="parent-summary"></p>
+        <h3 data-i18n="playTime">খেলার সময়</h3>
+        <p id="play-time" class="small left pre"></p>
         <div id="parent-letters"></div>
+      </section>
+      <section>
+        <h3 data-i18n="record">বর্ণের শব্দ রেকর্ড করুন</h3>
+        <p class="small left" data-i18n="recordInfo"></p>
+        <p id="voices-count" class="small left"></p>
+        <div class="settings">
+          <button class="btn orange" data-action="record-session" data-i18n="recordSession"></button>
+        </div>
+      </section>
+      <section>
+        <h3 data-i18n="teachTitle">শিক্ষক মোড</h3>
+        <p id="teacher-count" class="small left"></p>
+        <div class="settings">
+          <button class="btn purple" data-action="teach" data-i18n="teach"></button>
+        </div>
       </section>
       <section>
         <h3 data-i18n="settings">সেটিংস</h3>
@@ -145,20 +206,63 @@
           <button id="sound-toggle" class="btn blue" data-action="toggle-sound">🔊</button>
           <button id="voice-toggle" class="btn teal" data-action="toggle-voice">🗣️</button>
           <p id="voice-status" class="small"></p>
+          <button class="btn grey" data-action="device-check" data-i18n="deviceCheck"></button>
+          <pre id="device-result" class="small left pre"></pre>
         </div>
-      </section>
-      <section>
-        <h3 data-i18n="record">বর্ণের শব্দ রেকর্ড করুন</h3>
-        <p class="small" data-i18n="recordInfo"></p>
-        <p id="rec-status" class="small"></p>
-        <div id="rec-list"></div>
       </section>
       <section>
         <h3 data-i18n="reset">রিসেট</h3>
         <button id="reset-btn" class="btn red" data-action="reset" data-i18n="resetBtn">সব অগ্রগতি মুছুন</button>
       </section>
       <p class="privacy" data-i18n="privacy"></p>
+      <p id="version" class="privacy"></p>
     </div>
+  </section>
+
+  <!-- ============ RECORDING SESSION ============ -->
+  <section id="screen-record" class="screen">
+    <div class="topbar">
+      <button class="btn back-btn" data-action="parent-back">⬅ <span data-i18n="back">ফিরি</span></button>
+      <h2 data-i18n="sessionTitle">রেকর্ডিং সেশন</h2>
+      <span id="session-counter" class="counter"></span>
+    </div>
+    <p id="rec-status" class="small"></p>
+    <div class="session-card">
+      <span class="small" data-i18n="sayThis">এটা বলুন:</span>
+      <div id="session-item" class="session-item"></div>
+      <span id="session-state" class="session-state"></span>
+    </div>
+    <div class="session-buttons">
+      <button id="session-prev" class="btn grey" data-action="session-prev" data-i18n="prevItem">◀</button>
+      <button id="session-rec" class="btn red big-rec" data-action="session-record" data-i18n="recBtn">🎤</button>
+      <button id="session-play" class="btn blue" data-action="session-play" data-i18n="listen">▶</button>
+      <button id="session-next" class="btn green" data-action="session-next" data-i18n="nextItem">▶</button>
+    </div>
+    <p id="session-count" class="small"></p>
+    <button class="btn orange" data-action="export-voices" data-i18n="exportVoices"></button>
+    <p class="small" data-i18n="exportHelp"></p>
+  </section>
+
+  <!-- ============ TEACHER MODE ============ -->
+  <section id="screen-teach" class="screen">
+    <div class="topbar">
+      <button class="btn back-btn" data-action="parent-back">⬅ <span data-i18n="back">ফিরি</span></button>
+      <h2 data-i18n="teachTitle">শিক্ষক মোড</h2>
+      <span class="spacer"></span>
+    </div>
+    <p class="small" data-i18n="teachHelp"></p>
+    <select id="teach-select" class="teach-select" aria-label="Letter"></select>
+    <div id="teach-wrap" class="board-wrap">
+      <canvas id="teach-board" aria-label="Write the letter here"></canvas>
+    </div>
+    <div class="controls three">
+      <button class="btn red" data-action="teach-clear" data-i18n="clear">মুছি</button>
+      <button class="btn orange" data-action="teach-play" data-i18n="play">দেখাও</button>
+      <button class="btn green" data-action="teach-save" data-i18n="save">সংরক্ষণ</button>
+    </div>
+    <p id="teach-count" class="small"></p>
+    <button class="btn purple" data-action="export-strokes" data-i18n="exportStrokes"></button>
+    <p class="small" data-i18n="strokesHelp"></p>
   </section>
 
   <!-- ============ PARENT GATE (pop-up) ============ -->
@@ -190,8 +294,20 @@
   <div id="toast" role="status"></div>
 </div>
 
+<!-- content -->
 <script src="assets/letters.js"></script>
+<script src="assets/reading.js"></script>
 <script src="assets/strings.js"></script>
-<script src="script.js"></script>
+<script src="assets/voices.js"></script>
+<script src="assets/strokes.js"></script>
+<!-- game code (order matters: core first, main last) -->
+<script src="js/core.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/games.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/board.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/parent.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>

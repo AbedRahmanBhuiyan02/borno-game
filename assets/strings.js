@@ -82,7 +82,72 @@ window.BORNO_STRINGS = {
     deleted: "অগ্রগতি মুছে ফেলা হয়েছে",
     noVoice: "🔇 এখনো কণ্ঠ নেই – বড়রা অভিভাবক পাতায় রেকর্ড করতে পারেন",
     needTwo: "খেলতে অন্তত ২টি বর্ণ লাগবে",
-    noLetters: "assets/letters.js-এ কোনো বর্ণ পাওয়া যায়নি"
+    noLetters: "assets/letters.js-এ কোনো বর্ণ পাওয়া যায়নি",
+
+    // levels, medals, stroke order
+    level: "স্তর {n}",
+    hint2: "✋ হালকা বর্ণের উপর লেখো",
+    hint3: "🧠 মনে করে লেখো!",
+    lookFirst: "👀 ভালো করে দেখো…",
+    levelUp: "স্তর {n} খুলেছে! ⬆️",
+    medal: "পদক {m}",
+    watch: "দেখো",
+    orderHint: "সবুজ ১ থেকে শুরু করো, তারপর ২, ৩…",
+    numbers: "সংখ্যা",
+
+    // reading games
+    kar: "কার",
+    karHint: "বর্ণ আর কার জুড়ে পড়ো",
+    karQ: "জুড়লে কী হয়?",
+    words: "শব্দ বানাও",
+    wordsHint: "টুকরো জুড়ে শব্দ বানাও",
+    wordsQ: "ছবির শব্দটা বানাও",
+
+    // recording session
+    recordSession: "🎙️ রেকর্ডিং সেশন (সব একসাথে)",
+    sessionTitle: "রেকর্ডিং সেশন",
+    sayThis: "এটা বলুন:",
+    recBtn: "🎤 রেকর্ড",
+    listen: "▶ শুনুন",
+    prevItem: "◀ আগের",
+    nextItem: "পরের ▶",
+    exportVoices: "⬇ voices.js ডাউনলোড",
+    exportHelp: "ডাউনলোড করা voices.js ফাইলটি প্রজেক্টের assets ফোল্ডারে রাখুন (পুরনোটার জায়গায়)। তাহলে যেকোনো ডিভাইসে এই কণ্ঠ বাজবে।",
+    recordedCount: "রেকর্ড হয়েছে: {n} / {total}",
+    nothingRecorded: "এখনো কিছু রেকর্ড হয়নি",
+    exported: "voices.js তৈরি হয়েছে ✔",
+
+    // teacher mode
+    teach: "✍️ লেখার ক্রম শেখান (শিক্ষক মোড)",
+    teachTitle: "শিক্ষক মোড",
+    teachHelp: "একটি বর্ণ বেছে নিন, তারপর সঠিক ক্রমে একটি একটি টানে লিখুন এবং সংরক্ষণ চাপুন।",
+    save: "💾 সংরক্ষণ",
+    play: "▶ দেখাও",
+    exportStrokes: "⬇ strokes.js ডাউনলোড",
+    strokesHelp: "strokes.js ফাইলটি assets ফোল্ডারে রাখলে সব ডিভাইসে এই ক্রম দেখাবে।",
+    strokesSaved: "লেখার ক্রম সংরক্ষিত ✔",
+    teacherCount: "শিক্ষকের দেখানো ক্রম আছে: {n}টি বর্ণে",
+    drawFirst: "আগে বর্ণটি লিখুন",
+
+    // device check
+    deviceCheck: "📱 ডিভাইস পরীক্ষা",
+    deviceRunning: "পরীক্ষা চলছে…",
+    devScreen: "পর্দা: {w} × {h}, পিক্সেল ঘনত্ব {d}",
+    devScore: "লেখা যাচাই: {ms} মি.সে.",
+    devFps: "অ্যানিমেশন: {fps} ফ্রেম/সেকেন্ড",
+    devMemory: "মেমরি: {m}",
+    devFeatures: "ফন্ট: {f} · ইমোজি: {e} · মাইক: {mic} · সংরক্ষণ: {s}",
+    devOk: "✔ এই ডিভাইসে ভালো চলবে",
+    devSlow: "⚠ একটু ধীর – সমস্যা হলে লিখে রাখুন",
+    yes: "হ্যাঁ",
+    no: "না",
+    unknown: "অজানা",
+
+    // play time
+    playTime: "খেলার সময়",
+    dayLine: "{d}: {m} মিনিট · {a}টি লেখা · {g}টি খেলা",
+    noDays: "এখনো কোনো দিনের তথ্য নেই",
+    version: "সংস্করণ {v}"
   },
 
   en: {
@@ -160,6 +225,71 @@ window.BORNO_STRINGS = {
     deleted: "Progress deleted",
     noVoice: "🔇 No voice yet – a grown-up can record one on the Parents page",
     needTwo: "Add at least 2 letters to play",
-    noLetters: "No letters found in assets/letters.js"
+    noLetters: "No letters found in assets/letters.js",
+
+    // levels, medals, stroke order
+    level: "Level {n}",
+    hint2: "✋ Trace the light letter",
+    hint3: "🧠 Write it from memory!",
+    lookFirst: "👀 Look carefully…",
+    levelUp: "Level {n} unlocked! ⬆️",
+    medal: "Medal {m}",
+    watch: "Watch",
+    orderHint: "Start at the green 1, then 2, 3…",
+    numbers: "Numbers (সংখ্যা)",
+
+    // reading games
+    kar: "Vowel signs",
+    karHint: "Join a letter and a sign (কার)",
+    karQ: "What does it make?",
+    words: "Build a word",
+    wordsHint: "Join the pieces to make the word",
+    wordsQ: "Make the word for the picture",
+
+    // recording session
+    recordSession: "🎙️ Recording session (all in one go)",
+    sessionTitle: "Recording session",
+    sayThis: "Say this:",
+    recBtn: "🎤 Record",
+    listen: "▶ Listen",
+    prevItem: "◀ Back",
+    nextItem: "Next ▶",
+    exportVoices: "⬇ Download voices.js",
+    exportHelp: "Put the downloaded voices.js into the project's assets folder (replace the old one). Then every device plays these voices.",
+    recordedCount: "Recorded: {n} / {total}",
+    nothingRecorded: "Nothing recorded yet",
+    exported: "voices.js created ✔",
+
+    // teacher mode
+    teach: "✍️ Teach stroke order (teacher mode)",
+    teachTitle: "Teacher mode",
+    teachHelp: "Choose a letter, then write it stroke by stroke in the correct order and press Save.",
+    save: "💾 Save",
+    play: "▶ Play",
+    exportStrokes: "⬇ Download strokes.js",
+    strokesHelp: "Put strokes.js into the assets folder so every device shows this order.",
+    strokesSaved: "Stroke order saved ✔",
+    teacherCount: "Teacher stroke order for {n} letters",
+    drawFirst: "Write the letter first",
+
+    // device check
+    deviceCheck: "📱 Device check",
+    deviceRunning: "Checking…",
+    devScreen: "Screen: {w} × {h}, pixel ratio {d}",
+    devScore: "Tracing check: {ms} ms",
+    devFps: "Animation: {fps} frames/second",
+    devMemory: "Memory: {m}",
+    devFeatures: "Font: {f} · Emoji: {e} · Mic: {mic} · Saving: {s}",
+    devOk: "✔ Runs well on this device",
+    devSlow: "⚠ A bit slow – please note any problems",
+    yes: "yes",
+    no: "no",
+    unknown: "unknown",
+
+    // play time
+    playTime: "Play time",
+    dayLine: "{d}: {m} min · {a} tracings · {g} games",
+    noDays: "No days recorded yet",
+    version: "Version {v}"
   }
 };
