@@ -3,6 +3,15 @@
    The game is one page; each "screen" is a <section class="screen">
    and only the one with class "active" is shown. */
 
+/* The game's own font: Baloo Da 2 (SIL Open Font License, see assets/fonts/OFL.txt).
+   Round, child-friendly letters that look the same on every device. */
+@font-face {
+  font-family: "Baloo Da 2";
+  src: url("assets/fonts/BalooDa2.ttf") format("truetype");
+  font-weight: 400 800;
+  font-display: swap;
+}
+
 :root {
   --bg: #fff7e6;
   --text: #333a4d;
@@ -17,10 +26,11 @@
   --gold: #ffc926;
   --grey: #d7dae3;
   --card: #ffffff;
-  /* Bangla letters use a font that is already on the device */
-  --bangla: "Noto Sans Bengali", "Nirmala UI", "Kohinoor Bangla", "Bangla Sangam MN",
-            "Vrinda", "Shonar Bangla", "Hind Siliguri", sans-serif;
-  --ui: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, var(--bangla);
+  /* Bangla + English text: our bundled font first, device fonts as backup */
+  --bangla: "Baloo Da 2", "Noto Sans Bengali", "Nirmala UI", "Kohinoor Bangla",
+            "Bangla Sangam MN", "Vrinda", sans-serif;
+  --ui: "Baloo Da 2", system-ui, "Segoe UI", Roboto, Arial, "Noto Sans Bengali", "Nirmala UI", sans-serif;
+  --emoji: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -114,13 +124,14 @@ button:focus-visible { outline: 4px solid #2b59c3; outline-offset: 2px; }
 
 /* ---------- home ---------- */
 #screen-home { align-items: center; justify-content: space-between; text-align: center; }
-.parents-btn {
-  align-self: flex-end;
+.home-top { display: flex; justify-content: space-between; width: 100%; }
+.small-btn {
   min-height: 40px;
-  font-size: 15px;
+  font-size: 16px;
   padding: 4px 14px;
   background: #b9bdcc;
 }
+.bn-glyph { font-family: var(--bangla); }
 .title {
   margin: 0;
   font-family: var(--bangla);
@@ -172,7 +183,13 @@ button:focus-visible { outline: 4px solid #2b59c3; outline-offset: 2px; }
 }
 .tile:active { transform: translateY(4px); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.18); }
 .tile .glyph { font-family: var(--bangla); font-size: clamp(44px, 12vw, 64px); line-height: 1.1; }
-.tile img.glyph-img { width: 60%; height: auto; }
+.tile .pic { font-size: 18px; line-height: 1; }
+.group-title {
+  grid-column: 1 / -1;
+  margin: 8px 4px 0;
+  font-size: 22px;
+  color: var(--muted);
+}
 .mini-stars { font-size: 16px; letter-spacing: 1px; }
 .mini-stars .on { color: var(--gold); }
 .mini-stars .off { color: rgba(255, 255, 255, 0.5); }
@@ -207,7 +224,10 @@ button:focus-visible { outline: 4px solid #2b59c3; outline-offset: 2px; }
   box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08);
   text-align: left;
 }
-.word-card img { width: 64px; height: 64px; object-fit: contain; }
+.pic { font-family: var(--emoji); font-size: 48px; line-height: 1; }
+.pic img { width: 64px; height: 64px; object-fit: contain; }
+.pic.text { font-family: var(--ui); font-size: 18px; color: var(--muted); }
+.word-card .pic { width: 64px; text-align: center; }
 .word-card .word { font-family: var(--bangla); font-size: 32px; font-weight: 700; }
 .word-card .english { font-size: 15px; color: var(--muted); }
 
@@ -291,7 +311,8 @@ button:focus-visible { outline: 4px solid #2b59c3; outline-offset: 2px; }
   align-items: center;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.08);
 }
-.prompt img { width: min(40vw, 150px); height: min(40vw, 150px); object-fit: contain; }
+.prompt .pic.big { font-size: min(28vw, 120px); line-height: 1.15; }
+.prompt .pic.big img { width: min(40vw, 150px); height: min(40vw, 150px); }
 .prompt .word { font-family: var(--bangla); font-size: 40px; font-weight: 700; }
 .prompt .word .hl { color: var(--orange); }
 .prompt .question { font-size: 16px; color: var(--muted); }

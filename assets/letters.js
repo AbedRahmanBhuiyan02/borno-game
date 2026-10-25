@@ -1,115 +1,79 @@
 /*
-  letters.js – ALL letter content of Borno.
-  To add a letter, copy one block and change it. No other code changes needed.
+  letters.js – ALL letter content of Borno: the 50 letters of the Bangla
+  alphabet (11 স্বরবর্ণ vowels + 39 ব্যঞ্জনবর্ণ consonants).
+  The order here is the order the child learns them in.
 
   Fields:
-    id          short unique name (letters, numbers, no spaces)
+    id          short unique name (Latin letters, no spaces). Voice recordings
+                made on the parent page are saved under this id.
     letter      the Bangla letter
-    name        how to say it in Latin letters (for parents)
-    word        example word in Bangla (should start with the letter)
+    group       "vowel" or "consonant"
+    name        how to say it, in Latin letters (for parents)
+    word        example word in Bangla. If it STARTS with the letter, the
+                letter is also used in the "first letter" game.
     english     the word in English (for parents)
-    picture     picture file for the word (assets/images/...)
+    emoji       the picture for the word (emoji are built into every phone)
+    picture     optional picture file instead of the emoji, e.g. "assets/images/aam.png"
     letterSound optional sound file, e.g. "assets/sounds/letters/ka.mp3" ("" = none)
     wordSound   optional sound file, e.g. "assets/sounds/words/kola.mp3" ("" = none)
-    strokes     BACKUP letter shape, only used when the device has no Bangla
-                font. Each stroke is a list of points [x1, y1, x2, y2, ...]
-                in a 0..1 box, (0,0) = bottom-left.
+
+  To add or change a letter, just edit its line. No other code changes needed.
 
   Why a .js file and not .json? Browsers do not allow reading .json files
   when you open index.html directly from the disk. A .js file works.
 */
 window.BORNO_LETTERS = [
-  {
-    id: "o", letter: "অ", name: "o", word: "অজগর", english: "python (snake)",
-    picture: "assets/images/ojogor.png", letterSound: "", wordSound: "",
-    strokes: [
-      [0.50, 0.85, 0.92, 0.85],
-      [0.12, 0.70, 0.22, 0.78, 0.36, 0.78, 0.44, 0.70, 0.42, 0.60, 0.32, 0.54, 0.42, 0.50, 0.48, 0.40, 0.46, 0.26, 0.36, 0.18, 0.22, 0.18, 0.12, 0.26],
-      [0.40, 0.52, 0.72, 0.52],
-      [0.72, 0.85, 0.72, 0.10]
-    ]
-  },
-  {
-    id: "aa", letter: "আ", name: "aa", word: "আম", english: "mango",
-    picture: "assets/images/aam.png", letterSound: "", wordSound: "",
-    strokes: [
-      [0.42, 0.85, 0.95, 0.85],
-      [0.10, 0.70, 0.18, 0.78, 0.29, 0.78, 0.36, 0.70, 0.34, 0.60, 0.26, 0.54, 0.34, 0.50, 0.39, 0.40, 0.37, 0.26, 0.29, 0.18, 0.18, 0.18, 0.10, 0.26],
-      [0.33, 0.52, 0.60, 0.52],
-      [0.60, 0.85, 0.60, 0.10],
-      [0.86, 0.85, 0.86, 0.10]
-    ]
-  },
-  {
-    id: "i", letter: "ই", name: "i", word: "ইট", english: "brick",
-    picture: "assets/images/it.png", letterSound: "", wordSound: "",
-    strokes: [
-      [0.10, 0.85, 0.90, 0.85],
-      [0.40, 0.85, 0.36, 0.74, 0.26, 0.68, 0.20, 0.58, 0.28, 0.50, 0.42, 0.52, 0.56, 0.50, 0.66, 0.40, 0.66, 0.26, 0.56, 0.16, 0.40, 0.12, 0.26, 0.16],
-      [0.40, 0.85, 0.46, 0.95, 0.58, 0.97]
-    ]
-  },
-  {
-    id: "ii", letter: "ঈ", name: "dirgho i", word: "ঈগল", english: "eagle",
-    picture: "assets/images/igol.png", letterSound: "", wordSound: "",
-    strokes: [
-      [0.10, 0.85, 0.90, 0.85],
-      [0.30, 0.85, 0.30, 0.70, 0.42, 0.62, 0.56, 0.66, 0.58, 0.56, 0.46, 0.48, 0.62, 0.40, 0.68, 0.26, 0.58, 0.14, 0.40, 0.12, 0.26, 0.20],
-      [0.70, 0.85, 0.76, 0.96, 0.88, 0.96, 0.90, 0.88]
-    ]
-  },
-  {
-    id: "u", letter: "উ", name: "u", word: "উট", english: "camel",
-    picture: "assets/images/ut.png", letterSound: "", wordSound: "",
-    strokes: [
-      [0.10, 0.85, 0.90, 0.85],
-      [0.30, 0.85, 0.30, 0.74, 0.42, 0.68, 0.54, 0.68, 0.60, 0.60, 0.54, 0.52, 0.40, 0.50, 0.54, 0.46, 0.62, 0.36, 0.60, 0.24, 0.48, 0.16, 0.34, 0.16, 0.24, 0.24],
-      [0.61, 0.30, 0.74, 0.34, 0.84, 0.26, 0.84, 0.12]
-    ]
-  },
-  {
-    id: "ka", letter: "ক", name: "ko", word: "কলা", english: "banana",
-    picture: "assets/images/kola.png", letterSound: "", wordSound: "",
-    strokes: [
-      [0.08, 0.85, 0.92, 0.85],
-      [0.52, 0.85, 0.52, 0.10],
-      [0.52, 0.60, 0.36, 0.66, 0.22, 0.58, 0.20, 0.44, 0.30, 0.34, 0.44, 0.36, 0.52, 0.44],
-      [0.52, 0.50, 0.66, 0.62, 0.80, 0.60, 0.84, 0.46, 0.76, 0.34, 0.62, 0.32, 0.52, 0.36]
-    ]
-  },
-  {
-    id: "kha", letter: "খ", name: "kho", word: "খাতা", english: "notebook",
-    picture: "assets/images/khata.png", letterSound: "", wordSound: "",
-    strokes: [
-      [0.50, 0.85, 0.92, 0.85],
-      [0.74, 0.85, 0.74, 0.10],
-      [0.20, 0.85, 0.18, 0.72, 0.28, 0.62, 0.40, 0.62, 0.44, 0.52, 0.34, 0.44, 0.22, 0.40, 0.20, 0.28, 0.32, 0.20, 0.50, 0.24, 0.62, 0.36, 0.74, 0.44]
-    ]
-  },
-  {
-    id: "ga", letter: "গ", name: "go", word: "গাছ", english: "tree",
-    picture: "assets/images/gach.png", letterSound: "", wordSound: "",
-    strokes: [
-      [0.10, 0.85, 0.92, 0.85],
-      [0.74, 0.85, 0.74, 0.10],
-      [0.30, 0.85, 0.28, 0.60, 0.30, 0.42, 0.40, 0.34, 0.54, 0.36, 0.66, 0.44, 0.74, 0.50]
-    ]
-  },
-  {
-    id: "gha", letter: "ঘ", name: "gho", word: "ঘর", english: "house",
-    picture: "assets/images/ghor.png", letterSound: "", wordSound: "",
-    strokes: [
-      [0.10, 0.85, 0.92, 0.85],
-      [0.74, 0.85, 0.74, 0.10],
-      [0.28, 0.85, 0.26, 0.66, 0.36, 0.56, 0.30, 0.46, 0.20, 0.38, 0.22, 0.24, 0.36, 0.18, 0.50, 0.24, 0.50, 0.36, 0.40, 0.40, 0.56, 0.44, 0.74, 0.50]
-    ]
-  },
-  {
-    id: "cha", letter: "চ", name: "cho", word: "চশমা", english: "glasses",
-    picture: "assets/images/choshma.png", letterSound: "", wordSound: "",
-    strokes: [
-      [0.10, 0.85, 0.90, 0.85],
-      [0.50, 0.85, 0.50, 0.66, 0.36, 0.62, 0.24, 0.52, 0.22, 0.36, 0.32, 0.22, 0.50, 0.16, 0.68, 0.20, 0.78, 0.34, 0.74, 0.48, 0.62, 0.52, 0.52, 0.46]
-    ]
-  }
+  // ---------------- স্বরবর্ণ – vowels ----------------
+  { id: "o",   letter: "অ", group: "vowel", name: "o (shoro o)",     word: "অজগর",   english: "python",         emoji: "🐍", letterSound: "", wordSound: "" },
+  { id: "aa",  letter: "আ", group: "vowel", name: "aa",              word: "আম",     english: "mango",          emoji: "🥭", letterSound: "", wordSound: "" },
+  { id: "i",   letter: "ই", group: "vowel", name: "i (hroshyo i)",   word: "ইঁদুর",  english: "mouse",          emoji: "🐭", letterSound: "", wordSound: "" },
+  { id: "ii",  letter: "ঈ", group: "vowel", name: "ii (dirgho i)",   word: "ঈগল",    english: "eagle",          emoji: "🦅", letterSound: "", wordSound: "" },
+  { id: "u",   letter: "উ", group: "vowel", name: "u (hroshyo u)",   word: "উট",     english: "camel",          emoji: "🐫", letterSound: "", wordSound: "" },
+  { id: "uu",  letter: "ঊ", group: "vowel", name: "uu (dirgho u)",   word: "ঊষা",    english: "dawn",           emoji: "🌅", letterSound: "", wordSound: "" },
+  { id: "ri",  letter: "ঋ", group: "vowel", name: "ri",              word: "ঋষি",    english: "sage",           emoji: "🧘", letterSound: "", wordSound: "" },
+  { id: "e",   letter: "এ", group: "vowel", name: "e",               word: "একতারা", english: "ektara (one-string lute)", emoji: "🎸", letterSound: "", wordSound: "" },
+  { id: "oi",  letter: "ঐ", group: "vowel", name: "oi",              word: "ঐরাবত",  english: "Airavata (elephant)", emoji: "🐘", letterSound: "", wordSound: "" },
+  { id: "oh",  letter: "ও", group: "vowel", name: "o",               word: "ওল",     english: "yam",            emoji: "🍠", letterSound: "", wordSound: "" },
+  { id: "ou",  letter: "ঔ", group: "vowel", name: "ou",              word: "ঔষধ",    english: "medicine",       emoji: "💊", letterSound: "", wordSound: "" },
+
+  // ---------------- ব্যঞ্জনবর্ণ – consonants ----------------
+  { id: "ka",   letter: "ক", group: "consonant", name: "ko",                 word: "কলা",    english: "banana",       emoji: "🍌", letterSound: "", wordSound: "" },
+  { id: "kha",  letter: "খ", group: "consonant", name: "kho",                word: "খরগোশ",  english: "rabbit",       emoji: "🐇", letterSound: "", wordSound: "" },
+  { id: "ga",   letter: "গ", group: "consonant", name: "go",                 word: "গরু",    english: "cow",          emoji: "🐄", letterSound: "", wordSound: "" },
+  { id: "gha",  letter: "ঘ", group: "consonant", name: "gho",                word: "ঘড়ি",    english: "clock",        emoji: "⏰", letterSound: "", wordSound: "" },
+  { id: "nga",  letter: "ঙ", group: "consonant", name: "ungo",               word: "ব্যাঙ",   english: "frog",         emoji: "🐸", letterSound: "", wordSound: "" },
+  { id: "cha",  letter: "চ", group: "consonant", name: "cho",                word: "চশমা",   english: "glasses",      emoji: "👓", letterSound: "", wordSound: "" },
+  { id: "chha", letter: "ছ", group: "consonant", name: "chho",               word: "ছাতা",   english: "umbrella",     emoji: "☂️", letterSound: "", wordSound: "" },
+  { id: "ja",   letter: "জ", group: "consonant", name: "jo",                 word: "জাহাজ",  english: "ship",         emoji: "🚢", letterSound: "", wordSound: "" },
+  { id: "jha",  letter: "ঝ", group: "consonant", name: "jho",                word: "ঝুড়ি",   english: "basket",       emoji: "🧺", letterSound: "", wordSound: "" },
+  { id: "nya",  letter: "ঞ", group: "consonant", name: "nio",                word: "মিঞা",   english: "man (mia)",    emoji: "👨", letterSound: "", wordSound: "" },
+  { id: "tta",  letter: "ট", group: "consonant", name: "To",                 word: "টমেটো",  english: "tomato",       emoji: "🍅", letterSound: "", wordSound: "" },
+  { id: "ttha", letter: "ঠ", group: "consonant", name: "Tho",                word: "ঠোঁট",    english: "lips",         emoji: "👄", letterSound: "", wordSound: "" },
+  { id: "dda",  letter: "ড", group: "consonant", name: "Do",                 word: "ডাব",    english: "green coconut", emoji: "🥥", letterSound: "", wordSound: "" },
+  { id: "ddha", letter: "ঢ", group: "consonant", name: "Dho",                word: "ঢোল",    english: "drum",         emoji: "🥁", letterSound: "", wordSound: "" },
+  { id: "nna",  letter: "ণ", group: "consonant", name: "murdhonno no",       word: "হরিণ",   english: "deer",         emoji: "🦌", letterSound: "", wordSound: "" },
+  { id: "ta",   letter: "ত", group: "consonant", name: "to",                 word: "তরমুজ",  english: "watermelon",   emoji: "🍉", letterSound: "", wordSound: "" },
+  { id: "tha",  letter: "থ", group: "consonant", name: "tho",                word: "থালা",   english: "plate",        emoji: "🍽️", letterSound: "", wordSound: "" },
+  { id: "da",   letter: "দ", group: "consonant", name: "do",                 word: "দাঁত",    english: "tooth",        emoji: "🦷", letterSound: "", wordSound: "" },
+  { id: "dha",  letter: "ধ", group: "consonant", name: "dho",                word: "ধান",    english: "rice plant",   emoji: "🌾", letterSound: "", wordSound: "" },
+  { id: "na",   letter: "ন", group: "consonant", name: "donto no",           word: "নৌকা",   english: "boat",         emoji: "⛵", letterSound: "", wordSound: "" },
+  { id: "pa",   letter: "প", group: "consonant", name: "po",                 word: "পাখি",   english: "bird",         emoji: "🐦", letterSound: "", wordSound: "" },
+  { id: "pha",  letter: "ফ", group: "consonant", name: "pho",                word: "ফুল",    english: "flower",       emoji: "🌸", letterSound: "", wordSound: "" },
+  { id: "ba",   letter: "ব", group: "consonant", name: "bo",                 word: "বল",     english: "ball",         emoji: "⚽", letterSound: "", wordSound: "" },
+  { id: "bha",  letter: "ভ", group: "consonant", name: "bho",                word: "ভালুক",  english: "bear",         emoji: "🐻", letterSound: "", wordSound: "" },
+  { id: "ma",   letter: "ম", group: "consonant", name: "mo",                 word: "মাছ",    english: "fish",         emoji: "🐟", letterSound: "", wordSound: "" },
+  { id: "ya",   letter: "য", group: "consonant", name: "ontostho jo",        word: "যমজ",    english: "twins",        emoji: "👬", letterSound: "", wordSound: "" },
+  { id: "ra",   letter: "র", group: "consonant", name: "ro",                 word: "রকেট",   english: "rocket",       emoji: "🚀", letterSound: "", wordSound: "" },
+  { id: "la",   letter: "ল", group: "consonant", name: "lo",                 word: "লেবু",    english: "lemon",        emoji: "🍋", letterSound: "", wordSound: "" },
+  { id: "sha",  letter: "শ", group: "consonant", name: "talobbo sho",        word: "শসা",    english: "cucumber",     emoji: "🥒", letterSound: "", wordSound: "" },
+  { id: "ssa",  letter: "ষ", group: "consonant", name: "murdhonno sho",      word: "ষাঁড়",    english: "bull",         emoji: "🐂", letterSound: "", wordSound: "" },
+  { id: "sa",   letter: "স", group: "consonant", name: "donto so",           word: "সূর্য",   english: "sun",          emoji: "☀️", letterSound: "", wordSound: "" },
+  { id: "ha",   letter: "হ", group: "consonant", name: "ho",                 word: "হাঁস",    english: "duck",         emoji: "🦆", letterSound: "", wordSound: "" },
+  { id: "rra",  letter: "ড়", group: "consonant", name: "Ro (doshunno ro)",   word: "গাড়ি",   english: "car",          emoji: "🚗", letterSound: "", wordSound: "" },
+  { id: "rha",  letter: "ঢ়", group: "consonant", name: "Rho",                word: "আষাঢ়",   english: "Asharh (rainy month)", emoji: "🌧️", letterSound: "", wordSound: "" },
+  { id: "yya",  letter: "য়", group: "consonant", name: "ontostho o",         word: "ময়ূর",   english: "peacock",      emoji: "🦚", letterSound: "", wordSound: "" },
+  { id: "khta", letter: "ৎ", group: "consonant", name: "khondo to",          word: "শরৎ",    english: "autumn",       emoji: "🍂", letterSound: "", wordSound: "" },
+  { id: "anu",  letter: "ং", group: "consonant", name: "onushshar",          word: "রং",     english: "colour",       emoji: "🎨", letterSound: "", wordSound: "" },
+  { id: "bis",  letter: "ঃ", group: "consonant", name: "bishorgo",           word: "দুঃখ",   english: "sad",          emoji: "😢", letterSound: "", wordSound: "" },
+  { id: "chan", letter: "ঁ", group: "consonant", name: "chondrobindu",       word: "চাঁদ",    english: "moon",         emoji: "🌙", letterSound: "", wordSound: "" }
 ];

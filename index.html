@@ -1,8 +1,9 @@
 <!doctype html>
 <!--
   index.html – the page that holds the whole game.
-  Every screen is a <section class="screen">. script.js shows one at a time.
-  Open this file in a browser to play (no internet needed).
+  Every screen is a <section class="screen">; script.js shows one at a time.
+  Texts marked data-i18n="key" are filled in from assets/strings.js
+  (Bangla or English). Open this file in a browser to play – no internet needed.
 -->
 <html lang="bn">
 <head>
@@ -20,31 +21,35 @@
 
   <!-- ============ HOME ============ -->
   <section id="screen-home" class="screen">
-    <button class="btn parents-btn" data-action="parents">👪 Parents</button>
+    <div class="home-top">
+      <button class="btn small-btn grey" data-action="toggle-lang">🌐 <span data-i18n="langSwitch">English</span></button>
+      <button class="btn small-btn grey" data-action="parents">👪 <span data-i18n="parents">অভিভাবক</span></button>
+    </div>
     <div>
       <h1 class="title">বর্ণ</h1>
-      <p class="subtitle">Borno · বাংলা বর্ণ শিখি</p>
+      <p class="subtitle" data-i18n="appSub">বাংলা বর্ণ শিখি</p>
     </div>
     <div>
-      <div class="star-count"><span>⭐</span><span id="home-stars">0</span></div>
+      <div class="star-count"><span>⭐</span><span id="home-stars">০</span></div>
       <div id="sticker-row" class="sticker-row"></div>
       <p id="next-sticker" class="small"></p>
+      <p id="learned" class="small"></p>
     </div>
     <div class="menu">
-      <button class="btn big-btn orange" data-action="trace"><span class="emoji">✏️</span> <span class="bn">লিখি</span> <small>Trace</small></button>
+      <button class="btn big-btn orange" data-action="trace"><span class="emoji">✏️</span> <span data-i18n="trace">লিখি</span></button>
       <div class="menu-row">
-        <button class="btn big-btn blue" data-action="letters"><span class="bn">অ আ</span> <small>Letters</small></button>
-        <button class="btn big-btn green" data-action="games"><span class="emoji">🎈</span> <small>Games</small></button>
+        <button class="btn big-btn blue" data-action="letters"><span class="emoji bn-glyph">অ</span> <span data-i18n="letters">বর্ণমালা</span></button>
+        <button class="btn big-btn green" data-action="games"><span class="emoji">🎈</span> <span data-i18n="games">খেলা</span></button>
       </div>
     </div>
-    <p class="small">No ads · no internet needed</p>
+    <p class="small" data-i18n="footer">বিজ্ঞাপন নেই · ইন্টারনেট লাগে না</p>
   </section>
 
   <!-- ============ LETTER SELECT ============ -->
   <section id="screen-letters" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="home">⬅ Back</button>
-      <h2 class="bn">বর্ণ</h2>
+      <button class="btn back-btn" data-action="home">⬅ <span data-i18n="back">ফিরি</span></button>
+      <h2 data-i18n="letters">বর্ণমালা</h2>
       <span class="spacer"></span>
     </div>
     <div id="letter-grid" class="letter-grid"></div>
@@ -53,12 +58,12 @@
   <!-- ============ TRACING ============ -->
   <section id="screen-trace" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="trace-back">⬅ Back</button>
+      <button class="btn back-btn" data-action="trace-back">⬅ <span data-i18n="back">ফিরি</span></button>
       <button id="trace-letter" class="big-letter" data-action="say-letter" aria-label="Hear the letter">অ</button>
       <button class="btn sound-btn" data-action="say-letter" aria-label="Hear the letter">🔊</button>
     </div>
     <button class="word-card" data-action="say-word" aria-label="Hear the word">
-      <img id="trace-picture" src="assets/images/ojogor.png" alt="">
+      <span id="trace-picture" class="pic">🐍</span>
       <span>
         <span id="trace-word" class="word">অজগর</span><br>
         <span id="trace-english" class="english">python</span>
@@ -66,37 +71,43 @@
     </button>
     <div id="board-wrap" class="board-wrap">
       <canvas id="board" aria-label="Trace the letter here"></canvas>
-      <div id="trace-hint" class="hint">✋ Trace the letter with your finger</div>
+      <div id="trace-hint" class="hint" data-i18n="hint">✋ আঙুল দিয়ে বর্ণটি লেখো</div>
     </div>
     <div class="controls">
-      <button class="btn red" data-action="clear">🧽 Clear</button>
-      <button id="done-btn" class="btn green" data-action="done" disabled>✔ Done</button>
+      <button class="btn red" data-action="clear">🧽 <span data-i18n="clear">মুছি</span></button>
+      <button id="done-btn" class="btn green" data-action="done" disabled>✔ <span data-i18n="done">হয়েছে</span></button>
     </div>
   </section>
 
   <!-- ============ GAMES MENU ============ -->
   <section id="screen-games" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="home">⬅ Back</button>
-      <h2>Games</h2>
+      <button class="btn back-btn" data-action="home">⬅ <span data-i18n="back">ফিরি</span></button>
+      <h2 data-i18n="games">খেলা</h2>
       <span class="spacer"></span>
     </div>
     <div class="games-list">
-      <button class="btn game-card blue" data-action="match">🖼️ Letter Match <small>Find the first letter</small></button>
-      <button class="btn game-card pink" data-action="balloon">🎈 Balloon Pop <small>Pop the right letter</small></button>
+      <button class="btn game-card blue" data-action="match">
+        <span>🖼️ <span data-i18n="match">প্রথম বর্ণ</span></span>
+        <small data-i18n="matchHint">ছবির শব্দটি কোন বর্ণ দিয়ে শুরু?</small>
+      </button>
+      <button class="btn game-card pink" data-action="balloon">
+        <span>🎈 <span data-i18n="balloon">বেলুন ফাটাও</span></span>
+        <small data-i18n="balloonHint">ঠিক বর্ণের বেলুন ফাটাও</small>
+      </button>
     </div>
   </section>
 
   <!-- ============ LETTER MATCH ============ -->
   <section id="screen-match" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="games">⬅ Back</button>
+      <button class="btn back-btn" data-action="games">⬅ <span data-i18n="back">ফিরি</span></button>
       <div id="match-dots" class="dots"></div>
     </div>
     <button id="match-prompt" class="prompt" data-action="say-match" aria-label="Hear the word">
-      <img id="match-picture" src="assets/images/aam.png" alt="">
+      <span id="match-picture" class="pic big">🥭</span>
       <span id="match-word" class="word"></span>
-      <span class="question">Which letter does it start with?</span>
+      <span class="question" data-i18n="matchQ">শব্দটি কোন বর্ণ দিয়ে শুরু?</span>
     </button>
     <div id="match-options" class="options"></div>
   </section>
@@ -104,9 +115,9 @@
   <!-- ============ BALLOON POP ============ -->
   <section id="screen-balloon" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="games">⬅ Back</button>
+      <button class="btn back-btn" data-action="games">⬅ <span data-i18n="back">ফিরি</span></button>
       <span class="spacer"></span>
-      <span class="pop-label">Pop</span>
+      <span class="pop-label" data-i18n="pop">ফাটাও</span>
       <button id="balloon-target" class="btn target" data-action="say-target">ক</button>
       <span class="spacer"></span>
     </div>
@@ -117,62 +128,61 @@
   <!-- ============ PARENT PAGE ============ -->
   <section id="screen-parent" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="home">⬅ Back</button>
-      <h2>For parents</h2>
+      <button class="btn back-btn" data-action="home">⬅ <span data-i18n="back">ফিরি</span></button>
+      <h2 data-i18n="parentTitle">অভিভাবকদের জন্য</h2>
       <span class="spacer"></span>
     </div>
     <div class="parent-body">
       <section>
-        <h3>Progress</h3>
+        <h3 data-i18n="progress">অগ্রগতি</h3>
         <p id="parent-summary"></p>
         <div id="parent-letters"></div>
       </section>
       <section>
-        <h3>Settings</h3>
+        <h3 data-i18n="settings">সেটিংস</h3>
         <div class="settings">
-          <button id="sound-toggle" class="btn blue" data-action="toggle-sound">🔊 Sound: On</button>
-          <button id="voice-toggle" class="btn teal" data-action="toggle-voice">🗣️ Device voice: On</button>
+          <button id="lang-toggle" class="btn purple" data-action="toggle-lang">🌐</button>
+          <button id="sound-toggle" class="btn blue" data-action="toggle-sound">🔊</button>
+          <button id="voice-toggle" class="btn teal" data-action="toggle-voice">🗣️</button>
           <p id="voice-status" class="small"></p>
         </div>
       </section>
       <section>
-        <h3>Record letter sounds</h3>
-        <p class="small">Record your own voice for each letter and word (2 seconds each).
-          Recordings stay only in this browser on this device.</p>
+        <h3 data-i18n="record">বর্ণের শব্দ রেকর্ড করুন</h3>
+        <p class="small" data-i18n="recordInfo"></p>
         <p id="rec-status" class="small"></p>
         <div id="rec-list"></div>
       </section>
       <section>
-        <h3>Reset</h3>
-        <button id="reset-btn" class="btn red" data-action="reset">Delete all progress</button>
+        <h3 data-i18n="reset">রিসেট</h3>
+        <button id="reset-btn" class="btn red" data-action="reset" data-i18n="resetBtn">সব অগ্রগতি মুছুন</button>
       </section>
-      <p class="privacy">Borno has no ads, no accounts and no internet connection. It
-        collects no data. Progress and recordings are saved only in this browser.</p>
+      <p class="privacy" data-i18n="privacy"></p>
     </div>
   </section>
 
   <!-- ============ PARENT GATE (pop-up) ============ -->
   <div id="gate" class="overlay hidden">
     <div class="card">
-      <h3>Grown-ups only</h3>
-      <p class="small">Please answer to open the parent page:</p>
-      <div id="gate-q" class="gate-q">7 + 8 = ?</div>
+      <h3 data-i18n="gateTitle">শুধু বড়দের জন্য</h3>
+      <p class="small" data-i18n="gateHint">অভিভাবক পাতা খুলতে উত্তর দিন:</p>
+      <div id="gate-q" class="gate-q">৭ + ৮ = ?</div>
       <div id="gate-choices" class="gate-choices"></div>
-      <div class="card-buttons"><button class="btn grey" data-action="home">Cancel</button></div>
+      <div class="card-buttons"><button class="btn grey" data-action="home" data-i18n="cancel">বাতিল</button></div>
     </div>
   </div>
 
   <!-- ============ RESULT CARD (pop-up) ============ -->
   <div id="result" class="overlay hidden">
     <div class="card">
-      <h3 id="result-title">Excellent!</h3>
+      <h3 id="result-title"></h3>
       <div class="result-stars"><span>★</span><span>★</span><span>★</span></div>
       <p id="result-detail" class="result-detail"></p>
       <p id="result-extra" class="result-extra"></p>
       <div class="card-buttons">
-        <button class="btn blue" data-action="again">↻ Again</button>
-        <button class="btn purple" data-action="result-home">🏠 Home</button>
-        <button id="result-next" class="btn green" data-action="next">Next ➜</button>
+        <button class="btn blue" data-action="again">↻ <span data-i18n="again">আবার</span></button>
+        <button class="btn purple" data-action="result-home">🏠 <span data-i18n="home">শুরুতে</span></button>
+        <button id="result-next" class="btn green" data-action="next"><span data-i18n="next">পরেরটি</span> ➜</button>
       </div>
     </div>
   </div>
@@ -181,6 +191,7 @@
 </div>
 
 <script src="assets/letters.js"></script>
+<script src="assets/strings.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
