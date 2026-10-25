@@ -5,15 +5,15 @@ file in `assets/` must be listed here with its source and licence.
 
 | File(s) | Source | Licence |
 |---------|--------|---------|
-| `assets/images/*.png` (ojogor, aam, it, igol, ut, kola, khata, gach, ghor, choshma) | Drawn from basic shapes by `tools/make-placeholder-art.ps1`, made for this project | Original, CC0 |
-| `assets/images/icon.png` | Same script (shapes only, no font) | Original, CC0 |
-| Backup letter shapes (`strokes` in `assets/letters.js`) | Written by hand for this project | Original, CC0 |
+| `assets/fonts/BalooDa2.ttf` | **Baloo Da 2** by Ek Type, from Google Fonts' official repository (github.com/google/fonts, `ofl/balooda2`), downloaded 2026-10-25 | **SIL Open Font License 1.1** – free to use, embed and share; licence text in `assets/fonts/OFL.txt` (must stay next to the font) |
+| `assets/images/icon.png` | Drawn from basic shapes (stars, line) by a script made for this project | Original, CC0 |
+| Word pictures | **Emoji** – drawn by the device's own emoji font (Windows, Android, iPhone). No picture files are shipped | System emoji, used as text characters |
 | Sound effects (pop, chime, …) | Generated in the browser with the Web Audio API (`script.js`) | Original |
+| Letter list, words, texts (`letters.js`, `strings.js`) | Written for this project (example words follow the classic Bangla primer tradition) | Original |
 
 **Not included (on purpose):**
-- **Fonts** – the game uses the Bangla font already installed on the device
-  (Nirmala UI on Windows, Noto Sans Bengali on Android, Kohinoor Bangla on
-  iPhone). Nothing is downloaded.
 - **Voice recordings** – parents record their own voice in the game (stored
   only in the browser), or add files to `assets/sounds/` (list them here,
   e.g. "recorded by … for this project – own work").
+- Earlier placeholder pictures (CC0, drawn by script) were replaced by emoji;
+  they are still in the git history.

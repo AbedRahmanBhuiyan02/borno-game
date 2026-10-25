@@ -4,14 +4,19 @@ A small, offline web game that helps children aged 3–6 learn the Bangla
 alphabet. Plain **HTML + CSS + JavaScript** – no game engine, no build
 tools, no internet, no external services.
 
-- ✏️ **Trace** a letter with a finger (or mouse) → 1 to 3 stars
-- 🔤 **Letters** – pick any of the 10 letters: অ আ ই ঈ উ ক খ গ ঘ চ
-- 🖼️ **Letter Match** – which letter does the word start with?
-- 🎈 **Balloon Pop** – pop the balloons with the right letter
+- 🔤 **All 50 letters**: 11 স্বরবর্ণ (vowels) + 39 ব্যঞ্জনবর্ণ (consonants),
+  each with an example word and picture (অ – অজগর 🐍, ক – কলা 🍌, …)
+- ✏️ **লিখি / Trace** a letter with a finger (or mouse) → 1 to 3 stars
+- 📚 Letters open **step by step**: a child starts with অ আ ই ঈ উ ঊ; every
+  letter learned (2+ stars) opens the next one
+- 🖼️ **প্রথম বর্ণ / Letter Match** – which letter does the word start with?
+- 🎈 **বেলুন ফাটাও / Balloon Pop** – pop the balloons with the right letter
 - 🧠 Letters the child finds hard come back more often
 - ⭐ Stars and 7 stickers, saved in the browser
-- 👪 **Parent page** (behind a "7 + 8 = ?" question): progress, sound on/off,
-  **record your own voice** for every letter and word, reset
+- 🇧🇩 **Bangla interface** (with Bangla numbers ০১২…) – 🌐 button switches to English
+- 🔠 Round, child-friendly font **Baloo Da 2** included – same letters on every device
+- 👪 **Parent page** (behind a "৭ + ৮ = ?" question): progress, sound on/off,
+  language, **record your own voice** for every letter and word, reset
 
 No ads, no tracking, no accounts, no data leaves the device.
 
@@ -43,11 +48,11 @@ python -m http.server 8000
 ## How to play
 | Screen | What to do |
 |--------|-----------|
-| Home | **লিখি / Trace** = trace a letter · **অ আ / Letters** = choose a letter · **🎈 Games** · small **👪 Parents** button |
-| Tracing | Trace the grey letter, then press **✔ Done** → stars. **🧽 Clear** erases. Tap the letter or 🔊 to hear it, tap the picture to hear the word |
-| Letter Match | Tap the letter the word starts with |
-| Balloon Pop | Pop only the balloons with the letter shown at the top |
-| Parents | Answer the sum, see progress, record voices, switch sound off, reset |
+| Home | **লিখি** = the game picks a letter to trace · **বর্ণমালা** = choose any of the 50 letters · **খেলা** = games · **👪 অভিভাবক** = parents · **🌐** = Bangla/English |
+| Tracing | Trace the grey letter, then press **✔ হয়েছে (Done)** → stars. **🧽 মুছি (Clear)** erases. Tap the letter or 🔊 to hear it, tap the picture to hear the word |
+| প্রথম বর্ণ | Tap the letter the word starts with |
+| বেলুন ফাটাও | Pop only the balloons with the letter shown at the top |
+| অভিভাবক | Answer the sum, see progress, record voices, sound/language, reset |
 
 ## Sounds (letters and words)
 The pop / chime sound effects are made by code and always work. For the
@@ -69,15 +74,17 @@ script.js           all game logic (tracing check, stars, games, sounds...)
 sw.js               optional: keeps the game working offline when it is
                     opened from a web server (option B / a website)
 assets/
-  letters.js        ALL letter content (letter, word, picture, sounds)
-  images/           pictures for the words + app icon (icon.png)
+  letters.js        ALL 50 letters (letter, word, emoji picture, sounds)
+  strings.js        ALL texts of the game in Bangla and English
+  fonts/            Baloo Da 2 font + its licence (OFL.txt)
+  images/icon.png   app icon
   sounds/letters/   optional voice files for letters   (empty for now)
   sounds/words/     optional voice files for words      (empty for now)
 tests/
   unit.html         automatic checks of the game rules – open in a browser
   e2e.html          plays the whole game automatically (see notes in file)
-tools/
-  make-placeholder-art.ps1   (Windows) re-draws the simple pictures
+  calibrate.html    helps choose the tracing settings (see DECISIONS.md)
+  helpers.js        shared code for the test pages
 ```
 
 **How the tracing check works** (in `script.js`, section 3): the letter and
@@ -87,16 +94,13 @@ the child's line are drawn into small black-and-white pictures.
 - ⭐⭐⭐ = both ≥ 80% · ⭐⭐ = both ≥ 60% · ⭐ = coverage ≥ 25% · otherwise "try again"
 - a drawing more than 2.5× longer than the letter counts as scribbling → max ⭐
 
-The letters are drawn with the Bangla font that is already on the device
-(Windows: Nirmala UI, Android: Noto Sans Bengali, iPhone: Kohinoor Bangla).
-If a device has no Bangla font, simple backup shapes from `letters.js` are
-used instead (try it with `index.html?strokes=1`).
-
-## Adding a letter
-Copy one block in `assets/letters.js`, change `id`, `letter`, `word`,
-`english`, `picture`, and put the picture in `assets/images/`. No other
-change needed – the letter appears in tracing, the grid, both games and the
-parent page.
+## Changing letters or texts
+- **Letters:** edit one line in `assets/letters.js` (word, English, emoji).
+  To add a picture file instead of the emoji, put it in `assets/images/` and
+  add `picture: "assets/images/name.png"` to that letter.
+- **Texts:** edit `assets/strings.js` (Bangla `bn` and English `en`).
+- No other change needed – everything appears in tracing, the letter grid,
+  both games and the parent page.
 
 ## Checking for errors
 - Open **`tests/unit.html`** in your browser → it must say **✅ ALL PASSED**.

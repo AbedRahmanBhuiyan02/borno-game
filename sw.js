@@ -9,7 +9,7 @@
   If you change any game file, change the number in CACHE below so
   browsers fetch the new version.
 */
-var CACHE = 'borno-v1';
+var CACHE = 'borno-v2';
 
 var FILES = [
   './',
@@ -17,17 +17,9 @@ var FILES = [
   'style.css',
   'script.js',
   'assets/letters.js',
-  'assets/images/icon.png',
-  'assets/images/ojogor.png',
-  'assets/images/aam.png',
-  'assets/images/it.png',
-  'assets/images/igol.png',
-  'assets/images/ut.png',
-  'assets/images/kola.png',
-  'assets/images/khata.png',
-  'assets/images/gach.png',
-  'assets/images/ghor.png',
-  'assets/images/choshma.png'
+  'assets/strings.js',
+  'assets/fonts/BalooDa2.ttf',
+  'assets/images/icon.png'
 ];
 
 self.addEventListener('install', function (event) {

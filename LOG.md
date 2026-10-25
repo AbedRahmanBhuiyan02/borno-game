@@ -373,3 +373,35 @@ external APIs, offline, kid-friendly, responsive.
 - Screenshots of all screens (phone + desktop) checked by eye.
 - Not tested: real phones, real finger feel, microphone recording (needs a
   person to allow the microphone), Firefox/Safari (only Edge = Chromium).
+
+---
+
+## Font, all 50 letters, Bangla interface (2026-10-25)
+You chose improvements #1, #2 and #6.
+
+**Done**
+- #1 **Font:** downloaded Baloo Da 2 (SIL OFL, 441 KB) from Google Fonts'
+  official repository into `assets/fonts/` with `OFL.txt`. Used for all
+  text and for drawing/checking the letters. Checked: it loads when
+  `index.html` is opened from disk.
+- #2 **All 50 letters** (11 vowels + 39 consonants) with classic primer
+  words and emoji pictures; letters open step by step (start with 6, each
+  learned letter opens one more); letter grid with স্বরবর্ণ / ব্যঞ্জনবর্ণ.
+- #6 **Bangla interface** with Bangla digits; 🌐 English switch; all texts in
+  the new `assets/strings.js`.
+- Problems found by the tests and fixed:
+  - With the thicker font, tracing the WRONG letter often got 3★ → tuned
+    tolerance 7.5% → 5% and weight 500 using the new `tests/calibrate.html`
+    (wrong-letter 3★: 80/380 → 18/380 look-alikes only).
+  - ঁ ং ঃ showed a dotted circle → no-break space in front.
+  - ঁ was scaled up so much its lines were too thick to trace → marks are
+    never drawn bigger than ক.
+- Removed: backup stroke shapes, the 10 placeholder PNG pictures and their
+  script (emoji now), the `?strokes=1` mode.
+
+**Tested (headless Edge)**
+- `tests/unit.html` **54/54** (perfect trace of all 50 letters = 3★,
+  scribble ≤ 1★, wrong letter < 3★, learning order, texts, progress, games).
+- `tests/e2e.html` **42/42** phone and desktop, twice each (incl. language
+  switch, Bangla digits, 50 tiles, both games, parent page).
+- Screenshots of all screens checked by eye (Bangla text, emoji, marks).

@@ -132,6 +132,9 @@ button:focus-visible { outline: 4px solid #2b59c3; outline-offset: 2px; }
   background: #b9bdcc;
 }
 .bn-glyph { font-family: var(--bangla); }
+/* ঁ alone floats high (it normally sits on top of a letter): move it down */
+span.mark-high, .big-letter.mark-high { display: inline-block; transform: translateY(0.38em); }
+.balloon.mark-high, .target.mark-high { padding-top: 0.5em; }
 .title {
   margin: 0;
   font-family: var(--bangla);

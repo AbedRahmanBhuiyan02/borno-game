@@ -53,28 +53,9 @@
     if (STOP === name) { document.title = 'STOPPED at ' + name; throw 'stopped'; }
   }
 
-  /** Strokes along the centre line of the letter (a perfect trace). */
-  function perfectTrace(letter) {
-    var n = B.SCORE.grid, m = B.maskMargin(), size = B.maskSize();
-    var sk = B.skeleton(B.letterMasks(letter).shape, size);
-    var out = [];
-    for (var y = 0; y < size; y++) for (var x = 0; x < size; x++) {
-      if (!sk[y * size + x]) continue;
-      [[1, 0], [0, 1], [1, 1], [-1, 1]].forEach(function (d) {
-        var x2 = x + d[0], y2 = y + d[1];
-        if (x2 >= 0 && x2 < size && y2 < size && sk[y2 * size + x2]) {
-          out.push([{ x: (x - m + 0.5) / n, y: (y - m + 0.5) / n }, { x: (x2 - m + 0.5) / n, y: (y2 - m + 0.5) / n }]);
-        }
-      });
-    }
-    return out;
-  }
-
-  function zigzag() {
-    var pts = [];
-    for (var i = 0; i <= 20; i++) pts.push({ x: i % 2 ? 1 : 0, y: i / 20 });
-    return [pts];
-  }
+  /** A perfect trace along the centre line of the letter (see helpers.js). */
+  function perfectTrace(letter) { return window.BornoTest.perfectTrace(B, letter); }
+  var zigzag = window.BornoTest.zigzag;
 
   function noSideScroll() {
     return D.documentElement.scrollWidth <= D.documentElement.clientWidth + 1;
@@ -89,7 +70,7 @@
     return new Promise(function (resolve) {
       try { localStorage.removeItem('borno.progress.v1'); } catch (e) { /* ignore */ }
       frame.onload = function () { resolve(); };
-      frame.src = '../index.html' + (params.get('strokes') === '1' ? '?strokes=1' : '');
+      frame.src = '../index.html';
     });
   }
 
@@ -102,16 +83,24 @@
       W.addEventListener('unhandledrejection', function (e) { errors.push('promise: ' + e.reason); });
       try { W.localStorage.removeItem('borno.progress.v1'); } catch (e) { /* ignore */ }
       B = W.Borno;
-      return wait(300);
+      return B.ready.then(function () { return wait(300); });
     }).then(function () {
       /* ---- home ---- */
       check('game starts on the home screen', active() === 'home');
-      check('home shows 0 stars and 7 stickers', D.getElementById('home-stars').textContent === '0' &&
+      check('the game font Baloo Da 2 is loaded', D.fonts.check('500 40px "Baloo Da 2"', 'অ'));
+      check('home shows 0 stars and 7 stickers', D.getElementById('home-stars').textContent === '০' &&
             D.querySelectorAll('.sticker').length === 7);
+      check('home is in Bangla by default', D.documentElement.lang === 'bn' &&
+            /লিখি/.test(D.querySelector('[data-action="trace"]').textContent));
       check('no sideways scrolling on home', noSideScroll());
-      if (params.get('strokes') === '1') check('backup letter pictures are used (?strokes=1)', !B.useFontShapes());
-      else check('Bangla font is used for letters', B.useFontShapes());
       stopHere('home');
+      click('[data-action="toggle-lang"]');
+      check('🌐 switches the game to English', D.documentElement.lang === 'en' &&
+            /Trace/.test(D.querySelector('[data-action="trace"]').textContent) &&
+            D.getElementById('home-stars').textContent === '0');
+      stopHere('home-en');
+      click('[data-action="toggle-lang"]');
+      check('🌐 switches back to Bangla', /লিখি/.test(D.querySelector('[data-action="trace"]').textContent));
 
       /* ---- trace a letter perfectly ---- */
       click('[data-action="trace"]');
@@ -143,16 +132,18 @@
       return wait(300);
     }).then(function () {
       check('Back returns home and shows 3 stars', active() === 'home' &&
-            D.getElementById('home-stars').textContent === '3');
+            D.getElementById('home-stars').textContent === '৩');
       check('first sticker unlocked at 3 stars', D.querySelectorAll('.sticker.got').length === 1);
 
       /* ---- letter grid + scribble ---- */
       click('[data-action="letters"]');
       return wait(300);
     }).then(function () {
-      check('letter grid shows 10 letters', D.querySelectorAll('#letter-grid .tile').length === 10);
+      check('letter grid shows all 50 letters in 2 groups', D.querySelectorAll('#letter-grid .tile').length === 50 && D.querySelectorAll('#letter-grid .group-title').length === 2);
       check('no sideways scrolling on letter grid', noSideScroll());
       stopHere('letters');
+      if (STOP === 'letters-end') { D.getElementById('letter-grid').scrollTop = 99999; stopHere('letters-end'); }
+      if (STOP === 'trace-mark') { click('.tile[data-id="chan"]'); stopHere('trace-mark'); }
       click('.tile[data-id="ka"]');
       return wait(400);
     }).then(function () {
@@ -189,7 +180,7 @@
     }).then(function () {
       check('Letter Match opens with 4 choices', active() === 'match' &&
             D.querySelectorAll('#match-options .option').length === 4);
-      if (B.useFontShapes()) check('the word shows its first letter in colour', D.querySelector('#match-word .hl') !== null);
+      check('the word shows its first letter in colour', D.querySelector('#match-word .hl') !== null);
       check('no sideways scrolling on Letter Match', noSideScroll());
       stopHere('match');
       // answer one wrong, then all right
@@ -262,11 +253,11 @@
       return wait(400);
     }).then(function () {
       check('right answer opens the parent page', active() === 'parent');
-      check('parent page lists 10 letters', D.querySelectorAll('#parent-letters .stat-row').length === 10);
+      check('parent page lists all 50 letters', D.querySelectorAll('#parent-letters .stat-row').length === 50);
       check('parent page shows the weak letter ক', /ক/.test(D.getElementById('parent-summary').textContent));
       stopHere('parent');
       click('[data-action="toggle-sound"]');
-      check('sound can be switched off', /Off/.test(D.getElementById('sound-toggle').textContent) &&
+      check('sound can be switched off', D.getElementById('sound-toggle').textContent.indexOf(B.t('off')) >= 0 &&
             B.app.progress.settings.sound === false);
       click('[data-action="toggle-sound"]');
       click('[data-action="reset"]');
@@ -275,7 +266,7 @@
       click('[data-action="home"]');
       return wait(200);
     }).then(function () {
-      check('home shows 0 stars after reset', D.getElementById('home-stars').textContent === '0');
+      check('home shows 0 stars after reset', D.getElementById('home-stars').textContent === '০');
       check('no JavaScript errors in the game', errors.length === 0, errors.join(' | '));
     });
   }

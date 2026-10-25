@@ -1,0 +1,55 @@
+<!doctype html>
+<!--
+  calibrate.html – helps to choose the tracing settings (font weight and
+  tolerance in script.js). For each setting it shows:
+    perfect  how many of the 50 letters get 3 stars when traced perfectly
+    wobble   ... when the trace is 3.5% off to the side
+    WRONG    how often tracing a DIFFERENT letter still gets 3 stars (should be rare)
+  Takes about a minute. Open in Chrome/Edge.
+-->
+<html><head><meta charset="utf-8"><title>calibrating…</title>
+<style>@font-face { font-family: "Baloo Da 2"; src: url("../assets/fonts/BalooDa2.ttf"); font-weight: 400 800; }
+body { font-family: system-ui, sans-serif; }</style></head>
+<body><h1>Borno – tracing calibration</h1><pre id="out">running… (about a minute)</pre>
+<script src="../assets/letters.js"></script>
+<script src="../assets/strings.js"></script>
+<script src="../script.js"></script>
+<script src="helpers.js"></script>
+<script>
+(function () {
+  var B = window.Borno, H = window.BornoTest, out = [];
+  var configs = [[400, 0.055], [500, 0.05], [500, 0.055], [500, 0.06]];
+  B.ready.then(function () {
+    var L = B.LETTERS, sub = L.slice(0, 20);
+    configs.forEach(function (cfg) {
+      B.setLetterWeight(cfg[0]);
+      B.SCORE.tolerance = cfg[1];
+      B.clearCaches();
+      var traces = {};
+      L.forEach(function (l) { traces[l.id] = H.perfectTrace(B, l); });
+      var p3 = 0, minCov = 1, failed = '';
+      L.forEach(function (l) {
+        var r = B.scoreTrace(l, traces[l.id]);
+        if (r.stars === 3) p3++; else failed += l.letter;
+        minCov = Math.min(minCov, r.coverage);
+      });
+      var w3 = 0;
+      L.forEach(function (l) { if (B.scoreTrace(l, H.shift(traces[l.id], 0.035, 0.02)).stars === 3) w3++; });
+      var c3 = 0, c2 = 0, pairs = 0, which = [];
+      sub.forEach(function (a) { sub.forEach(function (b) {
+        if (a === b) return;
+        pairs++;
+        var r = B.scoreTrace(a, traces[b.id]);
+        if (r.stars === 3) { c3++; which.push(b.letter + '→' + a.letter); }
+        if (r.stars >= 2) c2++;
+      }); });
+      out.push('weight ' + cfg[0] + ', tolerance ' + cfg[1] + ':\n' +
+               '   perfect 3★ ' + p3 + '/50 (lowest coverage ' + Math.round(minCov * 100) + '%' + (failed ? ', fails: ' + failed : '') + ')\n' +
+               '   wobble 3★ ' + w3 + '/50\n' +
+               '   WRONG letter 3★ ' + c3 + '/' + pairs + ', 2★+ ' + c2 + '/' + pairs + '  ' + which.join(' '));
+    });
+    document.getElementById('out').textContent = out.join('\n\n');
+    document.title = 'CALIBRATION DONE';
+  });
+})();
+</script></body></html>
