@@ -151,6 +151,11 @@ window.BORNO_STRINGS = {
 
     // sound test
     soundTest: "🔊 শব্দ পরীক্ষা",
+
+    // home menu subtitles
+    traceHint: "আঙুল দিয়ে বর্ণ লেখো",
+    lettersHint: "সব বর্ণ ও সংখ্যা",
+    gamesHint: "৪টি মজার খেলা",
     sndRunning: "শুনুন… (একটা সুর, তারপর «অ»)",
     sndEffects: "সুর (পপ, ঘণ্টা): {v}",
     sndVoices: "কণ্ঠ: রেকর্ড করা {r}টি · গেমের সাথে {s}টি · কম্পিউটার কণ্ঠ {c}টি · ডিভাইসের বাংলা কণ্ঠ: {d}",
@@ -308,6 +313,11 @@ window.BORNO_STRINGS = {
 
     // sound test
     soundTest: "🔊 Sound test",
+
+    // home menu subtitles
+    traceHint: "Write letters with your finger",
+    lettersHint: "All letters & numbers",
+    gamesHint: "4 fun games",
     sndRunning: "Listen… (a tune, then «অ»)",
     sndEffects: "Tunes (pop, chime): {v}",
     sndVoices: "Voices: {r} recorded · {s} shipped with the game · {c} computer voice clips · device Bangla voice: {d}",

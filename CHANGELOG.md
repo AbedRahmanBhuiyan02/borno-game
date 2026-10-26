@@ -7,6 +7,20 @@ The version number is also shown on the parent page and lives in
 Numbers mean: **0.x** = still being tested; the middle number goes up for
 new features, the last number for small fixes.
 
+## 0.6.0 – 2026-10-26
+**New look** – a modern kids-app design:
+- Soft sky background, white cards, big "pressable" buttons with a coloured
+  3D edge, round icon buttons (back arrow, speaker) instead of text pills.
+- Home: owl mascot, a progress card (stars, letters learned, a bar to the
+  next sticker, sticker shelf) and menu buttons with icons and short hints.
+- Letter grid: white tiles with coloured letters and a coloured edge.
+- Tracing: dotted-paper board, cleaner header and word card.
+- Result card: big stars, the new sticker / level / medal / letter as badges,
+  "Next" as the main button.
+- Games: 4 icon cards; answer choices as white cards with coloured letters
+  (green when right, shake when wrong); progress as bars.
+- Parent page, recording session and teacher mode tidied to match.
+
 ## 0.5.1 – 2026-10-26
 - Fixed: after an update, a phone could run new and old game files mixed
   together for up to 10 minutes (the browser's own cache), so fixes did not

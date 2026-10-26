@@ -192,3 +192,13 @@ You chose a computer voice for every phone, "even if it sounds robotic".
 - **Testing limit:** the headless test browser fast-forwards timers but
   plays sound in real time, so "did it play?" is tested with a fake player;
   the real clips are checked by decoding them (length, loudness).
+
+## 0.6.0 – new look (2026-10-26)
+You asked for a more standard, modern design. Style chosen: what popular
+kids' learning apps use today – soft background, white rounded cards,
+"pressable" buttons with a darker 3D bottom edge (feels tappable for small
+fingers), round icon buttons, emoji icons in rounded squares, progress bars.
+All colours are tokens at the top of `style.css` (each colour has a darker
+"edge" shade). Icons are a tiny inline SVG set in `index.html` (back,
+speaker) – no icon files or fonts downloaded. No game logic changed; the
+tests still click the same buttons.

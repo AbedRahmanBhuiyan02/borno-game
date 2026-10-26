@@ -105,6 +105,10 @@
     }
     var next = B.Progress.nextGoal(p.totalStars);
     $('next-sticker').textContent = next < 0 ? t('allStickers') : t('nextSticker', { n: num(next) });
+    // progress bar: from the last sticker goal to the next one
+    var prev = got > 0 ? B.STICKER_GOALS[got - 1] : 0;
+    var share = next < 0 ? 1 : (p.totalStars - prev) / Math.max(1, next - prev);
+    $('sticker-bar').style.width = Math.round(B.clamp(share, 0, 1) * 100) + '%';
     $('learned').textContent = t('learned', { n: num(B.masteredCount(p, B.ALPHABET)), total: num(B.ALPHABET.length) });
   }
   B.renderHome = renderHome;
@@ -125,7 +129,7 @@
         grid.appendChild(h);
       }
       var b = el('button', 'tile');
-      b.style.background = B.TILE_COLORS[i % B.TILE_COLORS.length];
+      b.style.setProperty('--tile', B.TILE_COLORS[i % B.TILE_COLORS.length]);
       b.dataset.action = 'pick';
       b.dataset.id = l.id;
       b.setAttribute('aria-label', l.name + ' – ' + l.english);
@@ -308,7 +312,12 @@
       if (i < stars) spans[i].classList.add('on');
     }
     $('result-detail').textContent = detail || '';
-    $('result-extra').textContent = extra || '';
+    // extras (new sticker, level up, medal, new letter) as small badges
+    var box = $('result-extra');
+    box.textContent = '';
+    (extra || '').split(' · ').filter(Boolean).forEach(function (part) {
+      box.appendChild(el('span', 'badge-chip', part));
+    });
     $('result-next').classList.toggle('hidden', !showNext);
     $('result').classList.remove('hidden');
   };

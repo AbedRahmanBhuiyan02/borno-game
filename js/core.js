@@ -16,7 +16,7 @@
      1. SETTINGS, VERSION AND TEXTS
      ===================================================================== */
 
-  B.VERSION = '0.5.1';
+  B.VERSION = '0.6.0';
 
   B.SCORE = {
     grid: 160,              // tracings are checked on a 160 x 160 picture
@@ -33,7 +33,7 @@
   B.STICKER_GOALS = [3, 10, 20, 35, 50, 75, 100];
   B.STICKERS = ['🐣', '🦋', '🐠', '🌸', '🐘', '🚂', '🦁'];
   B.MEDALS = ['', '🥉', '🥈', '🥇'];
-  B.TILE_COLORS = ['#ff7f6b', '#4d8ef7', '#45bf66', '#ff9a3c', '#9b72e8', '#33b8b0', '#f27bb0'];
+  B.TILE_COLORS = ['#ff7a59', '#4c8dff', '#22b573', '#ff9f1c', '#8e6cf1', '#14b8a6', '#f45b9b'];
   B.FONT_NAME = 'Baloo Da 2';
   B.LETTER_FONT = '"Baloo Da 2", "Noto Sans Bengali", "Nirmala UI", "Kohinoor Bangla", "Vrinda", sans-serif';
   B.EMOJI_FONT = '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';

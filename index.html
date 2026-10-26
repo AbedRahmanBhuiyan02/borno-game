@@ -17,38 +17,56 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<!-- small line icons (drawn in code, no files needed) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 4.5 7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-sound" viewBox="0 0 24 24"><path d="M3.5 9.2v5.6h3.9l5.1 4.2V5L7.4 9.2H3.5z" fill="currentColor"/><path d="M16 8.6a4.8 4.8 0 0 1 0 6.8M18.6 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+</svg>
 <div id="app">
 
   <!-- ============ HOME ============ -->
   <section id="screen-home" class="screen">
     <div class="home-top">
-      <button class="btn small-btn grey" data-action="toggle-lang">🌐 <span data-i18n="langSwitch">English</span></button>
-      <button class="btn small-btn grey" data-action="parents">👪 <span data-i18n="parents">অভিভাবক</span></button>
+      <button class="chip" data-action="toggle-lang">🌐 <span data-i18n="langSwitch">English</span></button>
+      <button class="chip" data-action="parents">👪 <span data-i18n="parents">অভিভাবক</span></button>
     </div>
-    <div>
+    <div class="hero">
+      <div class="mascot" aria-hidden="true">🦉</div>
       <h1 class="title">বর্ণ</h1>
       <p class="subtitle" data-i18n="appSub">বাংলা বর্ণ শিখি</p>
     </div>
-    <div>
-      <div class="star-count"><span>⭐</span><span id="home-stars">০</span></div>
-      <div id="sticker-row" class="sticker-row"></div>
+    <div class="card stats-card">
+      <div class="stats-top">
+        <div class="star-count"><span class="star-icon">⭐</span><span id="home-stars">০</span></div>
+        <p id="learned" class="learned"></p>
+      </div>
+      <div class="progress" aria-hidden="true"><span id="sticker-bar"></span></div>
       <p id="next-sticker" class="small"></p>
-      <p id="learned" class="small"></p>
+      <div id="sticker-row" class="sticker-row"></div>
     </div>
     <div class="menu">
-      <button class="btn big-btn orange" data-action="trace"><span class="emoji">✏️</span> <span data-i18n="trace">লিখি</span></button>
+      <button class="btn big-btn cta orange" data-action="trace">
+        <span class="cta-icon">✏️</span>
+        <span class="cta-text"><span data-i18n="trace">লিখি</span><small data-i18n="traceHint">আঙুল দিয়ে বর্ণ লেখো</small></span>
+      </button>
       <div class="menu-row">
-        <button class="btn big-btn blue" data-action="letters"><span class="emoji bn-glyph">অ</span> <span data-i18n="letters">বর্ণমালা</span></button>
-        <button class="btn big-btn green" data-action="games"><span class="emoji">🎈</span> <span data-i18n="games">খেলা</span></button>
+        <button class="btn big-btn tile-btn blue" data-action="letters">
+          <span class="cta-icon bn-glyph">অ</span>
+          <span class="cta-text"><span data-i18n="letters">বর্ণমালা</span><small data-i18n="lettersHint">সব বর্ণ ও সংখ্যা</small></span>
+        </button>
+        <button class="btn big-btn tile-btn green" data-action="games">
+          <span class="cta-icon">🎈</span>
+          <span class="cta-text"><span data-i18n="games">খেলা</span><small data-i18n="gamesHint">৪টি মজার খেলা</small></span>
+        </button>
       </div>
     </div>
-    <p class="small" data-i18n="footer">বিজ্ঞাপন নেই · ইন্টারনেট লাগে না</p>
+    <p class="footer-note" data-i18n="footer">বিজ্ঞাপন নেই · ইন্টারনেট লাগে না</p>
   </section>
 
   <!-- ============ LETTER SELECT ============ -->
   <section id="screen-letters" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="home">⬅ <span data-i18n="back">ফিরি</span></button>
+      <button class="icon-btn back-btn" data-action="home" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-back"/></svg></button>
       <h2 data-i18n="letters">বর্ণমালা</h2>
       <span class="spacer"></span>
     </div>
@@ -58,10 +76,10 @@
   <!-- ============ TRACING ============ -->
   <section id="screen-trace" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="trace-back">⬅ <span data-i18n="back">ফিরি</span></button>
+      <button class="icon-btn back-btn" data-action="trace-back" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-back"/></svg></button>
       <button id="trace-letter" class="big-letter" data-action="say-letter" aria-label="Hear the letter">অ</button>
       <span id="trace-level" class="level-badge">স্তর ১</span>
-      <button class="btn sound-btn" data-action="say-letter" aria-label="Hear the letter">🔊</button>
+      <button class="icon-btn sound-btn" data-action="say-letter" aria-label="Hear the letter"><svg class="ico" aria-hidden="true"><use href="#i-sound"/></svg></button>
     </div>
     <button class="word-card" data-action="say-word" aria-label="Hear the word">
       <span id="trace-picture" class="pic">🐍</span>
@@ -84,25 +102,29 @@
   <!-- ============ GAMES MENU ============ -->
   <section id="screen-games" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="home">⬅ <span data-i18n="back">ফিরি</span></button>
+      <button class="icon-btn back-btn" data-action="home" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-back"/></svg></button>
       <h2 data-i18n="games">খেলা</h2>
       <span class="spacer"></span>
     </div>
     <div class="games-list">
       <button class="btn game-card blue" data-action="match">
-        <span>🖼️ <span data-i18n="match">প্রথম বর্ণ</span></span>
+        <span class="game-icon">🖼️</span>
+        <span class="game-title" data-i18n="match">প্রথম বর্ণ</span>
         <small data-i18n="matchHint">ছবির শব্দটি কোন বর্ণ দিয়ে শুরু?</small>
       </button>
       <button class="btn game-card pink" data-action="balloon">
-        <span>🎈 <span data-i18n="balloon">বেলুন ফাটাও</span></span>
+        <span class="game-icon">🎈</span>
+        <span class="game-title" data-i18n="balloon">বেলুন ফাটাও</span>
         <small data-i18n="balloonHint">ঠিক বর্ণের বেলুন ফাটাও</small>
       </button>
       <button class="btn game-card purple" data-action="kar">
-        <span>➕ <span data-i18n="kar">কার</span></span>
+        <span class="game-icon bn-glyph">কা</span>
+        <span class="game-title" data-i18n="kar">কার</span>
         <small data-i18n="karHint">বর্ণ আর কার জুড়ে পড়ো</small>
       </button>
       <button class="btn game-card teal" data-action="words">
-        <span>🧩 <span data-i18n="words">শব্দ বানাও</span></span>
+        <span class="game-icon">🧩</span>
+        <span class="game-title" data-i18n="words">শব্দ বানাও</span>
         <small data-i18n="wordsHint">টুকরো জুড়ে শব্দ বানাও</small>
       </button>
     </div>
@@ -111,7 +133,7 @@
   <!-- ============ LETTER MATCH ============ -->
   <section id="screen-match" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="games">⬅ <span data-i18n="back">ফিরি</span></button>
+      <button class="icon-btn back-btn" data-action="games" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-back"/></svg></button>
       <div id="match-dots" class="dots"></div>
     </div>
     <button id="match-prompt" class="prompt" data-action="say-match" aria-label="Hear the word">
@@ -125,7 +147,7 @@
   <!-- ============ কার (vowel signs) ============ -->
   <section id="screen-kar" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="games">⬅ <span data-i18n="back">ফিরি</span></button>
+      <button class="icon-btn back-btn" data-action="games" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-back"/></svg></button>
       <div id="kar-dots" class="dots"></div>
     </div>
     <div class="prompt kar-prompt">
@@ -144,7 +166,7 @@
   <!-- ============ শব্দ বানাও (build a word) ============ -->
   <section id="screen-words" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="games">⬅ <span data-i18n="back">ফিরি</span></button>
+      <button class="icon-btn back-btn" data-action="games" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-back"/></svg></button>
       <div id="words-dots" class="dots"></div>
     </div>
     <button class="prompt" data-action="say-words" aria-label="Hear the word">
@@ -159,7 +181,7 @@
   <!-- ============ BALLOON POP ============ -->
   <section id="screen-balloon" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="games">⬅ <span data-i18n="back">ফিরি</span></button>
+      <button class="icon-btn back-btn" data-action="games" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-back"/></svg></button>
       <span class="spacer"></span>
       <span class="pop-label" data-i18n="pop">ফাটাও</span>
       <button id="balloon-target" class="btn target" data-action="say-target">ক</button>
@@ -172,7 +194,7 @@
   <!-- ============ PARENT PAGE ============ -->
   <section id="screen-parent" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="home">⬅ <span data-i18n="back">ফিরি</span></button>
+      <button class="icon-btn back-btn" data-action="home" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-back"/></svg></button>
       <h2 data-i18n="parentTitle">অভিভাবকদের জন্য</h2>
       <span class="spacer"></span>
     </div>
@@ -224,7 +246,7 @@
   <!-- ============ RECORDING SESSION ============ -->
   <section id="screen-record" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="parent-back">⬅ <span data-i18n="back">ফিরি</span></button>
+      <button class="icon-btn back-btn" data-action="parent-back" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-back"/></svg></button>
       <h2 data-i18n="sessionTitle">রেকর্ডিং সেশন</h2>
       <span id="session-counter" class="counter"></span>
     </div>
@@ -248,7 +270,7 @@
   <!-- ============ TEACHER MODE ============ -->
   <section id="screen-teach" class="screen">
     <div class="topbar">
-      <button class="btn back-btn" data-action="parent-back">⬅ <span data-i18n="back">ফিরি</span></button>
+      <button class="icon-btn back-btn" data-action="parent-back" aria-label="Back"><svg class="ico" aria-hidden="true"><use href="#i-back"/></svg></button>
       <h2 data-i18n="teachTitle">শিক্ষক মোড</h2>
       <span class="spacer"></span>
     </div>
@@ -280,15 +302,15 @@
 
   <!-- ============ RESULT CARD (pop-up) ============ -->
   <div id="result" class="overlay hidden">
-    <div class="card">
-      <h3 id="result-title"></h3>
+    <div class="card result-card">
       <div class="result-stars"><span>★</span><span>★</span><span>★</span></div>
+      <h3 id="result-title"></h3>
       <p id="result-detail" class="result-detail"></p>
-      <p id="result-extra" class="result-extra"></p>
+      <div id="result-extra" class="result-extra"></div>
       <div class="card-buttons">
-        <button class="btn blue" data-action="again">↻ <span data-i18n="again">আবার</span></button>
-        <button class="btn purple" data-action="result-home">🏠 <span data-i18n="home">শুরুতে</span></button>
         <button id="result-next" class="btn green" data-action="next"><span data-i18n="next">পরেরটি</span> ➜</button>
+        <button class="btn soft" data-action="again">↻ <span data-i18n="again">আবার</span></button>
+        <button class="btn soft" data-action="result-home">🏠 <span data-i18n="home">শুরুতে</span></button>
       </div>
     </div>
   </div>

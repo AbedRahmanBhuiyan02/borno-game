@@ -23,7 +23,7 @@
     box.textContent = '';
     app.gate.choices.forEach(function (v, i) {
       var b = el('button', 'btn', num(v));
-      b.style.background = B.TILE_COLORS[i % B.TILE_COLORS.length];
+      b.style.setProperty('--c', B.TILE_COLORS[i % B.TILE_COLORS.length]);
       b.dataset.action = 'gate-answer';
       b.dataset.value = String(v);
       box.appendChild(b);
