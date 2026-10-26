@@ -37,7 +37,14 @@ No ads, no tracking, no accounts, no data leaves the device.
 
 ## How to run (pick one)
 
-### A. Easiest – just open the file (computer)
+### ⭐ Play online – any phone or computer
+**<https://abedrahmanbhuiyan02.github.io/borno-game/>**
+
+Open the link in Chrome on the phone → menu ⋮ → **Add to Home screen**.
+After the first visit it also works **without internet**. Every push to
+GitHub updates this page automatically (takes 1–2 minutes).
+
+### A. Easiest offline – just open the file (computer)
 1. Open the folder `D:\Projects\borno-game`.
 2. Double-click **`index.html`**. It opens in your browser (Chrome, Edge or
    Firefox). That's it – play!
