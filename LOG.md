@@ -459,3 +459,9 @@ You said the sound/voice did not work on your phone.
   কার syllable (430 clips), used when nothing better exists.
 - Published on GitHub Pages: https://abedrahmanbhuiyan02.github.io/borno-game/
 - Tests: unit 116/116, e2e 88/88 phone + desktop (headless Edge).
+- 0.5.1: a real-browser check showed version 0.5.0 running with the OLD
+  sound code – GitHub's 10-minute browser cache mixed old and new files, so
+  fixes did not reach phones. sw.js now always revalidates; a new version
+  reloads once on the home screen. Verified on the live link: after one
+  open the browser runs 0.5.1 completely, and tapping লিখি plays the
+  computer voice for «উ» to the end (0.92 s, no error).
