@@ -445,14 +445,16 @@
     }).then(function (done) {
       check('device check measures this device', done && /✔|⚠/.test(text('device-result')), text('device-result').split('\n')[1]);
       stopHere('device');
-      click('[data-action="sound-test"]');
-      return waitFor(function () { return text('sound-result').indexOf(B.t('sndTips')) >= 0; }, 15000);
-    }).then(function (done) {
-      // the test browser has no recording and no Bangla device voice -> the computer voice is used.
-      // (Whether it is heard cannot be timed here: this browser fast-forwards timers.)
-      check('sound test: falls back to the computer voice for «অ» and writes a report', done && !!B.Sfx.ctx &&
-            !!B.Voice.audio && B.Voice.audio.src === B.COMPUTER_VOICES['o:letter'] &&
-            text('sound-result').indexOf(B.t('sndTips')) >= 0, text('sound-result').split('\n')[1]);
+      check('the sound test button is on the parent page', !!D.querySelector('[data-action="sound-test"]'));
+      // wait for the test itself (this browser fast-forwards clocks, so no time limit here)
+      return B.runSoundTest();
+    }).then(function (r) {
+      // No recording here. The test computer may or may not have a Bangla speech engine:
+      // then the device voice speaks, otherwise the computer voice must be tried.
+      var usedComputer = !!B.Voice.audio && B.Voice.audio.src === B.COMPUTER_VOICES['o:letter'];
+      check('sound test: uses the device voice or falls back to the computer voice, and writes a report',
+            !!r && !!B.Sfx.ctx && (r.source === 'device' || usedComputer) && r.computer >= 140 &&
+            text('sound-result').indexOf(B.t('sndTips')) >= 0, JSON.stringify(r));
       stopHere('sound');
 
       /* ---- recording session ---- */
