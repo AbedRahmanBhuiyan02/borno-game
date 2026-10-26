@@ -316,8 +316,8 @@
     return B.soundTest().then(function (r) {
       var lines = [
         t('sndEffects', { v: t(r.effects ? 'yes' : 'no') }),
-        t('sndVoices', { r: num(r.recorded), s: num(r.shipped), d: t(r.deviceVoice ? 'yes' : 'no') }),
-        r.voicePlayed ? t('sndVoiceOk') : t('sndVoiceNone'),
+        t('sndVoices', { r: num(r.recorded), s: num(r.shipped), c: num(r.computer), d: t(r.deviceVoice ? 'yes' : 'no') }),
+        r.voicePlayed ? t('sndVoiceOk', { src: t('src_' + (r.source || 'device')) }) : t('sndVoiceNone'),
         t('sndTips')
       ];
       out.textContent = lines.join('\n');

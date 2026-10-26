@@ -7,6 +7,17 @@ The version number is also shown on the parent page and lives in
 Numbers mean: **0.x** = still being tested; the middle number goes up for
 new features, the last number for small fixes.
 
+## 0.5.0 – 2026-10-26
+- **A voice on every phone:** a computer voice (made with the free program
+  eSpeak NG) now comes with the game – all 50 letters, ০–৯, their words, the
+  20 words of শব্দ বানাও and all 290 syllables of the কার game. It sounds
+  robotic, so it is used only when there is no recorded voice and no Bangla
+  voice on the device. Works offline and on iPhones.
+- The কার syllables (3.3 MB) load only when that game opens.
+- Sound test says which voice was used.
+- Fixed: a sound that failed to load could still count as "played".
+- `tools/make-computer-voice.ps1` rebuilds the voice files.
+
 ## 0.4.2 – 2026-10-26
 - Voice: the game now uses any Bangla voice of the phone or browser
   (before: only "offline" ones – so almost every phone stayed silent).

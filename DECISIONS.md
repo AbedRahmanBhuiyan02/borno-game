@@ -171,3 +171,24 @@ right after a stop.
   after a stop; marks (ং ঃ ঁ ৎ) are read by name; numbers by their word.
 - A real fix for every device still needs a shipped voice pack
   (`assets/voices.js`), made from a person's recording.
+
+## 0.5.0 – computer voice with eSpeak NG (2026-10-26)
+You chose a computer voice for every phone, "even if it sounds robotic".
+- **eSpeak NG 1.52.0**, official GitHub release, unpacked with `msiexec /a`
+  into a temporary folder (nothing installed, no system change). Its Bangla
+  voice `bn` gives correct-looking sounds: অ "ô", ক "kô", কলা "kôla",
+  অজগর "ôjôgôr" (checked from its phoneme output – a person should still
+  listen and report any wrong word).
+- **Order of voices:** recording → shipped recording → sound file → the
+  device's Bangla voice → computer voice. A good phone voice (Google) sounds
+  better than eSpeak, so the computer voice is the last fallback.
+- **Size:** silence trimmed, volume evened, 11 kHz 16-bit WAV (WAV plays on
+  every browser incl. iPhone; no compressing tool needed). Letters + words
+  2.3 MB (cached for offline); the 290 কার syllables 3.3 MB in a second file,
+  loaded only when that game opens (and then cached), so the first visit
+  stays smaller.
+- **Licence:** eSpeak NG is GPL-3.0 but is not shipped; its generated audio
+  is not covered by the GPL.
+- **Testing limit:** the headless test browser fast-forwards timers but
+  plays sound in real time, so "did it play?" is tested with a fake player;
+  the real clips are checked by decoding them (length, loudness).

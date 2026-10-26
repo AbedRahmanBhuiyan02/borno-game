@@ -20,7 +20,7 @@ run_page() {
   out="$WORK/$name.html"
   timeout 300 "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --no-first-run \
     --mute-audio --user-data-dir="$WORK/profile-$name" --allow-file-access-from-files \
-    --virtual-time-budget=200000 --window-size=1300,1700 \
+    --autoplay-policy=no-user-gesture-required --virtual-time-budget=200000 --window-size=1300,1700 \
     --dump-dom "file://$ROOT/tests/$page" > "$out" 2>/dev/null
   title=$(grep -o '<title>[^<]*' "$out" | head -n 1 | sed 's/<title>//')
   [ -z "$title" ] && title='(no result)'

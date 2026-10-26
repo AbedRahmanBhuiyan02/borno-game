@@ -510,9 +510,84 @@
 
     return V.playUrl('data:audio/wav;base64,AAAA', false).then(function (ok) {
       check('a broken sound file is reported as "not played" (so the hint appears)', ok === false);
-      section('voice pack');
+      return computerVoice();
     }).then(function () {
+      section('voice pack');
       return voicePack();
+    });
+  }
+
+  /**
+   * "Did the sound play?" with a fake player (the test browser fast-forwards
+   * timers but plays sound in real time, so a real player cannot be timed here).
+   */
+  function playerLogic() {
+    var V = B.Voice, realPlayer = V.player;
+    var fake = function (behaviour) {
+      return function () {
+        var a = { paused: true, error: null, currentTime: 0 };
+        a.play = function () {
+          if (behaviour === 'starts') { setTimeout(function () { a.onplaying && a.onplaying(); }, 10); return Promise.resolve(); }
+          if (behaviour === 'refused') return Promise.reject(new Error('NotAllowedError'));
+          return new Promise(function () {});        // 'silent': never answers
+        };
+        return a;
+      };
+    };
+    var run = function (behaviour) { V.player = fake(behaviour); return V.playUrl('x', false); };
+    return Promise.all([run('starts'), run('refused'), run('silent')]).then(function (r) {
+      V.player = realPlayer;
+      check('player logic: started = played; refused = not played; no answer in 3 s = not played',
+            r[0] === true && r[1] === false && r[2] === false, r.join(' / '));
+    });
+  }
+
+  /** The computer voice (eSpeak NG clips) covers everything and really sounds. */
+  function computerVoice() {
+    section('computer voice');
+    var CV = B.COMPUTER_VOICES, missing = [];
+    B.LETTERS.forEach(function (l) {
+      ['letter', 'word'].forEach(function (kind) { if (!CV[l.id + ':' + kind]) missing.push(l.id + ':' + kind); });
+    });
+    B.WORDS.forEach(function (w) { if (!CV['text:' + w.word]) missing.push(w.word); });
+    check('computer voice has a clip for all 60 letters/numbers, their words and the 20 game words',
+          missing.length === 0, missing.slice(0, 8).join(' '));
+    var bad = Object.keys(CV).filter(function (k) { return CV[k].indexOf('data:audio/wav;base64,UklGR') !== 0; });
+    check('every clip is a WAV sound', bad.length === 0, bad.slice(0, 5).join(' '));
+
+    // decode a few clips: real length, not silent
+    var AC = window.AudioContext || window.webkitAudioContext;
+    var sample = ['o:letter', 'ka:letter', 'ka:word', 'anu:letter', 'n3:letter', 'text:' + B.WORDS[B.WORDS.length - 1].word];
+    var ctx = AC ? new AC() : null;
+    var decode = function (key) {
+      var b64 = CV[key].split(',')[1], bin = atob(b64), buf = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+      return ctx.decodeAudioData(buf.buffer).then(function (audio) {
+        var d = audio.getChannelData(0), peak = 0;
+        for (var j = 0; j < d.length; j++) peak = Math.max(peak, Math.abs(d[j]));
+        return { key: key, sec: audio.duration, peak: peak };
+      });
+    };
+    var decoded = ctx ? Promise.all(sample.map(decode)) : Promise.resolve([]);
+    return decoded.then(function (list) {
+      var info = list.map(function (r) { return r.key + ' ' + r.sec.toFixed(2) + 's'; }).join(', ');
+      check('clips decode, last 0.2–3 s and are loud (not silent)', list.length === sample.length &&
+            list.every(function (r) { return r.sec > 0.2 && r.sec < 3 && r.peak > 0.5; }), info);
+      return playerLogic();
+    }).then(function () {
+      return B.loadScript('../assets/voice-computer-kar.js');
+    }).then(function (loaded) {
+      var miss = [], quiz = new B.KarQuiz(B.ALPHABET, B.KARS, B.newProgress(), seeded(2)), full = B.newProgress();
+      B.ALPHABET.forEach(function (l) { B.Progress.recordAttempt(full, l.id, 3); });
+      quiz.progress = full;            // every consonant open
+      quiz.start();
+      for (var i = 0; i < 400; i++) {
+        quiz.nextQuestion();
+        quiz.options.forEach(function (o) { if (!CV['text:' + o.normalize('NFC')] && miss.indexOf(o) < 0) miss.push(o); });
+      }
+      check('the কার voice file loads and has every syllable the game can show', loaded && miss.length === 0,
+            miss.slice(0, 8).join(' '));
+      if (ctx && ctx.close) ctx.close();
     });
   }
 

@@ -16,7 +16,7 @@
      1. SETTINGS, VERSION AND TEXTS
      ===================================================================== */
 
-  B.VERSION = '0.4.2';
+  B.VERSION = '0.5.0';
 
   B.SCORE = {
     grid: 160,              // tracings are checked on a 160 x 160 picture
@@ -47,6 +47,8 @@
   B.KARS = Array.isArray(window.BORNO_KARS) ? window.BORNO_KARS : [];
   B.WORDS = Array.isArray(window.BORNO_WORDS) ? window.BORNO_WORDS : [];
   B.VOICES = window.BORNO_VOICES || {};
+  // the computer voice (assets/voice-computer.js; the কার syllables are added later)
+  B.COMPUTER_VOICES = window.BORNO_COMPUTER_VOICES = window.BORNO_COMPUTER_VOICES || {};
   B.BUNDLED_STROKES = window.BORNO_STROKES || {};
 
   // ড় ঢ় য় can be typed in two ways in Unicode; make them all the same.
@@ -118,6 +120,21 @@
     var c = document.createElement('canvas');
     c.width = w; c.height = h;
     return c;
+  };
+
+  /** Loads an extra .js file once (works from file:// too). Resolves true if it loaded. */
+  var loadedScripts = {};
+  B.loadScript = function (src) {
+    if (!loadedScripts[src]) {
+      loadedScripts[src] = new Promise(function (resolve) {
+        var s = document.createElement('script');
+        s.src = src;
+        s.onload = function () { resolve(true); };
+        s.onerror = function () { delete loadedScripts[src]; resolve(false); };  // try again next time
+        document.head.appendChild(s);
+      });
+    }
+    return loadedScripts[src];
   };
 
   /** Lets the browser download a text file (works offline, also from file://). */

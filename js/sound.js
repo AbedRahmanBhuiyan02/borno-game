@@ -234,7 +234,8 @@
         a.src = url;
         var pr = a.play();
         if (pr && pr.then) pr.then(function () { answer(true); }, function () { answer(false); cleanup(); });
-        setTimeout(function () { answer(!a.paused); }, 3000);
+        // no answer after 3 s: it played only if the sound really moved forward without an error
+        setTimeout(function () { answer(!a.error && a.currentTime > 0); }, 3000);
       });
     },
 
@@ -261,7 +262,7 @@
             window.speechSynthesis.speak(u);
           } catch (e) { answer(false); }
         }, 80);
-        setTimeout(function () { answer(false); }, 4000);   // never started: no usable voice
+        setTimeout(function () { answer(false); }, 2500);   // never started: no usable voice
       });
     },
 
@@ -277,23 +278,42 @@
       if (!letter || !B.app.progress || !B.app.progress.settings.sound) return Promise.resolve(false);
       this.stop();
       var key = letter.id + ':' + kind;
-      var speak = function () { return self.speakText(self.textFor(letter, kind)); };
+      var tag = function (source) { return function (ok) { if (ok) self.lastSource = source; return ok; }; };
+      // device voice first (sounds better); the computer voice when there is none
+      var speak = function () {
+        return self.speakText(self.textFor(letter, kind)).then(tag('device')).then(function (ok) {
+          return ok || self.playComputer(key).then(tag('computer'));
+        });
+      };
       var orSpeak = function (ok) { return ok ? true : speak(); };
+      self.lastSource = '';
       return VoiceStore.get(key).then(function (blob) {
-        if (blob) return self.playUrl(URL.createObjectURL(blob), true).then(orSpeak);
-        if (B.VOICES[key]) return self.playUrl(B.VOICES[key], false).then(orSpeak);
+        if (blob) return self.playUrl(URL.createObjectURL(blob), true).then(tag('recording')).then(orSpeak);
+        if (B.VOICES[key]) return self.playUrl(B.VOICES[key], false).then(tag('pack')).then(orSpeak);
         var file = kind === 'word' ? letter.wordSound : letter.letterSound;
-        if (file) return self.playUrl(file, false).then(orSpeak);
+        if (file) return self.playUrl(file, false).then(tag('file')).then(orSpeak);
         return speak();
       });
     },
 
-    /** Says a syllable or word of the reading games (only a device voice can do this). */
+    /** Says a syllable or word of the reading games (device voice, else the computer voice). */
     sayText: function (text) {
-      if (!B.app.progress || !B.app.progress.settings.sound) return Promise.resolve(false);
+      var self = this;
+      if (!B.app.progress || !B.app.progress.settings.sound || !text) return Promise.resolve(false);
       this.stop();
-      return this.speakText(text);
-    }
+      return this.speakText(text).then(function (ok) {
+        return ok || self.playComputer('text:' + (text.normalize ? text.normalize('NFC') : text));
+      });
+    },
+
+    /** Plays a clip of the computer voice (assets/voice-computer*.js) if there is one. */
+    playComputer: function (key) {
+      var url = B.COMPUTER_VOICES[key];
+      return url ? this.playUrl(url, false) : Promise.resolve(false);
+    },
+
+    /** Does the computer voice have this clip? */
+    hasComputer: function (key) { return !!B.COMPUTER_VOICES[key]; }
   };
 
   // Signs that a speech engine cannot read alone: read their names instead
@@ -367,8 +387,10 @@
       effects: !!Sfx.ctx,
       deviceVoice: Voice.hasDeviceVoice(),
       shipped: Object.keys(B.VOICES).length,
+      computer: Object.keys(B.COMPUTER_VOICES).length,
       recorded: 0,
-      voicePlayed: false
+      voicePlayed: false,
+      source: ''
     };
     Sfx.play('hooray');
     return VoiceStore.keys().then(function (keys) {
@@ -378,6 +400,7 @@
       return Voice.say(B.LETTERS[0], 'letter');
     }).then(function (played) {
       report.voicePlayed = !!played;
+      report.source = played ? Voice.lastSource : '';
       report.effects = !!Sfx.ctx && Sfx.ctx.state === 'running';
       return report;
     });

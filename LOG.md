@@ -445,3 +445,17 @@ You asked for list A (1–7) and C (13–16).
   teacher mode, device check, reset; no JavaScript errors). Ran 5 times.
 - Screenshots of the new screens (phone size) checked by eye.
 - Not tested: real phone/finger, microphone recording, Firefox/Safari.
+
+---
+
+## Voice fixes 0.4.1 → 0.5.0 (2026-10-26)
+You said the sound/voice did not work on your phone.
+- 0.4.1: sound "wake-up" on the first touch, iPhone silent switch, shared
+  voice player; 🔊 Sound test on the parent page.
+- 0.4.2: root cause – no voice shipped and only "offline" Bangla device
+  voices accepted (iPhones have none; Android often marks Google's as
+  online). Now any Bangla device voice; honest "played?" reporting.
+- 0.5.0: computer voice with eSpeak NG for every letter, number, word and
+  কার syllable (430 clips), used when nothing better exists.
+- Published on GitHub Pages: https://abedrahmanbhuiyan02.github.io/borno-game/
+- Tests: unit 116/116, e2e 88/88 phone + desktop (headless Edge).

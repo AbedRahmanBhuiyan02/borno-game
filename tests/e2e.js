@@ -336,6 +336,8 @@
       return chain;
     }).then(function () {
       check('কার game ends with 3 stars', visible('result') && onStars() === 3);
+      check('opening the কার game loaded its computer voice (কা, কি, …)',
+            !!B.COMPUTER_VOICES['text:' + ('ক' + 'া').normalize('NFC')]);
       click('[data-action="result-home"]');
       return wait(200);
     }).then(function () {
@@ -444,11 +446,13 @@
       check('device check measures this device', done && /✔|⚠/.test(text('device-result')), text('device-result').split('\n')[1]);
       stopHere('device');
       click('[data-action="sound-test"]');
-      return waitFor(function () { return text('sound-result').indexOf(B.t('sndTips')) >= 0; }, 8000);
+      return waitFor(function () { return text('sound-result').indexOf(B.t('sndTips')) >= 0; }, 15000);
     }).then(function (done) {
-      // the test browser has no recorded and no device voice -> it must explain how to fix that
-      check('sound test explains what works and how to add a voice', done && !!B.Sfx.ctx &&
-            text('sound-result').indexOf(B.t('sndVoiceNone')) >= 0, text('sound-result').split('\n')[0]);
+      // the test browser has no recording and no Bangla device voice -> the computer voice is used.
+      // (Whether it is heard cannot be timed here: this browser fast-forwards timers.)
+      check('sound test: falls back to the computer voice for «অ» and writes a report', done && !!B.Sfx.ctx &&
+            !!B.Voice.audio && B.Voice.audio.src === B.COMPUTER_VOICES['o:letter'] &&
+            text('sound-result').indexOf(B.t('sndTips')) >= 0, text('sound-result').split('\n')[1]);
       stopHere('sound');
 
       /* ---- recording session ---- */

@@ -399,6 +399,7 @@
     if (!app.kar.start()) { B.toast(t('needTwo')); return; }
     B.show('kar');
     renderKar();
+    B.loadScript('assets/voice-computer-kar.js');   // computer voice for কা, কি, … (3 MB, only now)
   };
 
   function renderKar() {

@@ -15,7 +15,9 @@
   open the game with internet.
 
   FILES must list every file index.html loads – the automatic tests
-  check this (tests/e2e.js).
+  check this (tests/e2e.js). Not listed on purpose: the 3 MB voice file of
+  the kar game (assets/voice-computer-kar.js) – it is saved the first time
+  that game is opened.
 */
 var CACHE = 'borno';
 var NETWORK_WAIT_MS = 3000;
@@ -28,6 +30,7 @@ var FILES = [
   'assets/reading.js',
   'assets/strings.js',
   'assets/voices.js',
+  'assets/voice-computer.js',
   'assets/strokes.js',
   'js/core.js',
   'js/progress.js',

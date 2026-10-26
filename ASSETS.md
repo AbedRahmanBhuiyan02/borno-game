@@ -10,6 +10,7 @@ file in `assets/` must be listed here with its source and licence.
 | Word pictures | **Emoji** – drawn by the device's own emoji font (Windows, Android, iPhone). No picture files are shipped | System emoji, used as text characters |
 | Sound effects (pop, chime, …) | Generated in the browser with the Web Audio API (`js/sound.js`) | Original |
 | Letter list, numbers, words, texts (`letters.js`, `reading.js`, `strings.js`) | Written for this project (example words follow the classic Bangla primer tradition) | Original |
+| `assets/voice-computer.js`, `assets/voice-computer-kar.js` | Speech **generated** on 2026-10-26 with **eSpeak NG 1.52.0** (github.com/espeak-ng/espeak-ng, official release `espeak-ng.msi`, unpacked, not installed), Bangla voice `bn`, by `tools/make-computer-voice.ps1`. 430 clips: 60 letters/numbers, their 60 words, 20 game words, 290 কার syllables | eSpeak NG itself is GPL-3.0; it is **not** shipped. Its generated sound output is not covered by the GPL – the clips are free to ship with the game |
 | `assets/voices.js` | Empty for now. Filled by the in-game recording session (a parent's own voice) – when filled, note here who recorded it and that they agreed to share it | Own work of the person recording |
 | `assets/strokes.js` | Empty for now. Filled by teacher mode (a teacher's own drawing of the stroke order) – note here who made it | Own work of the teacher |
 

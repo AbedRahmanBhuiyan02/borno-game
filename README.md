@@ -4,7 +4,7 @@ A small, offline web game that helps children aged 3–6 learn the Bangla
 alphabet. Plain **HTML + CSS + JavaScript** – no game engine, no build
 tools, no internet, no external services.
 
-**Version 0.4.2** – see [CHANGELOG.md](CHANGELOG.md) for what changed.
+**Version 0.5.0** – see [CHANGELOG.md](CHANGELOG.md) for what changed.
 
 ### For the child
 - 🔤 **All 50 letters** (11 স্বরবর্ণ + 39 ব্যঞ্জনবর্ণ) and the **numbers ০–৯**,
@@ -84,9 +84,16 @@ The pop / chime sound effects are made by code and always work. For the
    (replace the old one). Then every device plays your voice.
 3. **Sound files** in `assets/sounds/` named in `assets/letters.js`
    (`letterSound: "assets/sounds/letters/ka.mp3"`).
-4. The **Bangla voice of the phone or browser** (Android: Google Bangla voice; offline ones are preferred). iPhones have no Bangla voice – record one instead.
+4. The **Bangla voice of the phone or browser** (Android: Google Bangla voice; offline ones are preferred).
+5. The **computer voice** that comes with the game (`assets/voice-computer.js`,
+   made with the free program eSpeak NG). It sounds robotic, but it is always
+   there – on every phone, also iPhones, also without internet. The কার game's
+   syllables are in `assets/voice-computer-kar.js` (loaded when that game opens).
 
-If none of these exists the game is silent and shows a small hint once.
+To make the computer voice again (e.g. after adding words):
+```bash
+powershell -ExecutionPolicy Bypass -File tools\make-computer-voice.ps1 -EspeakDir "C:\path\to\eSpeak NG"
+```
 
 ## Stroke order (teacher mode)
 Parents → **Teacher mode** → choose a letter → write it with the right
@@ -115,6 +122,8 @@ assets/
   reading.js        the 10 vowel signs (কার) and the 20 words for শব্দ বানাও
   strings.js        ALL texts in Bangla and English
   voices.js         recorded voices shipped with the game (empty for now)
+  voice-computer.js       computer voice: letters, numbers, words (2.3 MB)
+  voice-computer-kar.js   computer voice: কার syllables (3.3 MB, loaded only by that game)
   strokes.js        teacher stroke order shipped with the game (empty for now)
   fonts/            Baloo Da 2 font + its licence (OFL.txt)
   images/icon.png   app icon
@@ -124,6 +133,7 @@ tests/
   calibrate.html    helps choose the tracing settings (see DECISIONS.md)
   run-tests.ps1     runs all tests on Windows (Edge)
   run-tests.sh      runs all tests on Linux/macOS (Chrome) – also used on GitHub
+tools/make-computer-voice.ps1 builds the computer voice files with eSpeak NG
 .github/workflows/tests.yml   GitHub runs all tests on every push
 CHANGELOG.md                  what changed in each version
 TESTING_WITH_CHILDREN.md      how to test with 3–5 children + observation sheet

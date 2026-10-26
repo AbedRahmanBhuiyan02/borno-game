@@ -22,7 +22,7 @@ function Run-Page($name, $page, $expect) {
   $url = 'file:///' + ($root -replace '\\', '/') + '/tests/' + $page
   $out = Join-Path $work "$name.html"
   $argList = "--headless --disable-gpu --no-first-run --mute-audio --user-data-dir=`"$work\profile-$name`" " +
-             "--allow-file-access-from-files --virtual-time-budget=200000 --window-size=1300,1700 --dump-dom `"$url`""
+             "--allow-file-access-from-files --autoplay-policy=no-user-gesture-required --virtual-time-budget=200000 --window-size=1300,1700 --dump-dom `"$url`""
   $p = Start-Process -FilePath $edge -ArgumentList $argList -RedirectStandardOutput $out `
                      -RedirectStandardError "$out.err" -PassThru -WindowStyle Hidden
   if (-not $p.WaitForExit(240000)) { $p.Kill(); Write-Host "$name : TIMEOUT"; return $false }
