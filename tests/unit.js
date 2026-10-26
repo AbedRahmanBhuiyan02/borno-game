@@ -474,9 +474,49 @@
           B.gameStars(0) === 3 && B.gameStars(2) === 2 && B.gameStars(9) === 1);
   }
 
-  /** Checks that need to wait (voice file export). */
+  /** Checks that need to wait (voices). */
   function runLater() {
-    section('voice pack');
+    section('voices');
+    var V = B.Voice;
+    check('the device voice reads letters, words, numbers and signs correctly',
+          V.textFor(byId('ka'), 'letter') === 'ক' && V.textFor(byId('ka'), 'word') === 'কলা' &&
+          V.textFor(byId('anu'), 'letter') === 'অনুস্বার' && V.textFor(byId('n3'), 'letter') === 'তিন');
+
+    // pretend the phone has 4 voices and see which one the game picks
+    var synth = window.speechSynthesis;
+    if (synth) {
+      var realGet = synth.getVoices;
+      var fake = [
+        { name: 'English', lang: 'en-US', localService: true },
+        { name: 'Bangla India online', lang: 'bn-IN', localService: false },
+        { name: 'Bangla BD online', lang: 'bn-BD', localService: false },
+        { name: 'Bangla India offline', lang: 'bn_IN', localService: true }
+      ];
+      synth.getVoices = function () { return fake; };
+      V.init();
+      var picked = V.ttsVoices.map(function (v) { return v.name; });
+      check('uses any Bangla voice, offline ones first, then Bangladesh', picked.length === 3 &&
+            picked[0] === 'Bangla India offline' && picked[1] === 'Bangla BD online', picked.join(' > '));
+      fake = [{ name: 'English', lang: 'en-US', localService: true }];
+      V.init();
+      check('a phone with only English voices: no device voice (no wrong-language reading)',
+            !V.hasDeviceVoice() && !V.canTrySpeech());
+      fake = [];
+      V.init();
+      check('an empty voice list (Android bug): still tries Bangla speech', V.canTrySpeech());
+      synth.getVoices = realGet;
+      V.init();
+    }
+
+    return V.playUrl('data:audio/wav;base64,AAAA', false).then(function (ok) {
+      check('a broken sound file is reported as "not played" (so the hint appears)', ok === false);
+      section('voice pack');
+    }).then(function () {
+      return voicePack();
+    });
+  }
+
+  function voicePack() {
     var timeout = new Promise(function (resolve) { setTimeout(function () { resolve('timeout'); }, 4000); });
     return Promise.race([B.buildVoicesFile(), timeout]).then(function (res) {
       if (res === 'timeout') { check('voices.js export finishes', false, 'took longer than 4 s'); return; }

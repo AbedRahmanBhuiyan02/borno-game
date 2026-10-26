@@ -178,79 +178,126 @@
       return this.audio;
     },
 
+    allVoices: 0,       // how many voices (any language) the browser listed
+
     init: function () {
       var self = this;
       if (!('speechSynthesis' in window)) return;
       var load = function () {
-        // only Bangla voices that work WITHOUT internet
-        self.ttsVoices = window.speechSynthesis.getVoices().filter(function (v) {
-          return /^bn/i.test(v.lang) && v.localService;
+        var all = window.speechSynthesis.getVoices() || [];
+        self.allVoices = all.length;
+        // every Bangla voice of the phone/browser; best first:
+        // works offline > Bangladesh accent > others
+        self.ttsVoices = all.filter(function (v) { return /^bn/i.test(v.lang); }).sort(function (a, b) {
+          var score = function (v) { return (v.localService ? 2 : 0) + (/BD/i.test(v.lang) ? 1 : 0); };
+          return score(b) - score(a);
         });
       };
       load();
       if (window.speechSynthesis.addEventListener) window.speechSynthesis.addEventListener('voiceschanged', load);
+      // Android Chrome often gives the list only after a while: ask again a few times
+      [500, 1500, 4000].forEach(function (ms) { setTimeout(load, ms); });
     },
 
     hasDeviceVoice: function () { return this.ttsVoices.length > 0; },
+
+    /**
+     * Can we try the device voice? Yes if a Bangla voice is listed – or if the
+     * browser listed NO voices at all (an Android Chrome bug: the phone's
+     * speech engine may still speak Bangla when asked for "bn-BD").
+     */
+    canTrySpeech: function () {
+      return !!window.speechSynthesis && !!window.SpeechSynthesisUtterance &&
+             (this.hasDeviceVoice() || this.allVoices === 0);
+    },
 
     stop: function () {
       if (this.current) { try { this.current.pause(); } catch (e) { /* ignore */ } this.current = null; }
       if (window.speechSynthesis) { try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ } }
     },
 
+    /**
+     * Plays a sound file / recording. Resolves true as soon as it really
+     * starts playing, false if it cannot play (blocked, broken, missing).
+     */
     playUrl: function (url, revoke) {
       var self = this;
       return new Promise(function (resolve) {
         var a = self.player();
         self.current = a;
-        var finished = false;
-        var done = function (ok) {
-          if (finished) return;
-          finished = true;
-          if (revoke) URL.revokeObjectURL(url);
-          resolve(ok);
-        };
-        a.onended = function () { done(true); };
-        a.onerror = function () { done(false); };
+        var answered = false;
+        var answer = function (ok) { if (!answered) { answered = true; resolve(ok); } };
+        var cleanup = function () { if (revoke) URL.revokeObjectURL(url); };
+        a.onplaying = function () { answer(true); };
+        a.onended = function () { answer(true); cleanup(); };
+        a.onerror = function () { answer(false); cleanup(); };
         a.src = url;
         var pr = a.play();
-        if (pr && pr.catch) pr.catch(function () { done(false); });
+        if (pr && pr.then) pr.then(function () { answer(true); }, function () { answer(false); cleanup(); });
+        setTimeout(function () { answer(!a.paused); }, 3000);
       });
     },
 
-    /** Speaks any Bangla text with the device voice (only offline voices). */
+    /**
+     * Speaks Bangla text with the phone's/browser's own voice.
+     * Resolves true when the voice really starts, false if there is none.
+     */
     speakText: function (text) {
-      if (!B.app.progress.settings.voice || !this.hasDeviceVoice() || !text) return false;
-      var u = new window.SpeechSynthesisUtterance(text);
-      u.voice = this.ttsVoices[0];
-      u.lang = this.ttsVoices[0].lang;
-      u.rate = 0.8;
-      window.speechSynthesis.speak(u);
-      return true;
+      var self = this;
+      if (!B.app.progress.settings.voice || !text || !this.canTrySpeech()) return Promise.resolve(false);
+      return new Promise(function (resolve) {
+        var answered = false;
+        var answer = function (ok) { if (!answered) { answered = true; resolve(ok); } };
+        var u = new window.SpeechSynthesisUtterance(text);
+        if (self.ttsVoices[0]) { u.voice = self.ttsVoices[0]; u.lang = self.ttsVoices[0].lang; } else u.lang = 'bn-BD';
+        u.rate = 0.8;
+        u.onstart = function () { answer(true); };
+        u.onend = function () { answer(true); };
+        u.onerror = function () { answer(false); };
+        // Chrome sometimes drops speech that starts right after a stop: wait a moment
+        setTimeout(function () {
+          try {
+            window.speechSynthesis.resume();   // Android: un-pause a stuck speech engine
+            window.speechSynthesis.speak(u);
+          } catch (e) { answer(false); }
+        }, 80);
+        setTimeout(function () { answer(false); }, 4000);   // never started: no usable voice
+      });
     },
 
-    /** Says the letter (kind 'letter') or its word (kind 'word'). Resolves true if something played. */
+    /** The Bangla text the device voice should read for a letter or its word. */
+    textFor: function (letter, kind) {
+      if (kind === 'word' || letter.group === 'number') return letter.word;
+      return SPOKEN_NAMES[letter.id] || letter.letter;
+    },
+
+    /** Says the letter (kind 'letter') or its word (kind 'word'). Resolves true if a voice played. */
     say: function (letter, kind) {
       var self = this;
       if (!letter || !B.app.progress || !B.app.progress.settings.sound) return Promise.resolve(false);
       this.stop();
       var key = letter.id + ':' + kind;
+      var speak = function () { return self.speakText(self.textFor(letter, kind)); };
+      var orSpeak = function (ok) { return ok ? true : speak(); };
       return VoiceStore.get(key).then(function (blob) {
-        if (blob) { self.playUrl(URL.createObjectURL(blob), true); return true; }
-        if (B.VOICES[key]) { self.playUrl(B.VOICES[key], false); return true; }
+        if (blob) return self.playUrl(URL.createObjectURL(blob), true).then(orSpeak);
+        if (B.VOICES[key]) return self.playUrl(B.VOICES[key], false).then(orSpeak);
         var file = kind === 'word' ? letter.wordSound : letter.letterSound;
-        if (file) { self.playUrl(file, false); return true; }
-        return self.speakText(kind === 'word' ? letter.word : letter.letter);
+        if (file) return self.playUrl(file, false).then(orSpeak);
+        return speak();
       });
     },
 
-    /** Says a word of the reading games (only a device voice can do this). */
+    /** Says a syllable or word of the reading games (only a device voice can do this). */
     sayText: function (text) {
-      if (!B.app.progress || !B.app.progress.settings.sound) return false;
+      if (!B.app.progress || !B.app.progress.settings.sound) return Promise.resolve(false);
       this.stop();
       return this.speakText(text);
     }
   };
+
+  // Signs that a speech engine cannot read alone: read their names instead
+  var SPOKEN_NAMES = { anu: 'অনুস্বার', bis: 'বিসর্গ', chan: 'চন্দ্রবিন্দু', khta: 'খণ্ড ত' };
 
   /** Microphone recording for the parent page (2 seconds, stays on the device). */
   var Recorder = {

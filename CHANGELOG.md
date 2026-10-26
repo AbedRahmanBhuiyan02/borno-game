@@ -7,6 +7,15 @@ The version number is also shown on the parent page and lives in
 Numbers mean: **0.x** = still being tested; the middle number goes up for
 new features, the last number for small fixes.
 
+## 0.4.2 – 2026-10-26
+- Voice: the game now uses any Bangla voice of the phone or browser
+  (before: only "offline" ones – so almost every phone stayed silent).
+  Offline voices are still preferred; parents can switch the device voice off.
+- Works around Android Chrome giving an empty voice list, and Chrome
+  dropping speech that starts right after a stop.
+- The game now knows when a sound really played, so the "no voice" hint and
+  the Sound test tell the truth. ং ঃ ঁ ৎ are read by their names.
+
 ## 0.4.1 – 2026-10-26
 - Sound on phones: the sound is now "woken up" properly on the first touch
   (effects, voice player and device voice); iPhones play sound even with the

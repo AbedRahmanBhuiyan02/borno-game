@@ -25,6 +25,13 @@ Nothing is sent anywhere. A parent can delete the progress on the parent page
 strokes.js". The file is saved on that device so the parent can add it to
 the game; it contains the parent's recordings or the teacher's strokes.
 
+**Device voice:** when no recorded voice exists, the game asks the phone's or
+browser's own Bangla voice to read the letter or word aloud. Some phones and
+browsers make this voice with their maker's online speech service (for
+example Google); then only the letter or word being read (e.g. "কলা") goes
+to that service – nothing about the child. Parents can switch this off on
+the parent page (🗣️ Device voice: off); recorded voices never leave the device.
+
 **Device check:** reads the screen size, memory size and browser version and
 shows them on the screen only. Nothing is stored or sent.
 

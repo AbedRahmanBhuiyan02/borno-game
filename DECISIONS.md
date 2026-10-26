@@ -148,3 +148,26 @@ colour emoji font is installed because the tests check emoji pictures.
 **Device check (C16)** measures inside the game (tracing check time,
 animation frames per second, memory, features) – a real phone is still
 needed for touch feel, heat and battery (see `TESTING_ON_PHONE.md`).
+
+## 0.4.2 – why the voice was silent, and the fix (2026-10-26)
+**Analysis.** The game ships no voice yet (`voices.js` empty, no files), so
+it depended on a device voice – and accepted only Bangla voices marked
+"offline". iPhones have no Bangla voice at all; Android Chrome often marks
+Google's Bangla voice as online or gives an empty list at first; desktop
+browsers here have 0 Bangla voices. Result: silence almost everywhere.
+Also the game reported "played" even when nothing played, so the hint and
+the sound test could be wrong, and Chrome can drop speech that starts
+right after a stop.
+
+**Changes.**
+- Any Bangla device voice is used (offline first, then Bangladesh accent).
+  This can mean the phone's online speech service reads the letter or word;
+  only that text is sent. Parents can switch it off (🗣️). This relaxes the
+  earlier "offline voices only" rule, because otherwise the voice is silent
+  for nearly every child; recordings remain the recommended way.
+- An empty voice list (Android bug) still tries `bn-BD`; a list with only
+  other languages does NOT (no English voice reading Bangla wrongly).
+- Playback resolves true only when sound really starts; speech waits 80 ms
+  after a stop; marks (ং ঃ ঁ ৎ) are read by name; numbers by their word.
+- A real fix for every device still needs a shipped voice pack
+  (`assets/voices.js`), made from a person's recording.

@@ -4,7 +4,7 @@ A small, offline web game that helps children aged 3–6 learn the Bangla
 alphabet. Plain **HTML + CSS + JavaScript** – no game engine, no build
 tools, no internet, no external services.
 
-**Version 0.4.1** – see [CHANGELOG.md](CHANGELOG.md) for what changed.
+**Version 0.4.2** – see [CHANGELOG.md](CHANGELOG.md) for what changed.
 
 ### For the child
 - 🔤 **All 50 letters** (11 স্বরবর্ণ + 39 ব্যঞ্জনবর্ণ) and the **numbers ০–৯**,
@@ -84,7 +84,7 @@ The pop / chime sound effects are made by code and always work. For the
    (replace the old one). Then every device plays your voice.
 3. **Sound files** in `assets/sounds/` named in `assets/letters.js`
    (`letterSound: "assets/sounds/letters/ka.mp3"`).
-4. A **Bangla voice built into the device** – only if it works offline.
+4. The **Bangla voice of the phone or browser** (Android: Google Bangla voice; offline ones are preferred). iPhones have no Bangla voice – record one instead.
 
 If none of these exists the game is silent and shows a small hint once.
 
