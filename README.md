@@ -4,7 +4,7 @@ A small, offline web game that helps children aged 3–6 learn the Bangla
 alphabet. Plain **HTML + CSS + JavaScript** – no game engine, no build
 tools, no internet, no external services.
 
-**Version 0.6.1** – see [CHANGELOG.md](CHANGELOG.md) for what changed.
+**Version 0.7.0** – see [CHANGELOG.md](CHANGELOG.md) for what changed.
 
 ### For the child
 - 🔤 **All 50 letters** (11 স্বরবর্ণ + 39 ব্যঞ্জনবর্ণ) and the **numbers ০–৯**,
@@ -23,7 +23,12 @@ tools, no internet, no external services.
 - ⭐ Stars and 7 stickers · 🇧🇩 Bangla interface (🌐 switches to English)
 
 ### For parents and teachers (behind a "৭ + ৮ = ?" question)
+- 🐯🐘🦋🐟 **Up to 4 children on one phone** – each an animal, no names; tap the
+  animal on the home screen to switch
 - Progress per letter (level, medal, stars), weak letters, **play time per day**
+  and **this week vs last week**
+- 🖨️ **Worksheets to print**: hollow letters to trace on paper (A4 or PDF)
+- ⏰ **Break reminder** after 15 minutes of play (can be switched off)
 - 🎤 **Recording session**: walks through all 120 clips (60 letters + 60 words),
   then **download `voices.js`** so every device has your voice
 - ✍️ **Teacher mode**: write each letter in the correct stroke order once,

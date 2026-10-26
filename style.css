@@ -778,6 +778,120 @@ pre.small:not(:empty) { padding: 10px 12px; }
   background: #fff;
 }
 
+/* ---------- children on one phone ---------- */
+.chip.avatar {
+  width: 48px;
+  min-height: 48px;
+  padding: 0;
+  justify-content: center;
+  font-family: var(--emoji);
+  font-size: 26px;
+  border-radius: 50%;
+}
+.home-top { align-items: center; }
+.profile-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+.profile-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px 10px;
+  border-radius: 22px;
+  background: var(--soft);
+  border: 3px solid transparent;
+  box-shadow: 0 4px 0 var(--edge);
+  transition: transform 0.08s ease;
+}
+.profile-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--edge); }
+.profile-btn.current { background: #fff7e6; border-color: var(--orange); }
+.profile-btn.add { border: 3px dashed #c8cee0; box-shadow: none; background: #fff; }
+.profile-animal { font-family: var(--emoji); font-size: 48px; line-height: 1.1; }
+.profile-btn.add .profile-animal { font-size: 34px; color: var(--muted); }
+.profile-stars { font-size: 16px; font-weight: 800; color: var(--ink); }
+
+.children-list { display: grid; gap: 8px; }
+.child-row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 16px;
+  background: var(--soft);
+}
+.child-row.current { background: #fff7e6; box-shadow: inset 0 0 0 2px #ffd9a0; }
+.child-animal { font-family: var(--emoji); font-size: 30px; text-align: center; }
+.child-info { font-size: 14px; font-weight: 600; }
+.btn.small-del { min-height: 38px; padding: 4px 12px; font-size: 14px; border-radius: 12px; }
+.parent-child { font-family: var(--emoji); font-weight: 400; }
+.week-compare {
+  margin: 4px 0 8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  background: #eef5ff;
+  color: var(--blue-d);
+}
+
+/* ---------- break reminder ---------- */
+.break-card { padding-top: 26px; }
+.break-icon {
+  width: 84px; height: 84px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--emoji);
+  font-size: 48px;
+  background: #e6f8ef;
+  animation: bob 2.4s ease-in-out infinite;
+}
+.break-text { font-size: 17px; line-height: 1.5; color: var(--muted); margin: 4px 6px 4px; }
+#break-ok { grid-column: 1 / -1; min-height: 60px; font-size: 22px; }
+
+/* ---------- printable worksheet (A4) ---------- */
+#print-sheet { display: none; }
+@page { size: A4 portrait; margin: 12mm; }
+@media print {
+  html, body { height: auto; background: #fff !important; }
+  #app { display: none !important; }
+  #print-sheet { display: block; color: #000; font-family: var(--bangla); }
+  .sheet-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #000; padding-bottom: 4mm; }
+  .sheet-title { font-size: 20pt; font-weight: 800; }
+  .sheet-name { font-size: 11pt; }
+  .sheet-hint { font-size: 11pt; margin: 3mm 0 4mm; }
+  .sheet-row {
+    display: grid;
+    grid-template-columns: 30mm repeat(6, 1fr);
+    gap: 2mm;
+    align-items: center;
+    padding: 2mm 0;
+    border-bottom: 1px dashed #999;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .sheet-word { display: flex; flex-direction: column; align-items: center; font-size: 11pt; }
+  .sheet-word .pic { font-size: 22pt; }
+  .sheet-word .pic.counting { font-size: 8pt; max-width: 26mm; }
+  .sheet-cell {
+    height: 24mm;
+    display: grid;
+    place-items: center;
+    border: 1px solid #bbb;
+    border-radius: 3mm;
+    font-family: var(--bangla);
+    font-size: 40pt;
+    line-height: 1;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .sheet-cell.example { color: #000; font-weight: 700; }
+  .sheet-cell.trace { color: transparent; -webkit-text-stroke: 1.2px #8a8f9c; font-weight: 500; }
+  .sheet-cell.empty { border-style: dashed; }
+  .sheet-foot { margin-top: 4mm; font-size: 9pt; color: #555; text-align: right; }
+}
+
 /* ---------- small message at the bottom ---------- */
 #toast {
   position: absolute;

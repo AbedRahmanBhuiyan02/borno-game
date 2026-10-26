@@ -152,6 +152,39 @@ window.BORNO_STRINGS = {
     // sound test
     soundTest: "🔊 শব্দ পরীক্ষা",
 
+    // children on one phone
+    whoPlays: "কে খেলবে?",
+    newProfile: "নতুন",
+    children: "শিশুরা",
+    childrenHelp: "একই ফোনে ৪ জন পর্যন্ত শিশু – প্রত্যেকের নিজের তারা ও অগ্রগতি। হোম পাতার প্রাণীটিতে চাপ দিয়ে বদলান। নাম লাগে না।",
+    childLine: "{s} ⭐ · শেখা বর্ণ {l}/{L}",
+    playingNow: "এখন খেলছে",
+    deleteChild: "মুছুন",
+    deleteConfirm: "আবার চাপুন",
+    lastChild: "অন্তত একজন শিশু থাকতে হবে",
+
+    // play time this week
+    weekLine: "এই সপ্তাহ: {m} মিনিট · {a}টি লেখা · {g}টি খেলা",
+    lastWeekLine: "গত সপ্তাহ: {m} মিনিট · {a}টি লেখা · {g}টি খেলা",
+
+    // break reminder
+    breakToggle: "⏰ ১৫ মিনিট পর বিরতি: {v}",
+    breakTitle: "একটু বিরতি!",
+    breakText: "অনেকক্ষণ খেলেছ! চোখ বন্ধ করে ১০ পর্যন্ত গোনো, একটু পানি খাও, তারপর আবার খেলো।",
+    breakWait: "অপেক্ষা… {n}",
+    breakOk: "ঠিক আছে 👍",
+
+    // printable worksheet
+    printTitle: "🖨️ ছাপার পাতা",
+    printHelp: "কাগজে পেনসিল দিয়ে লেখার জন্য একটি পাতা ছাপুন (বা PDF হিসেবে রাখুন)।",
+    printPractice: "এখন যে বর্ণগুলো শিখছে",
+    printWeak: "যেগুলো কঠিন লাগছে",
+    printBtn: "🖨️ প্রিন্ট",
+    printNone: "এই তালিকায় এখনো কোনো বর্ণ নেই",
+    sheetHeader: "বর্ণ – লেখার পাতা",
+    sheetName: "নাম: ____________________   তারিখ: ______________",
+    sheetHint: "ধূসর বর্ণের উপর পেনসিল দিয়ে লেখো, তারপর শেষ ঘরে নিজে লেখো।",
+
     // home menu subtitles
     traceHint: "আঙুল দিয়ে বর্ণ লেখো",
     lettersHint: "সব বর্ণ ও সংখ্যা",
@@ -313,6 +346,39 @@ window.BORNO_STRINGS = {
 
     // sound test
     soundTest: "🔊 Sound test",
+
+    // children on one phone
+    whoPlays: "Who is playing?",
+    newProfile: "New",
+    children: "Children",
+    childrenHelp: "Up to 4 children on one phone – each has their own stars and progress. Tap the animal on the home screen to switch. No names needed.",
+    childLine: "{s} ⭐ · letters learned {l}/{L}",
+    playingNow: "playing now",
+    deleteChild: "Delete",
+    deleteConfirm: "Tap again",
+    lastChild: "At least one child must stay",
+
+    // play time this week
+    weekLine: "This week: {m} min · {a} tracings · {g} games",
+    lastWeekLine: "Last week: {m} min · {a} tracings · {g} games",
+
+    // break reminder
+    breakToggle: "⏰ Break after 15 minutes: {v}",
+    breakTitle: "Time for a little break!",
+    breakText: "You played for a long time! Close your eyes and count to 10, drink some water, then play again.",
+    breakWait: "Wait… {n}",
+    breakOk: "OK 👍",
+
+    // printable worksheet
+    printTitle: "🖨️ Worksheet to print",
+    printHelp: "Print a page for writing on paper with a pencil (or save it as a PDF).",
+    printPractice: "Letters being learned now",
+    printWeak: "Letters that are hard",
+    printBtn: "🖨️ Print",
+    printNone: "No letters in this list yet",
+    sheetHeader: "Borno – writing practice",
+    sheetName: "Name: ____________________   Date: ______________",
+    sheetHint: "Trace the grey letters with a pencil, then write one yourself in the last box.",
 
     // home menu subtitles
     traceHint: "Write letters with your finger",

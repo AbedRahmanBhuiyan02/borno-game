@@ -7,6 +7,22 @@ The version number is also shown on the parent page and lives in
 Numbers mean: **0.x** = still being tested; the middle number goes up for
 new features, the last number for small fixes.
 
+## 0.7.0 – 2026-10-26
+**For real families**
+- **Several children on one phone:** up to 4 children, each shown as an
+  animal (🐯 🐘 🦋 🐟) – no names. Each has their own stars, levels, medals
+  and play time. Tap the animal on the home screen to switch; parents can
+  delete a child on the parent page (two taps). Settings stay the same for
+  all. Old progress becomes child 🐯 – nothing is lost.
+- **Printable worksheets** (parent page): the letters being learned, the hard
+  ones, all vowels, consonants or numbers – each row with the picture and
+  word, a dark example, 4 hollow letters to trace with a pencil and an empty
+  box. Print or save as PDF (A4).
+- **Break reminder:** after 15 minutes of active play a friendly break card
+  appears (the OK button works after 10 seconds). Leaving the game for 5+
+  minutes counts as a break. Parents can switch it off.
+- **This week vs last week** (minutes, tracings, games) on the parent page.
+
 ## 0.6.1 – 2026-10-26
 - **Smoother computer voice:** softer eSpeak voice style ("anika": no
   roughness, gentler treble), spoken slower, 16 kHz with a proper smoothing

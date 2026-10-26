@@ -55,10 +55,21 @@
       w: weak.length ? weak.join(' ') : t('none')
     });
 
+    $('parent-child').textContent = B.Profiles.animal(app.profiles, app.profiles.current);
+
+    // this week compared with last week, then the last days one by one
+    var wk = B.Progress.weekCompare(p, Date.now());
+    var trend = wk.now.sec > wk.before.sec ? ' ⬆️' : (wk.now.sec < wk.before.sec ? ' ⬇️' : '');
+    $('week-compare').textContent =
+      t('weekLine', { m: num(Math.round(wk.now.sec / 60)), a: num(wk.now.tries), g: num(wk.now.games) }) + trend + '\n' +
+      t('lastWeekLine', { m: num(Math.round(wk.before.sec / 60)), a: num(wk.before.tries), g: num(wk.before.games) });
     var days = B.Progress.recentDays(p, 7);
     $('play-time').textContent = days.length ? days.map(function (d) {
       return t('dayLine', { d: num(d.day), m: num(Math.round(d.sec / 60)), a: num(d.tries), g: num(d.games) });
     }).join('\n') : t('noDays');
+
+    renderChildren();
+    $('break-toggle').textContent = t('breakToggle', { v: t(p.settings.breakReminder ? 'on' : 'off') });
 
     var list = $('parent-letters');
     list.textContent = '';
@@ -100,6 +111,103 @@
     });
   };
 
+  /* ---------- children on this phone ---------- */
+
+  function renderChildren() {
+    var box = $('children-list');
+    box.textContent = '';
+    app.profiles.list.forEach(function (prof) {
+      var current = prof.id === app.profiles.current;
+      var p = current ? app.progress : B.Progress.load(app.storage, prof.id);
+      var row = el('div', 'child-row' + (current ? ' current' : ''));
+      row.appendChild(el('span', 'child-animal', B.ANIMALS[prof.animal]));
+      row.appendChild(el('span', 'child-info', t('childLine', {
+        s: num(p.totalStars), l: num(B.masteredCount(p, B.ALPHABET)), L: num(B.ALPHABET.length)
+      }) + (current ? ' · ' + t('playingNow') : '')));
+      var del = el('button', 'btn soft small-del', app.deleteArmed === prof.id ? t('deleteConfirm') : t('deleteChild'));
+      del.dataset.action = 'delete-profile';
+      del.dataset.id = prof.id;
+      del.disabled = app.profiles.list.length <= 1;
+      row.appendChild(del);
+      box.appendChild(row);
+    });
+  }
+
+  /** Deleting a child needs two taps (like reset). */
+  B.armDeleteProfile = function (id) {
+    if (app.deleteArmed !== id) {
+      app.deleteArmed = id;
+      renderChildren();
+      B.later(4000, function () { app.deleteArmed = null; if (app.screen === 'parent') renderChildren(); });
+      return false;
+    }
+    clearTimeout(app.timer);
+    app.deleteArmed = null;
+    var wasCurrent = id === app.profiles.current;
+    var settings = app.progress.settings;
+    if (!B.Profiles.remove(app.storage, app.profiles, id)) { B.toast(t('lastChild')); return false; }
+    B.Profiles.save(app.storage, app.profiles);
+    if (wasCurrent) {
+      app.progress = B.Progress.load(app.storage, app.profiles.current);
+      app.progress.settings = settings;
+      app.lastPlayed = null;
+      B.save();
+    }
+    B.renderParent();
+    B.toast(t('deleted'));
+    return true;
+  };
+
+  /* ---------- printable worksheet ---------- */
+
+  /** Which letters a worksheet shows. */
+  B.sheetLetters = function (kind) {
+    var p = app.progress;
+    if (kind === 'vowels') return B.ALPHABET.filter(function (l) { return l.group === 'vowel'; });
+    if (kind === 'consonants') return B.ALPHABET.filter(function (l) { return l.group === 'consonant'; });
+    if (kind === 'numbers') return B.NUMBERS.slice();
+    if (kind === 'weak') return B.ALPHABET.filter(function (l) { return B.Progress.isWeak(p, l.id); });
+    return B.learningPool(p, B.ALPHABET);   // 'practice': the letters the child is learning now
+  };
+
+  /**
+   * Builds the A4 worksheet: per letter the picture and word, one dark
+   * example, four hollow letters to trace with a pencil, and an empty box.
+   */
+  B.buildWorksheet = function (kind) {
+    var letters = B.sheetLetters(kind);
+    var sheet = $('print-sheet');
+    sheet.textContent = '';
+    if (!letters.length) return 0;
+    var head = el('div', 'sheet-head');
+    head.appendChild(el('div', 'sheet-title', t('sheetHeader')));
+    head.appendChild(el('div', 'sheet-name', t('sheetName')));
+    sheet.appendChild(head);
+    sheet.appendChild(el('p', 'sheet-hint', t('sheetHint')));
+    letters.forEach(function (l) {
+      var row = el('div', 'sheet-row');
+      var word = el('div', 'sheet-word');
+      var pic = el('span', 'pic');
+      B.setPicture(pic, l);
+      word.appendChild(pic);
+      word.appendChild(el('span', 'sheet-word-text', l.word));
+      row.appendChild(word);
+      row.appendChild(B.glyphEl('span', 'sheet-cell example', l));
+      for (var i = 0; i < 4; i++) row.appendChild(B.glyphEl('span', 'sheet-cell trace', l));
+      row.appendChild(el('span', 'sheet-cell empty'));
+      sheet.appendChild(row);
+    });
+    sheet.appendChild(el('p', 'sheet-foot', 'বর্ণ · Borno ' + B.VERSION));
+    return letters.length;
+  };
+
+  B.printSheet = function (kind) {
+    if (!B.buildWorksheet(kind)) { B.toast(t('printNone')); return false; }
+    // wait for the font, then open the print window (save as PDF also works)
+    B.ready.then(function () { window.print(); });
+    return true;
+  };
+
   B.armReset = function () {
     if (!app.resetArmed) {
       app.resetArmed = true;
@@ -109,7 +217,7 @@
     }
     clearTimeout(app.timer);
     app.resetArmed = false;
-    B.Progress.reset(app.progress);
+    B.Progress.reset(app.progress);   // only the child who is playing now
     app.lastPlayed = null;
     B.save();
     B.renderParent();

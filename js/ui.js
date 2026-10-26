@@ -31,7 +31,56 @@
     toldNoVoice: false
   };
 
-  B.save = function () { B.Progress.save(app.storage, app.progress); };
+  /** Saves the progress of the child who is playing now. */
+  B.save = function () {
+    B.Progress.save(app.storage, app.progress, app.profiles ? app.profiles.current : 'p1');
+  };
+
+  /* ---------- children on one phone ---------- */
+
+  /** Switches to another child. Settings (language, sound) belong to the phone and stay. */
+  B.switchProfile = function (id) {
+    if (!B.Profiles.find(app.profiles, id)) return;
+    B.save();
+    var settings = app.progress.settings;
+    app.profiles.current = id;
+    B.Profiles.save(app.storage, app.profiles);
+    app.progress = B.Progress.load(app.storage, id);
+    app.progress.settings = settings;
+    app.lastPlayed = null;
+    app.sessionActive = 0;
+    B.save();
+    $('profiles').classList.add('hidden');
+    B.goHome();
+  };
+
+  /** "Who is playing?" – one big animal button per child, plus "new". */
+  B.openProfiles = function () {
+    var box = $('profile-list');
+    box.textContent = '';
+    app.profiles.list.forEach(function (prof) {
+      var p = prof.id === app.profiles.current ? app.progress : B.Progress.load(app.storage, prof.id);
+      var b = el('button', 'profile-btn' + (prof.id === app.profiles.current ? ' current' : ''));
+      b.dataset.action = 'pick-profile';
+      b.dataset.id = prof.id;
+      b.appendChild(el('span', 'profile-animal', B.ANIMALS[prof.animal]));
+      b.appendChild(el('span', 'profile-stars', '⭐ ' + num(p.totalStars)));
+      box.appendChild(b);
+    });
+    if (B.Profiles.canAdd(app.profiles)) {
+      var add = el('button', 'profile-btn add');
+      add.dataset.action = 'add-profile';
+      add.appendChild(el('span', 'profile-animal', '➕'));
+      add.appendChild(el('span', 'profile-stars', t('newProfile')));
+      box.appendChild(add);
+    }
+    $('profiles').classList.remove('hidden');
+  };
+
+  B.addProfile = function () {
+    var prof = B.Profiles.add(app.profiles);
+    if (prof) B.switchProfile(prof.id);
+  };
 
   /** Runs fn after ms milliseconds (only one waiting action at a time). */
   B.later = function (ms, fn) {
@@ -65,6 +114,7 @@
     $('screen-' + name).classList.add('active');
     $('result').classList.add('hidden');
     $('gate').classList.add('hidden');
+    $('profiles').classList.add('hidden');
     app.screen = name;
     if (app.board) {
       app.board.enabled = name === 'trace';
@@ -85,6 +135,8 @@
 
   B.goBack = function () {
     if (!$('gate').classList.contains('hidden')) { $('gate').classList.add('hidden'); return; }
+    if (!$('profiles').classList.contains('hidden')) { $('profiles').classList.add('hidden'); return; }
+    if (!$('break').classList.contains('hidden')) return;   // the break card closes only with its button
     var s = app.screen;
     if (s === 'trace') { if (app.fromLetters) B.showLetters(); else B.goHome(); }
     else if (s === 'match' || s === 'balloon' || s === 'kar' || s === 'words') B.show('games');
@@ -97,6 +149,7 @@
   function renderHome() {
     var p = app.progress;
     $('home-stars').textContent = num(p.totalStars);
+    $('profile-chip').textContent = B.Profiles.animal(app.profiles, app.profiles.current);
     var row = $('sticker-row');
     row.textContent = '';
     var got = B.Progress.stickers(p.totalStars);

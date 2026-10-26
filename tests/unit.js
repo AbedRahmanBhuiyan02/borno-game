@@ -299,6 +299,40 @@
     check('reset deletes progress but keeps settings', p.totalStars === 0 && !Object.keys(p.letters).length &&
           !Object.keys(p.days).length && p.settings.lang === 'en');
 
+    /* children on one phone */
+    section('children on one phone');
+    var PR = B.Profiles, ps = fakeStorage();
+    var reg = PR.load(ps);
+    check('a phone starts with one child (🐯), so old saves keep working', reg.list.length === 1 &&
+          reg.current === 'p1' && PR.animal(reg, 'p1') === '🐯');
+    var kid1 = B.newProgress(); P.recordAttempt(kid1, 'ka', 3);
+    P.save(ps, kid1, 'p1');
+    check('child 1 is saved under the old key (no progress lost after the update)',
+          !!ps.raw['borno.progress.v1'] && P.load(ps).totalStars === 3);
+    var second = PR.add(reg);
+    check('adding a child gives the next animal (🐘)', second.id === 'p2' && PR.animal(reg, 'p2') === '🐘');
+    var kid2 = B.newProgress(); P.recordAttempt(kid2, 'o', 1);
+    P.save(ps, kid2, 'p2');
+    check('each child has their own stars', P.load(ps, 'p1').totalStars === 3 && P.load(ps, 'p2').totalStars === 1);
+    PR.add(reg); PR.add(reg);
+    check('at most 4 children (🐯 🐘 🦋 🐟)', reg.list.length === 4 && PR.add(reg) === null && !PR.canAdd(reg) &&
+          reg.list.map(function (x) { return B.ANIMALS[x.animal]; }).join('') === '🐯🐘🦋🐟');
+    reg.current = 'p2';
+    PR.save(ps, reg);
+    var back2 = PR.load(ps);
+    check('the child list and who plays now are saved', back2.list.length === 4 && back2.current === 'p2');
+    check('deleting a child removes only their progress', PR.remove(ps, back2, 'p2') &&
+          ps.raw['borno.progress.v1.p2'] === undefined && P.load(ps, 'p1').totalStars === 3 &&
+          back2.current === 'p1' && back2.list.length === 3);
+    PR.remove(ps, back2, 'p3'); PR.remove(ps, back2, 'p4');
+    check('the last child cannot be deleted', !PR.remove(ps, back2, 'p1') && back2.list.length === 1);
+    var fixed = PR.load(fakeStorage({ 'borno.profiles.v1': '{"list":[{"id":"p9"},{"id":"p2","animal":7},{"id":"p2"}],"current":"x"}' }));
+    check('a broken child list is repaired', fixed.list.length === 1 && fixed.list[0].id === 'p2' &&
+          fixed.list[0].animal === 1 && fixed.current === 'p2');
+    check('the break reminder is on by default and can be switched off', B.newProgress().settings.breakReminder === true &&
+          B.normalizeProgress({ settings: { breakReminder: false } }).settings.breakReminder === false &&
+          B.normalizeProgress({ settings: { sound: true } }).settings.breakReminder === true);
+
     /* tracing levels */
     section('tracing levels 1 → 2 → 3');
     var lv = B.newProgress();
@@ -350,6 +384,15 @@
     check('day keys look like 2026-01-05', B.dayKey(t0) === '2026-01-05');
     for (i = 0; i < 40; i++) P.addPlayTime(pt, 15, t0 + i * DAY);
     check('only the last 30 days are kept (no endless growth)', Object.keys(pt.days).length === 30);
+    var wkp = B.newProgress();
+    P.addPlayTime(wkp, 600, t0);               // today
+    P.addPlayTime(wkp, 300, t0 - 6 * DAY);     // still this week
+    P.addPlayTime(wkp, 120, t0 - 7 * DAY);     // last week
+    P.addGameStars(wkp, 3, t0 - 13 * DAY);     // last week
+    P.addPlayTime(wkp, 999, t0 - 14 * DAY);    // too old
+    var wc = P.weekCompare(wkp, t0);
+    check('this week vs last week adds up the right days', wc.now.sec === 900 && wc.before.sec === 120 &&
+          wc.before.games === 1 && wc.now.games === 0, JSON.stringify(wc));
 
     /* learning order */
     section('which letter next');

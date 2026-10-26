@@ -221,3 +221,19 @@ tests still click the same buttons.
   on the wrong side). `B.firstCluster` colours the whole first syllable.
   Gradient text (background-clip) also cut the top of র্ on iPhones → solid
   colour. Tested on Edge/Chrome only – no iPhone here.
+
+## 0.7.0 – children, worksheets, breaks (2026-10-26)
+- **Profiles without names:** a child is just an animal (🐯 🐘 🦋 🐟), max 4
+  – enough for siblings, nothing personal stored. Child 1 keeps the old
+  storage key `borno.progress.v1`, so updating loses nothing; others use
+  `borno.progress.v1.p2` …; the list is in `borno.profiles.v1`. Settings
+  belong to the phone and are carried over when switching. Children can add
+  a profile (harmless); only parents can delete one (parent page, two taps).
+  Voice recordings and teacher strokes are shared by all children.
+- **Worksheets** use the browser's print (A4 via `@page`, hollow letters with
+  `-webkit-text-stroke`) – no PDF library, works offline. The sheet lives
+  outside `#app` and only shows in print. Checked by printing to PDF.
+- **Break reminder:** counts only active play (same 15 s heartbeat as play
+  time). After 15 min a card blocks play; its button unlocks after 10 s so a
+  child cannot tap it away at once. Never on the parent pages. 5+ minutes
+  away from the game resets the count.

@@ -17,6 +17,11 @@ or to any external service.
 - Voice recordings a parent makes on the parent page (optional), in the
   browser's IndexedDB. They are only played back inside the game.
 - The stroke order a teacher draws in teacher mode (optional).
+- Up to 4 child profiles, each only an animal picture (🐯 🐘 🦋 🐟) with its
+  own progress – no names, ages or photos.
+
+**Worksheets:** printing happens on the device; the game sends nothing. The
+"Name / Date" line on the paper is for writing by hand.
 
 Nothing is sent anywhere. A parent can delete the progress on the parent page
 ("Delete all progress"); clearing the browser's site data removes everything.

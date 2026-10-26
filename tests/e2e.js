@@ -91,7 +91,10 @@
   }
 
   function clearSaves(store) {
-    try { store.removeItem('borno.progress.v1'); store.removeItem('borno.strokes.v1'); } catch (e) { /* ignore */ }
+    try {
+      ['borno.progress.v1', 'borno.strokes.v1', 'borno.profiles.v1', 'borno.progress.v1.p2', 'borno.progress.v1.p3',
+       'borno.progress.v1.p4'].forEach(function (k) { store.removeItem(k); });
+    } catch (e) { /* ignore */ }
   }
 
   function loadGame() {
@@ -520,6 +523,66 @@
       check('writing ক in the wrong order: hint on the result card', text('result-detail').indexOf(B.t('orderHint')) >= 0 ||
             onStars() < 3, text('result-detail'));
       click('[data-action="result-home"]');
+      return wait(200);
+    }).then(function () {
+      /* ---- children on one phone ---- */
+      var starsBefore = text('home-stars');
+      check('home shows the child animal 🐯', text('profile-chip') === '🐯');
+      click('[data-action="profiles"]');
+      check('"Who is playing?" shows 1 child + New', visible('profiles') &&
+            D.querySelectorAll('#profile-list .profile-btn').length === 2);
+      stopHere('profiles');
+      click('[data-action="add-profile"]');
+      return wait(300).then(function () { return starsBefore; });
+    }).then(function (starsBefore) {
+      check('a new child (🐘) starts with 0 stars', text('profile-chip') === '🐘' && text('home-stars') === '০' &&
+            !visible('profiles'));
+      check('the first child\'s stars stay saved', JSON.parse(W.localStorage.getItem('borno.progress.v1')).totalStars > 0);
+      click('[data-action="profiles"]');
+      click('[data-action="pick-profile"][data-id="p1"]');
+      return wait(300).then(function () { return starsBefore; });
+    }).then(function (starsBefore) {
+      check('switching back shows the first child\'s stars again', text('profile-chip') === '🐯' &&
+            text('home-stars') === starsBefore, starsBefore + ' -> ' + text('home-stars'));
+
+      /* ---- break reminder ---- */
+      B.noteActiveTime(15 * 60);
+      check('after 15 minutes of play a break card appears; OK waits', visible('break') &&
+            D.getElementById('break-ok').disabled);
+      stopHere('break');
+      return waitFor(function () { return !D.getElementById('break-ok').disabled; }, 15000);
+    }).then(function (ready) {
+      check('the OK button works after a few seconds', ready);
+      click('[data-action="break-ok"]');
+      check('OK closes the break card and goes home', !visible('break') && active() === 'home');
+      click('[data-action="parents"]');
+      return wait(200);
+    }).then(function () {
+      var g = B.app.gate;
+      click('[data-action="gate-answer"][data-value="' + (g.a + g.b) + '"]');
+      return wait(300);
+    }).then(function () {
+      /* ---- parent page: children, week, worksheet ---- */
+      check('parent page lists both children', D.querySelectorAll('#children-list .child-row').length === 2);
+      check('parent page compares this week with last week',
+            text('week-compare').indexOf(B.t('weekLine').split('{')[0].trim()) === 0, text('week-compare').split('\n')[0]);
+      var n = B.buildWorksheet('vowels');
+      var rows = D.querySelectorAll('#print-sheet .sheet-row');
+      check('worksheet: 11 vowels, each with a picture, 1 example, 4 to trace and 1 empty box', n === 11 &&
+            rows.length === 11 && Array.prototype.every.call(rows, function (r) {
+              return r.querySelectorAll('.sheet-cell.trace').length === 4 && r.querySelectorAll('.sheet-cell').length === 6 &&
+                     !!r.querySelector('.pic');
+            }));
+      check('worksheet for numbers shows counting pictures', B.buildWorksheet('numbers') === 10 &&
+            D.querySelectorAll('#print-sheet .pic.counting').length >= 9);
+      check('the worksheet is hidden on screen (only for printing)', W.getComputedStyle(D.getElementById('print-sheet')).display === 'none');
+      stopHere('children');
+      click('[data-action="delete-profile"][data-id="p2"]');
+      check('deleting a child needs a second tap', D.querySelectorAll('#children-list .child-row').length === 2);
+      click('[data-action="delete-profile"][data-id="p2"]');
+      check('second tap deletes the child and their progress', D.querySelectorAll('#children-list .child-row').length === 1 &&
+            W.localStorage.getItem('borno.progress.v1.p2') === null);
+      click('[data-action="home"]');
       return wait(200);
     }).then(function () {
       /* ---- reset ---- */

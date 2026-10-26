@@ -29,7 +29,7 @@
       totalStars: 0,
       totalAttempts: 0,
       gameRounds: 0,
-      settings: { sound: true, voice: true, lang: 'bn' },
+      settings: { sound: true, voice: true, lang: 'bn', breakReminder: true },
       letters: {},
       days: {}
     };
@@ -59,6 +59,7 @@
       p.settings.sound = d.settings.sound !== false;
       p.settings.voice = d.settings.voice !== false;
       p.settings.lang = d.settings.lang === 'en' ? 'en' : 'bn';
+      p.settings.breakReminder = d.settings.breakReminder !== false;
     }
     if (d.letters && typeof d.letters === 'object') {
       Object.keys(d.letters).forEach(function (id) {
@@ -117,18 +118,39 @@
     return p.days[key];
   }
 
+  /** Where a child's progress is saved. Child 1 uses the old key, so nothing is lost. */
+  function storeKey(profileId) {
+    return !profileId || profileId === 'p1' ? STORE_KEY : STORE_KEY + '.' + profileId;
+  }
+
   var Progress = {
-    load: function (storage) {
+    load: function (storage, profileId) {
       try {
-        var raw = storage.getItem(STORE_KEY);
+        var raw = storage.getItem(storeKey(profileId));
         return normalizeProgress(raw ? JSON.parse(raw) : null);
       } catch (e) {
         return newProgress(); // broken save: start fresh, never crash
       }
     },
 
-    save: function (storage, p) {
-      try { storage.setItem(STORE_KEY, JSON.stringify(p)); return true; } catch (e) { return false; }
+    save: function (storage, p, profileId) {
+      try { storage.setItem(storeKey(profileId), JSON.stringify(p)); return true; } catch (e) { return false; }
+    },
+
+    /**
+     * Play of this week (today and the 6 days before) and of the week before.
+     * Returns { now: {sec, tries, games}, before: {sec, tries, games} }.
+     */
+    weekCompare: function (p, now) {
+      var out = { now: { sec: 0, tries: 0, games: 0 }, before: { sec: 0, tries: 0, games: 0 } };
+      now = now || Date.now();
+      for (var i = 0; i < 14; i++) {
+        var d = p.days[dayKey(now - i * DAY)];
+        if (!d) continue;
+        var w = i < 7 ? out.now : out.before;
+        w.sec += d.sec; w.tries += d.tries; w.games += d.games;
+      }
+      return out;
     },
 
     stickers: function (total) {
@@ -315,7 +337,71 @@
     return letters[letters.length - 1];
   }
 
+  /* =====================================================================
+     CHILDREN ON ONE PHONE (profiles)
+     Up to 4 children, each shown as an animal – no names, nothing personal.
+     Saved as { list: [{ id: 'p1', animal: 0 }, ...], current: 'p1' }.
+     ===================================================================== */
+
+  var PROFILES_KEY = 'borno.profiles.v1';
+  B.ANIMALS = ['🐯', '🐘', '🦋', '🐟'];
+  var MAX_PROFILES = B.ANIMALS.length;
+  var IDS = ['p1', 'p2', 'p3', 'p4'];
+
+  var Profiles = {
+    /** The list of children; never empty, repaired if broken. */
+    load: function (storage) {
+      var reg = null;
+      try { reg = JSON.parse(storage.getItem(PROFILES_KEY) || 'null'); } catch (e) { reg = null; }
+      var list = [], usedAnimals = {};
+      if (reg && Array.isArray(reg.list)) {
+        reg.list.forEach(function (x) {
+          if (!x || IDS.indexOf(x.id) < 0 || list.some(function (y) { return y.id === x.id; })) return;
+          var a = Number(x.animal);
+          if (!(a >= 0 && a < MAX_PROFILES) || usedAnimals[a]) a = IDS.indexOf(x.id);
+          usedAnimals[a] = true;
+          list.push({ id: x.id, animal: a });
+        });
+      }
+      if (!list.length) list.push({ id: 'p1', animal: 0 });   // the first child (old saves)
+      var current = reg && list.some(function (x) { return x.id === reg.current; }) ? reg.current : list[0].id;
+      return { list: list.slice(0, MAX_PROFILES), current: current };
+    },
+
+    save: function (storage, reg) {
+      try { storage.setItem(PROFILES_KEY, JSON.stringify(reg)); return true; } catch (e) { return false; }
+    },
+
+    find: function (reg, id) { return reg.list.filter(function (x) { return x.id === id; })[0] || null; },
+
+    animal: function (reg, id) { var x = Profiles.find(reg, id); return x ? B.ANIMALS[x.animal] : B.ANIMALS[0]; },
+
+    canAdd: function (reg) { return reg.list.length < MAX_PROFILES; },
+
+    /** Adds a child with the first free animal. Returns the new profile, or null if full. */
+    add: function (reg) {
+      if (!Profiles.canAdd(reg)) return null;
+      var usedIds = reg.list.map(function (x) { return x.id; });
+      var usedAnimals = reg.list.map(function (x) { return x.animal; });
+      var id = IDS.filter(function (x) { return usedIds.indexOf(x) < 0; })[0];
+      var animal = [0, 1, 2, 3].filter(function (a) { return usedAnimals.indexOf(a) < 0; })[0];
+      var prof = { id: id, animal: animal };
+      reg.list.push(prof);
+      return prof;
+    },
+
+    /** Removes a child and all their progress. The last child cannot be removed. */
+    remove: function (storage, reg, id) {
+      if (reg.list.length <= 1 || !Profiles.find(reg, id)) return false;
+      reg.list = reg.list.filter(function (x) { return x.id !== id; });
+      try { storage.removeItem(storeKey(id)); } catch (e) { /* ignore */ }
+      if (reg.current === id) reg.current = reg.list[0].id;
+      return true;
+    }
+  };
+
   B.Progress = Progress;
+  B.Profiles = Profiles;
   B.newProgress = newProgress;
   B.normalizeProgress = normalizeProgress;
   B.dayKey = dayKey;

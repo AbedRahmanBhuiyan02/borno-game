@@ -28,6 +28,7 @@
   <section id="screen-home" class="screen">
     <div class="home-top">
       <button class="chip" data-action="toggle-lang">🌐 <span data-i18n="langSwitch">English</span></button>
+      <button id="profile-chip" class="chip avatar" data-action="profiles" aria-label="Who is playing?">🐯</button>
       <button class="chip" data-action="parents">👪 <span data-i18n="parents">অভিভাবক</span></button>
     </div>
     <div class="hero">
@@ -200,11 +201,31 @@
     </div>
     <div class="parent-body">
       <section>
-        <h3 data-i18n="progress">অগ্রগতি</h3>
+        <h3><span data-i18n="children">শিশুরা</span></h3>
+        <p class="small left" data-i18n="childrenHelp"></p>
+        <div id="children-list" class="children-list"></div>
+      </section>
+      <section>
+        <h3><span data-i18n="progress">অগ্রগতি</span> <span id="parent-child" class="parent-child"></span></h3>
         <p id="parent-summary"></p>
         <h3 data-i18n="playTime">খেলার সময়</h3>
+        <p id="week-compare" class="week-compare pre"></p>
         <p id="play-time" class="small left pre"></p>
         <div id="parent-letters"></div>
+      </section>
+      <section>
+        <h3 data-i18n="printTitle">ছাপার পাতা</h3>
+        <p class="small left" data-i18n="printHelp"></p>
+        <div class="settings">
+          <select id="print-kind" class="teach-select" aria-label="Worksheet">
+            <option value="practice" data-i18n="printPractice">এখন যে বর্ণগুলো শিখছে</option>
+            <option value="weak" data-i18n="printWeak">যেগুলো কঠিন লাগছে</option>
+            <option value="vowels" data-i18n="vowels">স্বরবর্ণ</option>
+            <option value="consonants" data-i18n="consonants">ব্যঞ্জনবর্ণ</option>
+            <option value="numbers" data-i18n="numbers">সংখ্যা</option>
+          </select>
+          <button class="btn blue" data-action="print-sheet" data-i18n="printBtn">🖨️ প্রিন্ট</button>
+        </div>
       </section>
       <section>
         <h3 data-i18n="record">বর্ণের শব্দ রেকর্ড করুন</h3>
@@ -227,6 +248,7 @@
           <button id="lang-toggle" class="btn purple" data-action="toggle-lang">🌐</button>
           <button id="sound-toggle" class="btn blue" data-action="toggle-sound">🔊</button>
           <button id="voice-toggle" class="btn teal" data-action="toggle-voice">🗣️</button>
+          <button id="break-toggle" class="btn green" data-action="toggle-break">⏰</button>
           <p id="voice-status" class="small"></p>
           <button class="btn orange" data-action="sound-test" data-i18n="soundTest"></button>
           <pre id="sound-result" class="small left pre"></pre>
@@ -315,8 +337,30 @@
     </div>
   </div>
 
+  <!-- ============ WHO IS PLAYING? (pop-up) ============ -->
+  <div id="profiles" class="overlay hidden">
+    <div class="card">
+      <h3 data-i18n="whoPlays">কে খেলবে?</h3>
+      <div id="profile-list" class="profile-list"></div>
+      <div class="card-buttons"><button class="btn soft" data-action="close-profiles" data-i18n="cancel">বাতিল</button></div>
+    </div>
+  </div>
+
+  <!-- ============ BREAK REMINDER (pop-up) ============ -->
+  <div id="break" class="overlay hidden">
+    <div class="card break-card">
+      <div class="break-icon" aria-hidden="true">🧃</div>
+      <h3 data-i18n="breakTitle">একটু বিরতি!</h3>
+      <p class="break-text" data-i18n="breakText"></p>
+      <div class="card-buttons"><button id="break-ok" class="btn green" data-action="break-ok" disabled>…</button></div>
+    </div>
+  </div>
+
   <div id="toast" role="status"></div>
 </div>
+
+<!-- the printable worksheet (only visible when printing) -->
+<div id="print-sheet" aria-hidden="true"></div>
 
 <!-- content -->
 <script src="assets/letters.js"></script>

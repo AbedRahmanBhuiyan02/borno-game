@@ -84,6 +84,20 @@
         B.save(); B.renderParent(); break;
       case 'reset': B.armReset(); break;
       case 'device-check': B.deviceCheck(); break;
+      case 'toggle-break':
+        app.progress.settings.breakReminder = !app.progress.settings.breakReminder;
+        B.save(); B.renderParent(); break;
+      case 'delete-profile': B.armDeleteProfile(b.dataset.id); break;
+      case 'print-sheet': B.printSheet($('print-kind').value); break;
+
+      // children on one phone
+      case 'profiles': B.openProfiles(); break;
+      case 'pick-profile': B.switchProfile(b.dataset.id); break;
+      case 'add-profile': B.addProfile(); break;
+      case 'close-profiles': $('profiles').classList.add('hidden'); break;
+
+      // break reminder
+      case 'break-ok': B.closeBreak(); break;
       case 'sound-test': B.runSoundTest(); break;
 
       // recording session
@@ -112,16 +126,65 @@
   // last minute – so a phone left lying around does not count.
   var lastTouch = 0;
   var ticks = 0;
+  var hiddenSince = 0;
   function trackPlayTime() {
     var mark = function () { lastTouch = Date.now(); };
     document.addEventListener('pointerdown', mark, true);
     document.addEventListener('keydown', mark, true);
+    // away from the game for 5+ minutes = a real break: start counting again
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) hiddenSince = Date.now();
+      else if (hiddenSince && Date.now() - hiddenSince > 5 * 60000) app.sessionActive = 0;
+    });
     setInterval(function () {
       if (document.hidden || Date.now() - lastTouch > 60000) return;
       B.Progress.addPlayTime(app.progress, 15);
+      B.noteActiveTime(15);
       if (++ticks % 4 === 0) B.save(); // save once a minute
     }, 15000);
   }
+
+  /* ---------- break reminder ---------- */
+
+  var BREAK_AFTER = 15 * 60;     // seconds of active play
+  var BREAK_WAIT = 10;           // the OK button works after 10 seconds
+
+  /** Counts active play; after 15 minutes asks for a short break (not on the parent pages). */
+  B.noteActiveTime = function (seconds) {
+    app.sessionActive = (app.sessionActive || 0) + seconds;
+    var grownUpScreen = ['parent', 'record', 'teach'].indexOf(app.screen) >= 0;
+    if (app.sessionActive >= BREAK_AFTER && app.progress.settings.breakReminder && !grownUpScreen &&
+        $('break').classList.contains('hidden')) {
+      B.openBreak();
+    }
+  };
+
+  B.openBreak = function () {
+    app.sessionActive = 0;
+    if (app.board) app.board.enabled = false;
+    B.Voice.stop();
+    if (app.screen === 'balloon') B.Balloons.stop();
+    var ok = $('break-ok');
+    var left = BREAK_WAIT;
+    ok.disabled = true;
+    ok.textContent = B.t('breakWait', { n: B.num(left) });
+    clearInterval(app.breakTimer);
+    app.breakTimer = setInterval(function () {
+      left--;
+      if (left > 0) { ok.textContent = B.t('breakWait', { n: B.num(left) }); return; }
+      clearInterval(app.breakTimer);
+      ok.disabled = false;
+      ok.textContent = B.t('breakOk');
+    }, 1000);
+    $('break').classList.remove('hidden');
+    B.Sfx.play('right');
+  };
+
+  B.closeBreak = function () {
+    clearInterval(app.breakTimer);
+    $('break').classList.add('hidden');
+    B.goHome();   // a fresh start after the break
+  };
 
   /* ---------- start-up ---------- */
 
@@ -129,7 +192,9 @@
     if (!$('app')) return; // test pages load these files without the game screens
 
     app.storage = safeStorage();
-    app.progress = B.Progress.load(app.storage);
+    app.profiles = B.Profiles.load(app.storage);
+    app.progress = B.Progress.load(app.storage, app.profiles.current);
+    app.sessionActive = 0;
     B.Voice.init();
     B.initBoard();
     B.Balloons.build();
