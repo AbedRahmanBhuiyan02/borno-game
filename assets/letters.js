@@ -13,7 +13,7 @@
                 letter is also used in the "first letter" game.
     english     the word in English (for parents)
     emoji       the picture for the word (emoji are built into every phone)
-    count       optional: show the emoji this many times (for counting numbers)
+    count       optional: show the emoji this many times (numbers; and 👦👦 for যমজ "twins")
     picture     optional picture file instead of the emoji, e.g. "assets/images/aam.png"
     letterSound optional sound file, e.g. "assets/sounds/letters/ka.mp3" ("" = none)
     wordSound   optional sound file, e.g. "assets/sounds/words/kola.mp3" ("" = none)
@@ -31,8 +31,8 @@ window.BORNO_LETTERS = [
   { id: "ii",  letter: "ঈ", group: "vowel", name: "ii (dirgho i)",   word: "ঈগল",    english: "eagle",          emoji: "🦅", letterSound: "", wordSound: "" },
   { id: "u",   letter: "উ", group: "vowel", name: "u (hroshyo u)",   word: "উট",     english: "camel",          emoji: "🐫", letterSound: "", wordSound: "" },
   { id: "uu",  letter: "ঊ", group: "vowel", name: "uu (dirgho u)",   word: "ঊষা",    english: "dawn",           emoji: "🌅", letterSound: "", wordSound: "" },
-  { id: "ri",  letter: "ঋ", group: "vowel", name: "ri",              word: "ঋষি",    english: "sage",           emoji: "🧘", letterSound: "", wordSound: "" },
-  { id: "e",   letter: "এ", group: "vowel", name: "e",               word: "একতারা", english: "ektara (one-string lute)", emoji: "🎸", letterSound: "", wordSound: "" },
+  { id: "ri",  letter: "ঋ", group: "vowel", name: "ri",              word: "ঋষি",    english: "sage",           emoji: "👴", letterSound: "", wordSound: "" },
+  { id: "e",   letter: "এ", group: "vowel", name: "e",               word: "একতারা", english: "ektara (one-string lute)", emoji: "🪕", letterSound: "", wordSound: "" },
   { id: "oi",  letter: "ঐ", group: "vowel", name: "oi",              word: "ঐরাবত",  english: "Airavata (elephant)", emoji: "🐘", letterSound: "", wordSound: "" },
   { id: "oh",  letter: "ও", group: "vowel", name: "o",               word: "ওল",     english: "yam",            emoji: "🍠", letterSound: "", wordSound: "" },
   { id: "ou",  letter: "ঔ", group: "vowel", name: "ou",              word: "ঔষধ",    english: "medicine",       emoji: "💊", letterSound: "", wordSound: "" },
@@ -63,7 +63,7 @@ window.BORNO_LETTERS = [
   { id: "ba",   letter: "ব", group: "consonant", name: "bo",                 word: "বল",     english: "ball",         emoji: "⚽", letterSound: "", wordSound: "" },
   { id: "bha",  letter: "ভ", group: "consonant", name: "bho",                word: "ভালুক",  english: "bear",         emoji: "🐻", letterSound: "", wordSound: "" },
   { id: "ma",   letter: "ম", group: "consonant", name: "mo",                 word: "মাছ",    english: "fish",         emoji: "🐟", letterSound: "", wordSound: "" },
-  { id: "ya",   letter: "য", group: "consonant", name: "ontostho jo",        word: "যমজ",    english: "twins",        emoji: "👬", letterSound: "", wordSound: "" },
+  { id: "ya",   letter: "য", group: "consonant", name: "ontostho jo",        word: "যমজ",    english: "twins",        emoji: "👦", count: 2, letterSound: "", wordSound: "" },
   { id: "ra",   letter: "র", group: "consonant", name: "ro",                 word: "রকেট",   english: "rocket",       emoji: "🚀", letterSound: "", wordSound: "" },
   { id: "la",   letter: "ল", group: "consonant", name: "lo",                 word: "লেবু",    english: "lemon",        emoji: "🍋", letterSound: "", wordSound: "" },
   { id: "sha",  letter: "শ", group: "consonant", name: "talobbo sho",        word: "শসা",    english: "cucumber",     emoji: "🥒", letterSound: "", wordSound: "" },
@@ -73,7 +73,7 @@ window.BORNO_LETTERS = [
   { id: "rra",  letter: "ড়", group: "consonant", name: "Ro (doshunno ro)",   word: "গাড়ি",   english: "car",          emoji: "🚗", letterSound: "", wordSound: "" },
   { id: "rha",  letter: "ঢ়", group: "consonant", name: "Rho",                word: "আষাঢ়",   english: "Asharh (rainy month)", emoji: "🌧️", letterSound: "", wordSound: "" },
   { id: "yya",  letter: "য়", group: "consonant", name: "ontostho o",         word: "ময়ূর",   english: "peacock",      emoji: "🦚", letterSound: "", wordSound: "" },
-  { id: "khta", letter: "ৎ", group: "consonant", name: "khondo to",          word: "শরৎ",    english: "autumn",       emoji: "🍂", letterSound: "", wordSound: "" },
+  { id: "khta", letter: "ৎ", group: "consonant", name: "khondo to",          word: "শরৎ",    english: "autumn (clear sky)", emoji: "🌤️", letterSound: "", wordSound: "" },
   { id: "anu",  letter: "ং", group: "consonant", name: "onushshar",          word: "রং",     english: "colour",       emoji: "🎨", letterSound: "", wordSound: "" },
   { id: "bis",  letter: "ঃ", group: "consonant", name: "bishorgo",           word: "দুঃখ",   english: "sad",          emoji: "😢", letterSound: "", wordSound: "" },
   { id: "chan", letter: "ঁ", group: "consonant", name: "chondrobindu",       word: "চাঁদ",    english: "moon",         emoji: "🌙", letterSound: "", wordSound: "" },

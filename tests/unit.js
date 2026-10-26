@@ -108,6 +108,14 @@
     check('ঁ ং ঃ are shown with a no-break space in front (no dotted circle)',
           B.display(byId('chan')).charAt(0) === ' ' && B.display(byId('anu')).length === 2 &&
           B.display(byId('ka')) === 'ক');
+    var pics = {};
+    B.ALPHABET.forEach(function (l) { pics[l.id] = l.emoji + (l.count ? '×' + l.count : ''); });
+    check('clearer pictures: একতারা 🪕, ঋষি 👴, যমজ 👦👦, শরৎ 🌤️ (not 🎸 🧘 👬 🍂)',
+          pics.e === '🪕' && pics.ri === '👴' && pics.ya === '👦×2' && pics.khta === '🌤️',
+          pics.e + ' ' + pics.ri + ' ' + pics.ya + ' ' + pics.khta);
+    var used = {}, twice = [];
+    B.ALPHABET.forEach(function (l) { var k = l.emoji + (l.count || ''); if (used[k]) twice.push(l.word + '/' + used[k]); used[k] = l.word; });
+    check('no two letters use the same picture', twice.length === 0, twice.join(' '));
     var noEmoji = B.LETTERS.filter(function (l) { return !B.emojiOk(l.emoji); }).map(function (l) { return l.emoji; });
     check('this browser can show every emoji picture', noEmoji.length === 0, noEmoji.join(' '));
 

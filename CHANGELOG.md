@@ -7,6 +7,13 @@ The version number is also shown on the parent page and lives in
 Numbers mean: **0.x** = still being tested; the middle number goes up for
 new features, the last number for small fixes.
 
+## 0.7.1 – 2026-10-27
+- Clearer pictures: একতারা 🎸 → 🪕 (folk string instrument), ঋষি 🧘 → 👴
+  (wise old man), যমজ 👬 → 👦👦 (two boys), শরৎ 🍂 → 🌤️ (Bangladesh's clear
+  শরৎ sky; ☁️ is already মেঘ). Kept: ওল 🍠 (no closer picture), মিঞা 👨.
+- 1–3 counting pictures (১ ২ ৩, যমজ) are shown bigger.
+- Test: no two letters share a picture.
+
 ## 0.7.0 – 2026-10-26
 **For real families**
 - **Several children on one phone:** up to 4 children, each shown as an

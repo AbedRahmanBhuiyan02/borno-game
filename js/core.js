@@ -16,7 +16,7 @@
      1. SETTINGS, VERSION AND TEXTS
      ===================================================================== */
 
-  B.VERSION = '0.7.0';
+  B.VERSION = '0.7.1';
 
   B.SCORE = {
     grid: 160,              // tracings are checked on a 160 x 160 picture
@@ -309,7 +309,7 @@
    */
   B.setPicture = function (target, item) {
     target.textContent = '';
-    target.classList.remove('text', 'counting');
+    target.classList.remove('text', 'counting', 'few');
     if (item.picture) {
       var img = B.el('img');
       img.src = item.picture;
@@ -318,6 +318,7 @@
     } else if (item.emoji && B.emojiOk(item.emoji)) {
       if (item.count) {
         target.classList.add('counting');
+        if (item.count <= 3) target.classList.add('few');   // 1–3 pictures: show them bigger
         for (var i = 0; i < item.count; i++) target.appendChild(B.el('span', '', item.emoji));
       } else {
         target.textContent = item.emoji;

@@ -370,6 +370,11 @@ button:focus-visible { outline: 4px solid rgba(76, 141, 255, 0.55); outline-offs
 .tile .pic.counting { font-size: 9px; max-width: 70%; }
 .word-card .pic.counting { font-size: 17px; }
 .prompt .pic.big.counting { font-size: min(9vw, 40px); max-width: 80%; }
+/* only 1–3 pictures (১ ২ ৩, যমজ 👦👦): they fit bigger */
+.tile .pic.counting.few { font-size: 15px; max-width: 90%; }
+.word-card .pic.counting.few { font-size: 26px; }
+.prompt .pic.big.counting.few { font-size: min(18vw, 72px); }
+.session-item .pic.counting.few { font-size: 56px; }
 
 /* ====================== 6. tracing ====================== */
 .big-letter {
