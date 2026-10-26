@@ -171,7 +171,16 @@
     // Offline cache when the game is served from a web server (https or localhost)
     if ('serviceWorker' in navigator && (window.location.protocol === 'https:' ||
         window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      var hadWorker = !!navigator.serviceWorker.controller;
       navigator.serviceWorker.register('sw.js').catch(function () { /* fine without it */ });
+      // A new version just took over: reload once so no old file stays in use.
+      // Only on the home screen, so a child is never interrupted while playing.
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (!hadWorker || app.reloading) return;
+        var reload = function () { app.reloading = true; B.save(); window.location.reload(); };
+        if (app.screen === 'home') reload();
+        else app.reloadOnHome = reload;
+      });
     }
   }
 

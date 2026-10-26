@@ -78,6 +78,7 @@
   };
 
   B.goHome = function () {
+    if (app.reloadOnHome) { app.reloadOnHome(); return; }   // a new version is waiting (main.js)
     B.show('home');
     renderHome();
   };

@@ -8,6 +8,7 @@
 
   How updates work (no number to change by hand any more):
   - "network first": when there is internet, the newest file is loaded
+    (always checked with the server, never an old browser-cache copy)
     and the saved copy is replaced with it;
   - without internet (or if the network takes longer than 3 seconds),
     the saved copy is used.
@@ -74,7 +75,12 @@ self.addEventListener('fetch', function (event) {
       caches.match(req, { ignoreSearch: true }).then(function (hit) { if (hit) answer(hit); });
     }, NETWORK_WAIT_MS);
 
-    fetch(req).then(function (res) {
+    // "no-cache": always ask the server whether the file changed (cheap when it did
+    // not). Without it the browser may give a 10-minute-old copy, and a phone could
+    // run new and old game files mixed together.
+    var fresh = req.mode === 'navigate' ? new Request(req.url, { cache: 'no-cache', credentials: 'same-origin' })
+                                        : new Request(req, { cache: 'no-cache' });
+    fetch(fresh).then(function (res) {
       clearTimeout(timer);
       if (res && res.ok) {
         var copy = res.clone();

@@ -7,6 +7,12 @@ The version number is also shown on the parent page and lives in
 Numbers mean: **0.x** = still being tested; the middle number goes up for
 new features, the last number for small fixes.
 
+## 0.5.1 – 2026-10-26
+- Fixed: after an update, a phone could run new and old game files mixed
+  together for up to 10 minutes (the browser's own cache), so fixes did not
+  arrive. The offline helper now always checks the server for changed files,
+  and when a new version takes over the game reloads once on the home screen.
+
 ## 0.5.0 – 2026-10-26
 - **A voice on every phone:** a computer voice (made with the free program
   eSpeak NG) now comes with the game – all 50 letters, ০–৯, their words, the
