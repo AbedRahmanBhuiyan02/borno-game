@@ -238,13 +238,10 @@ button:focus-visible { outline: 4px solid rgba(76, 141, 255, 0.55); outline-offs
   font-family: var(--bangla);
   font-size: clamp(64px, 19vw, 104px);
   font-weight: 800;
-  line-height: 1.05;
-  color: var(--orange);
-  background: linear-gradient(180deg, #ffb347 0%, #ff8a00 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 0 rgba(224, 127, 0, 0.18));
+  line-height: 1.2;
+  /* solid colour on purpose: gradient text cuts off the top of র্ on iPhones */
+  color: #ff8f0a;
+  text-shadow: 0 4px 0 rgba(224, 127, 0, 0.2);
 }
 .subtitle { margin: 0; font-size: 18px; font-weight: 600; color: var(--muted); }
 

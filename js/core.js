@@ -328,12 +328,34 @@
     }
   };
 
-  /** Writes the word; if it starts with the letter, that letter is coloured. */
+  // Bangla signs that belong to the letter before them (vowel signs, ঁ ং ঃ, nukta)
+  var JOINS_BEFORE = /[ঁ-ঃ়া-ৄেৈোৌৗ‌‍]/;
+  var HASANTA = '্';
+
+  /**
+   * The first syllable of a word as it is drawn: a letter with its vowel
+   * sign and marks, and joined letters (ক্ষ, স্ক …). Splitting a word INSIDE
+   * a syllable (e.g. "ম" + "াছ") breaks the drawing on iPhones.
+   */
+  B.firstCluster = function (word) {
+    var i = 1;
+    while (i < word.length) {
+      var ch = word.charAt(i);
+      if (JOINS_BEFORE.test(ch)) { i++; continue; }
+      if (ch === HASANTA) { i += 2; continue; }   // ্ + the next letter joins
+      break;
+    }
+    return word.slice(0, Math.min(i, word.length));
+  };
+
+  /** Writes the word; if it starts with the letter, its first syllable is coloured. */
   B.setWord = function (target, letter) {
     target.textContent = '';
     if (B.startsWord(letter)) {
-      target.appendChild(B.el('span', 'hl', letter.letter));
-      target.appendChild(document.createTextNode(letter.word.slice(letter.letter.length)));
+      // colour the whole first syllable (মা in মাছ), never half of it
+      var first = B.firstCluster(letter.word);
+      target.appendChild(B.el('span', 'hl', first));
+      target.appendChild(document.createTextNode(letter.word.slice(first.length)));
     } else {
       target.textContent = letter.word;
     }
