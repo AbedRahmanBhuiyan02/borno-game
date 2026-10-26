@@ -84,6 +84,7 @@
         B.save(); B.renderParent(); break;
       case 'reset': B.armReset(); break;
       case 'device-check': B.deviceCheck(); break;
+      case 'sound-test': B.runSoundTest(); break;
 
       // recording session
       case 'record-session': B.startSession(); break;
@@ -138,7 +139,7 @@
     document.addEventListener('click', function (e) {
       var b = e.target.closest('[data-action]');
       if (!b || b.disabled) return;
-      B.Sfx.unlock();
+      B.unlockAudio();
       var quiet = ['answer', 'kar-answer', 'word-tile', 'gate-answer', 'session-record', 'session-play', 'done'];
       if (quiet.indexOf(b.dataset.action) < 0) B.Sfx.play('tap');
       handle(b.dataset.action, b);
@@ -156,6 +157,11 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') B.goBack(); });
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) { B.Voice.stop(); B.save(); }
+    });
+
+    // phones allow sound only after a touch: wake the sound up on every kind of touch/key
+    ['touchend', 'pointerup', 'keydown'].forEach(function (type) {
+      document.addEventListener(type, B.unlockAudio, true);
     });
 
     trackPlayTime();

@@ -7,6 +7,16 @@ The version number is also shown on the parent page and lives in
 Numbers mean: **0.x** = still being tested; the middle number goes up for
 new features, the last number for small fixes.
 
+## 0.4.1 – 2026-10-26
+- Sound on phones: the sound is now "woken up" properly on the first touch
+  (effects, voice player and device voice); iPhones play sound even with the
+  silent switch on (Safari 17+); recorded voices use one shared player that
+  phones allow to play later.
+- Parent page: **🔊 Sound test** – plays a tune and «অ», shows which voices
+  this device has and explains how to add one (record, or install the
+  Android Bangla voice).
+- The game is online at https://abedrahmanbhuiyan02.github.io/borno-game/
+
 ## 0.4.0 – 2026-10-25
 **Learning**
 - Three tracing levels per letter: thick guide → faint guide → from memory

@@ -91,7 +91,7 @@
   TraceBoard.prototype.down = function (e) {
     if (!this.enabled || this.demo || this.pointerId !== null) return; // one finger at a time
     e.preventDefault();
-    B.Sfx.unlock();
+    B.unlockAudio();
     this.pointerId = e.pointerId;
     try { this.canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
     this.active = [this.point(e)];

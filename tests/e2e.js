@@ -443,6 +443,13 @@
     }).then(function (done) {
       check('device check measures this device', done && /✔|⚠/.test(text('device-result')), text('device-result').split('\n')[1]);
       stopHere('device');
+      click('[data-action="sound-test"]');
+      return waitFor(function () { return text('sound-result').indexOf(B.t('sndTips')) >= 0; }, 8000);
+    }).then(function (done) {
+      // the test browser has no recorded and no device voice -> it must explain how to fix that
+      check('sound test explains what works and how to add a voice', done && !!B.Sfx.ctx &&
+            text('sound-result').indexOf(B.t('sndVoiceNone')) >= 0, text('sound-result').split('\n')[0]);
+      stopHere('sound');
 
       /* ---- recording session ---- */
       click('[data-action="record-session"]');

@@ -10,6 +10,48 @@
 (function (B) {
   'use strict';
 
+  /*
+    Phones only allow sound after the user touched the page, and only from
+    code that runs DURING that touch. unlockAudio() is called on every tap
+    (see main.js) and, the first time, "wakes up" all three sound outputs:
+    the effects (Web Audio), the voice player (<audio>) and the device voice.
+  */
+  var unlocked = false;
+
+  /** A tiny silent WAV sound (0.05 s), made in code. */
+  function silentWav() {
+    var samples = 400, buf = new ArrayBuffer(44 + samples * 2), v = new DataView(buf);
+    var w = function (o, s) { for (var i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+    w(0, 'RIFF'); v.setUint32(4, 36 + samples * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, 8000, true); v.setUint32(28, 16000, true); v.setUint16(32, 2, true);
+    v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, samples * 2, true);
+    return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+  }
+
+  function unlockAudio() {
+    Sfx.unlock();
+    if (unlocked) return;
+    unlocked = true;
+    // iPhone/iPad (Safari 17+): play sound even when the silent switch is on
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* ignore */ }
+    // the voice player: play silence once, so later play() calls are allowed
+    try {
+      var a = Voice.player();
+      a.src = silentWav();
+      var pr = a.play();
+      if (pr && pr.catch) pr.catch(function () { unlocked = false; });
+    } catch (e) { unlocked = false; }
+    // the device voice (iPhone needs one speak() during a touch)
+    try {
+      if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
+        var u = new window.SpeechSynthesisUtterance(' ');
+        u.volume = 0;
+        window.speechSynthesis.speak(u);
+      }
+    } catch (e) { /* ignore */ }
+  }
+
   var Sfx = {
     ctx: null,
 
@@ -20,7 +62,15 @@
           if (!AC) return;
           this.ctx = new AC();
         }
-        if (this.ctx.state === 'suspended') this.ctx.resume();
+        if (this.ctx.state !== 'running') {
+          this.ctx.resume();
+          // older iPhones: playing a silent sound during the touch starts the audio
+          var b = this.ctx.createBuffer(1, 1, 22050);
+          var s = this.ctx.createBufferSource();
+          s.buffer = b;
+          s.connect(this.ctx.destination);
+          s.start(0);
+        }
       } catch (e) { /* no sound on this device */ }
     },
 
@@ -42,9 +92,19 @@
     },
 
     play: function (name) {
+      var self = this;
       if (!B.app.progress || !B.app.progress.settings.sound) return;
       this.unlock();
       if (!this.ctx) return;
+      // still waking up: play as soon as the audio is running (instead of losing the sound)
+      if (this.ctx.state !== 'running' && this.ctx.resume) {
+        this.ctx.resume().then(function () { self.notes(name); }, function () { /* no sound */ });
+        return;
+      }
+      this.notes(name);
+    },
+
+    notes: function (name) {
       try {
         if (name === 'tap') this.tone(1200, 900, 0.05, 0, 0.12);
         else if (name === 'pop') this.tone(900, 250, 0.15, 0, 0.35);
@@ -110,6 +170,13 @@
   var Voice = {
     ttsVoices: [],
     current: null,
+    audio: null,
+
+    /** One shared <audio> player: once it played during a touch, phones let it play later too. */
+    player: function () {
+      if (!this.audio) this.audio = new Audio();
+      return this.audio;
+    },
 
     init: function () {
       var self = this;
@@ -134,11 +201,18 @@
     playUrl: function (url, revoke) {
       var self = this;
       return new Promise(function (resolve) {
-        var a = new Audio(url);
+        var a = self.player();
         self.current = a;
-        var done = function (ok) { if (revoke) URL.revokeObjectURL(url); resolve(ok); };
+        var finished = false;
+        var done = function (ok) {
+          if (finished) return;
+          finished = true;
+          if (revoke) URL.revokeObjectURL(url);
+          resolve(ok);
+        };
         a.onended = function () { done(true); };
         a.onerror = function () { done(false); };
+        a.src = url;
         var pr = a.play();
         if (pr && pr.catch) pr.catch(function () { done(false); });
       });
@@ -236,6 +310,34 @@
     });
   }
 
+  /**
+   * Parent page "Sound test": plays the effects and the letter অ, and
+   * reports which sound sources this device has. Resolves the report.
+   */
+  function soundTest() {
+    unlockAudio();
+    var report = {
+      effects: !!Sfx.ctx,
+      deviceVoice: Voice.hasDeviceVoice(),
+      shipped: Object.keys(B.VOICES).length,
+      recorded: 0,
+      voicePlayed: false
+    };
+    Sfx.play('hooray');
+    return VoiceStore.keys().then(function (keys) {
+      report.recorded = keys.length;
+      return new Promise(function (resolve) { setTimeout(resolve, 700); });
+    }).then(function () {
+      return Voice.say(B.LETTERS[0], 'letter');
+    }).then(function (played) {
+      report.voicePlayed = !!played;
+      report.effects = !!Sfx.ctx && Sfx.ctx.state === 'running';
+      return report;
+    });
+  }
+
+  B.unlockAudio = unlockAudio;
+  B.soundTest = soundTest;
   B.Sfx = Sfx;
   B.VoiceStore = VoiceStore;
   B.Voice = Voice;

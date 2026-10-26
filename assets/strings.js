@@ -66,7 +66,7 @@ window.BORNO_STRINGS = {
     on: "চালু",
     off: "বন্ধ",
     voiceFound: "এই ডিভাইসে ইন্টারনেট ছাড়া চলে এমন একটি বাংলা কণ্ঠ পাওয়া গেছে।",
-    voiceNone: "এই ডিভাইসে ইন্টারনেট ছাড়া চলে এমন বাংলা কণ্ঠ নেই – নিচে নিজের কণ্ঠ রেকর্ড করুন।",
+    voiceNone: "এই ডিভাইসে ইন্টারনেট ছাড়া চলে এমন বাংলা কণ্ঠ নেই – উপরের «রেকর্ডিং সেশন» দিয়ে নিজের কণ্ঠ রেকর্ড করুন।",
     summary: "তারা: {s} · স্টিকার: {k}/{K} · লেখার চেষ্টা: {a} · খেলা: {g} · শেখা বর্ণ: {l}/{L} · অনুশীলন দরকার: {w}",
     none: "নেই",
     rowNotPlayed: "এখনো খেলা হয়নি",
@@ -147,7 +147,16 @@ window.BORNO_STRINGS = {
     playTime: "খেলার সময়",
     dayLine: "{d}: {m} মিনিট · {a}টি লেখা · {g}টি খেলা",
     noDays: "এখনো কোনো দিনের তথ্য নেই",
-    version: "সংস্করণ {v}"
+    version: "সংস্করণ {v}",
+
+    // sound test
+    soundTest: "🔊 শব্দ পরীক্ষা",
+    sndRunning: "শুনুন… (একটা সুর, তারপর «অ»)",
+    sndEffects: "সুর (পপ, ঘণ্টা): {v}",
+    sndVoices: "কণ্ঠ: রেকর্ড করা {r}টি · গেমের সাথে {s}টি · ডিভাইসের বাংলা কণ্ঠ: {d}",
+    sndVoiceOk: "✔ «অ» শোনা যাওয়ার কথা।",
+    sndVoiceNone: "✘ বর্ণ ও শব্দের জন্য এখনো কোনো কণ্ঠ নেই। সমাধান: উপরে «রেকর্ডিং সেশন» দিয়ে নিজের কণ্ঠ রেকর্ড করুন। অথবা Android-এ: সেটিংস → «Text-to-speech» → Google → বাংলা কণ্ঠ ইনস্টল করুন।",
+    sndTips: "কিছুই শোনা না গেলে: ফোনের ভলিউম (মিডিয়া) বাড়ান · iPhone-এ পাশের সাইলেন্ট সুইচ বন্ধ করুন · ব্লুটুথ হেডফোন সংযুক্ত আছে কিনা দেখুন · গেম বন্ধ করে আবার খুলুন।"
   },
 
   en: {
@@ -209,7 +218,7 @@ window.BORNO_STRINGS = {
     on: "On",
     off: "Off",
     voiceFound: "A Bangla voice that works offline was found on this device.",
-    voiceNone: "No offline Bangla voice on this device – please record your own voice below.",
+    voiceNone: "No offline Bangla voice on this device – record your own voice with the «Recording session» above.",
     summary: "Stars: {s} · Stickers: {k}/{K} · Tracing tries: {a} · Game rounds: {g} · Letters learned: {l}/{L} · To practise: {w}",
     none: "none",
     rowNotPlayed: "not played yet",
@@ -290,6 +299,15 @@ window.BORNO_STRINGS = {
     playTime: "Play time",
     dayLine: "{d}: {m} min · {a} tracings · {g} games",
     noDays: "No days recorded yet",
-    version: "Version {v}"
+    version: "Version {v}",
+
+    // sound test
+    soundTest: "🔊 Sound test",
+    sndRunning: "Listen… (a tune, then «অ»)",
+    sndEffects: "Tunes (pop, chime): {v}",
+    sndVoices: "Voices: {r} recorded · {s} shipped with the game · device Bangla voice: {d}",
+    sndVoiceOk: "✔ You should hear «অ».",
+    sndVoiceNone: "✘ No voice for letters and words yet. Fix: record your own voice with the «Recording session» above. Or on Android: Settings → «Text-to-speech» → Google → install the Bangla (Bengali) voice.",
+    sndTips: "If you hear nothing at all: turn up the phone's media volume · iPhone: switch off the silent switch on the side · check that no Bluetooth headphones are connected · close the game and open it again."
   }
 };

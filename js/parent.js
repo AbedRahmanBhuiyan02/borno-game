@@ -302,6 +302,29 @@
 
   B.exportStrokes = function () { B.downloadText('strokes.js', B.buildStrokesFile()); };
 
+  /* ---------- sound test ---------- */
+
+  /** Plays a tune and the letter অ, then explains what works on this device and how to fix the rest. */
+  B.runSoundTest = function () {
+    var out = $('sound-result');
+    if (!app.progress.settings.sound) {   // the test needs sound switched on
+      app.progress.settings.sound = true;
+      B.save();
+      B.renderParent();
+    }
+    out.textContent = t('sndRunning');
+    return B.soundTest().then(function (r) {
+      var lines = [
+        t('sndEffects', { v: t(r.effects ? 'yes' : 'no') }),
+        t('sndVoices', { r: num(r.recorded), s: num(r.shipped), d: t(r.deviceVoice ? 'yes' : 'no') }),
+        r.voicePlayed ? t('sndVoiceOk') : t('sndVoiceNone'),
+        t('sndTips')
+      ];
+      out.textContent = lines.join('\n');
+      return r;
+    });
+  };
+
   /** For the automatic tests: the teacher's drawing board. */
   B.teachBoardForTests = function () { return teach.board; };
 
