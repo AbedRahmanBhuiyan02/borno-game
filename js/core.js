@@ -16,7 +16,7 @@
      1. SETTINGS, VERSION AND TEXTS
      ===================================================================== */
 
-  B.VERSION = '0.6.0';
+  B.VERSION = '0.6.1';
 
   B.SCORE = {
     grid: 160,              // tracings are checked on a 160 x 160 picture

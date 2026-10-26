@@ -10,7 +10,9 @@
 
 param(
   [Parameter(Mandatory = $true)][string]$EspeakDir,
-  [int]$Speed = 130,           # words per minute (eSpeak default 175; slower is clearer for children)
+  [int]$Speed = 115,           # words per minute (eSpeak default 175; slower is clearer for children)
+  [string]$Variant = 'anika',  # eSpeak voice style: anika = soft female voice, no roughness, gentle treble
+  [int]$Rate = 16000,          # samples per second of the game files (speech needs < 8 kHz)
   [string]$EspeakVersion = '1.52.0'   # only written into the file header
 )
 $ErrorActionPreference = 'Stop'
@@ -18,13 +20,16 @@ $root = Split-Path -Parent $PSScriptRoot
 $exe = Join-Path $EspeakDir 'espeak-ng.exe'
 if (-not (Test-Path $exe)) { throw "espeak-ng.exe not found in $EspeakDir" }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
+$voice = if ($Variant) { "bn+$Variant" } else { 'bn' }
 
-# --- small sound helper: trim silence, even out volume, halve the sample rate ---
+# --- sound polishing: trim, smooth resampling, even loudness, soft fades ---
 Add-Type -TypeDefinition @'
 using System;
 using System.IO;
 public static class BornoWav {
-  public static byte[] Shrink(string path) {
+  static double Sinc(double x) { return Math.Abs(x) < 1e-9 ? 1.0 : Math.Sin(Math.PI * x) / (Math.PI * x); }
+
+  public static byte[] Polish(string path, int outRate) {
     byte[] b = File.ReadAllBytes(path);
     // find the "data" chunk (eSpeak writes 22050 Hz, 16-bit, mono)
     int p = 12, dataStart = -1, dataLen = 0, rate = 22050;
@@ -37,33 +42,72 @@ public static class BornoWav {
     }
     if (dataStart < 0) throw new Exception("no sound data in " + path);
     int n = dataLen / 2;
-    short[] s = new short[n];
-    for (int i = 0; i < n; i++) s[i] = BitConverter.ToInt16(b, dataStart + 2 * i);
-    // trim silence at both ends (keep 40 ms around the sound)
-    int first = 0, last = n - 1, thr = 250;
-    while (first < n && Math.Abs((int)s[first]) < thr) first++;
-    while (last > first && Math.Abs((int)s[last]) < thr) last--;
-    int pad = rate / 25;
-    first = Math.Max(0, first - pad); last = Math.Min(n - 1, last + pad);
-    // loudest point -> 90% of full volume
-    int peak = 1;
-    for (int i = first; i <= last; i++) peak = Math.Max(peak, Math.Abs((int)s[i]));
-    double gain = Math.Min(4.0, 29490.0 / peak);
-    // half the sample rate: average each pair of samples (also a gentle filter)
-    int m = (last - first + 1) / 2;
-    short[] o = new short[m];
-    for (int i = 0; i < m; i++) {
-      double v = (s[first + 2 * i] + s[first + 2 * i + 1]) / 2.0 * gain;
-      o[i] = (short)Math.Max(-32768, Math.Min(32767, Math.Round(v)));
+    double[] s = new double[n];
+    for (int i = 0; i < n; i++) s[i] = BitConverter.ToInt16(b, dataStart + 2 * i) / 32768.0;
+
+    // 1. trim silence (keep 30 ms before the sound and 60 ms after it, for the natural fade)
+    double thr = 0.006;
+    int first = 0, last = n - 1;
+    while (first < n && Math.Abs(s[first]) < thr) first++;
+    while (last > first && Math.Abs(s[last]) < thr) last--;
+    first = Math.Max(0, first - rate * 30 / 1000);
+    last = Math.Min(n - 1, last + rate * 60 / 1000);
+    int len0 = last - first + 1;
+
+    // 2. smooth resampling (windowed-sinc filter: no harsh "aliasing" noise)
+    double ratio = (double)outRate / rate;
+    double cut = Math.Min(1.0, ratio) * 0.92;
+    int A = 16;
+    int m = (int)Math.Floor(len0 * ratio);
+    double[] o = new double[m];
+    for (int j = 0; j < m; j++) {
+      double x = j / ratio;
+      int c = (int)Math.Floor(x);
+      double sum = 0, wsum = 0;
+      for (int k = c - A + 1; k <= c + A; k++) {
+        double t = x - k;
+        double u = t / A;
+        if (Math.Abs(u) >= 1) continue;
+        double w = 0.42 + 0.5 * Math.Cos(Math.PI * u) + 0.08 * Math.Cos(2 * Math.PI * u); // Blackman window
+        double h = cut * Sinc(cut * t) * w;
+        int idx = first + k;
+        double v = (idx >= first && idx <= last) ? s[idx] : 0;
+        sum += v * h; wsum += h;
+      }
+      o[j] = wsum != 0 ? sum / wsum : 0;
     }
-    int outRate = rate / 2;
+
+    // 3. even loudness: same speech level for every clip, never clipping
+    double peak = 1e-6, sq = 0; int voiced = 0;
+    for (int j = 0; j < m; j++) {
+      double a = Math.Abs(o[j]); if (a > peak) peak = a;
+      if (a > 0.02) { sq += o[j] * o[j]; voiced++; }
+    }
+    double rms = voiced > 0 ? Math.Sqrt(sq / voiced) : peak;
+    double gain = Math.Min(Math.Min(0.24 / rms, 0.95 / peak), 8.0);
+
+    // 4. soft fade in (12 ms) and fade out (40 ms): no clicks
+    int fin = outRate * 12 / 1000, fout = outRate * 40 / 1000;
+    for (int j = 0; j < m; j++) {
+      double f = 1;
+      if (j < fin) f = 0.5 - 0.5 * Math.Cos(Math.PI * j / fin);
+      if (j > m - 1 - fout) f = Math.Min(f, 0.5 - 0.5 * Math.Cos(Math.PI * (m - 1 - j) / fout));
+      o[j] *= gain * f;
+    }
+
+    // 5. a little silence first (phones often swallow the very start while the speaker wakes up)
+    int lead = outRate * 80 / 1000, tail = outRate * 20 / 1000;
+    int total = lead + m + tail;
+    short[] outS = new short[total];
+    for (int j = 0; j < m; j++) outS[lead + j] = (short)Math.Max(-32768, Math.Min(32767, Math.Round(o[j] * 32767)));
+
     using (MemoryStream ms = new MemoryStream())
     using (BinaryWriter w = new BinaryWriter(ms)) {
-      w.Write(System.Text.Encoding.ASCII.GetBytes("RIFF")); w.Write(36 + m * 2);
+      w.Write(System.Text.Encoding.ASCII.GetBytes("RIFF")); w.Write(36 + total * 2);
       w.Write(System.Text.Encoding.ASCII.GetBytes("WAVEfmt ")); w.Write(16); w.Write((short)1); w.Write((short)1);
       w.Write(outRate); w.Write(outRate * 2); w.Write((short)2); w.Write((short)16);
-      w.Write(System.Text.Encoding.ASCII.GetBytes("data")); w.Write(m * 2);
-      foreach (short v in o) w.Write(v);
+      w.Write(System.Text.Encoding.ASCII.GetBytes("data")); w.Write(total * 2);
+      foreach (short v in outS) w.Write(v);
       w.Flush();
       return ms.ToArray();
     }
@@ -75,14 +119,14 @@ public static class BornoWav {
 $lettersJs = [IO.File]::ReadAllText((Join-Path $root 'assets\letters.js'), $utf8)
 $readingJs = [IO.File]::ReadAllText((Join-Path $root 'assets\reading.js'), $utf8)
 # signs that cannot be read alone are read by their names (same as js/sound.js):
-# অনুস্বার, বিসর্গ, চন্দ্রবিন্দু, খণ্ড ত – written as character codes, because
+# anusvar, bisarga, chandrabindu, khanda ta - built from character NUMBERS, because
 # Windows PowerShell 5.1 misreads Bangla letters typed into a script file
-$u = { param($s) [regex]::Unescape($s) }
+function Chars([int[]]$codes) { -join ($codes | ForEach-Object { [char]$_ }) }
 $names = @{
-  anu  = & $u 'অনুস্বার'
-  bis  = & $u 'বিসর্গ'
-  chan = & $u 'চন্দ্রবিন্দু'
-  khta = & $u 'খণ্ড ত'
+  anu  = Chars 0x0985, 0x09A8, 0x09C1, 0x09B8, 0x09CD, 0x09AC, 0x09BE, 0x09B0
+  bis  = Chars 0x09AC, 0x09BF, 0x09B8, 0x09B0, 0x09CD, 0x0997
+  chan = Chars 0x099A, 0x09A8, 0x09CD, 0x09A6, 0x09CD, 0x09B0, 0x09AC, 0x09BF, 0x09A8, 0x09CD, 0x09A6, 0x09C1
+  khta = Chars 0x0996, 0x09A3, 0x09CD, 0x09A1, 0x0020, 0x09A4
 }
 
 $clips = New-Object System.Collections.Specialized.OrderedDictionary
@@ -121,15 +165,15 @@ function Write-VoiceFile($list, $fileName, $varName, $what) {
     $script:n++
     $txt = Join-Path $tmp "$($script:n).txt"; $wav = Join-Path $tmp "$($script:n).wav"
     [IO.File]::WriteAllText($txt, $list[$key], $utf8)
-    & $exe --path="$EspeakDir" -v bn -s $Speed -w $wav -f $txt
+    & $exe --path="$EspeakDir" -v $voice -s $Speed -w $wav -f $txt
     if (-not (Test-Path $wav)) { throw "eSpeak made no sound for $key" }
-    $bytes = [BornoWav]::Shrink($wav)
+    $bytes = [BornoWav]::Polish($wav, $Rate)
     $total += $bytes.Length
     $lines.Add('  ' + ($key | ConvertTo-Json) + ': "data:audio/wav;base64,' + [Convert]::ToBase64String($bytes) + '"')
   }
   $head = "/*`n  $fileName - a computer voice (robotic, but always there) for $what.`n" +
-          "  Made by tools/make-computer-voice.ps1 with eSpeak NG $EspeakVersion, voice bn,`n" +
-          "  speed $Speed, on $(Get-Date -Format yyyy-MM-dd). $($list.Count) clips.`n" +
+          "  Made by tools/make-computer-voice.ps1 with eSpeak NG $EspeakVersion, voice $voice,`n" +
+          "  speed $Speed, $Rate Hz, on $(Get-Date -Format yyyy-MM-dd). $($list.Count) clips.`n" +
           "  Used only when there is no recorded voice and no Bangla voice on the device.`n" +
           "  Do not edit by hand - run the script again.`n*/`n"
   $entries = ($lines | ForEach-Object { '  v[' + $_.Trim().Replace('": "data:', '"] = "data:') + ';' }) -join "`n"

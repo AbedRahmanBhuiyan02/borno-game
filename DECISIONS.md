@@ -202,3 +202,22 @@ All colours are tokens at the top of `style.css` (each colour has a darker
 "edge" shade). Icons are a tiny inline SVG set in `index.html` (back,
 speaker) – no icon files or fonts downloaded. No game logic changed; the
 tests still click the same buttons.
+
+## 0.6.1 – smoother voice, iPhone Bangla (2026-10-26)
+- **Voice quality.** The rough sound came from my own processing, not only
+  from eSpeak: halving 22 kHz to 11 kHz by averaging sample pairs lets harsh
+  "aliasing" noise through, and cutting silence without a fade makes clicks.
+  Now: windowed-sinc resampling to 16 kHz, 12 ms fade in / 40 ms fade out,
+  loudness evened by speech level (never clipping), 80 ms silence first
+  (phones often swallow the start while the speaker wakes up), eSpeak voice
+  style `anika` (roughness 0, softer treble), speed 115. Cost: files grew
+  from 2.3/3.3 MB to 3.5/5.6 MB – accepted, the কার file loads only when
+  that game opens.
+- **Sign names were garbled:** the Edit tool turned `\u` codes into Bangla
+  letters, which Windows PowerShell 5.1 misreads; they are now built from
+  character numbers. Tests check that ং ঃ ঁ ৎ clips are real speech.
+- **iPhone Bangla:** WebKit shapes each differently-coloured piece of text
+  separately, so colouring "ম" in "মাছ" left "া" alone (dotted circle, or ে
+  on the wrong side). `B.firstCluster` colours the whole first syllable.
+  Gradient text (background-clip) also cut the top of র্ on iPhones → solid
+  colour. Tested on Edge/Chrome only – no iPhone here.

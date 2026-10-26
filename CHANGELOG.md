@@ -7,6 +7,18 @@ The version number is also shown on the parent page and lives in
 Numbers mean: **0.x** = still being tested; the middle number goes up for
 new features, the last number for small fixes.
 
+## 0.6.1 – 2026-10-26
+- **Smoother computer voice:** softer eSpeak voice style ("anika": no
+  roughness, gentler treble), spoken slower, 16 kHz with a proper smoothing
+  filter (before: a crude 11 kHz cut that sounded rough), soft fade in/out
+  (no clicks), even and louder volume, a short silence first so phones do
+  not swallow the start.
+- **Fixed: ং ঃ ঁ ৎ said nonsense** – their names reached eSpeak garbled.
+- **Fixed: broken Bangla words on iPhone** – the coloured first letter split
+  a syllable in two (ম + াছ), which iPhones draw wrongly (19 of 50 words).
+  Now the whole first syllable is coloured (মা + ছ).
+- The big বর্ণ title no longer uses gradient text (iPhones cut off the top of র্).
+
 ## 0.6.0 – 2026-10-26
 **New look** – a modern kids-app design:
 - Soft sky background, white cards, big "pressable" buttons with a coloured

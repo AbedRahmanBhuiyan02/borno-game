@@ -4,7 +4,7 @@ A small, offline web game that helps children aged 3–6 learn the Bangla
 alphabet. Plain **HTML + CSS + JavaScript** – no game engine, no build
 tools, no internet, no external services.
 
-**Version 0.6.0** – see [CHANGELOG.md](CHANGELOG.md) for what changed.
+**Version 0.6.1** – see [CHANGELOG.md](CHANGELOG.md) for what changed.
 
 ### For the child
 - 🔤 **All 50 letters** (11 স্বরবর্ণ + 39 ব্যঞ্জনবর্ণ) and the **numbers ০–৯**,
@@ -122,8 +122,8 @@ assets/
   reading.js        the 10 vowel signs (কার) and the 20 words for শব্দ বানাও
   strings.js        ALL texts in Bangla and English
   voices.js         recorded voices shipped with the game (empty for now)
-  voice-computer.js       computer voice: letters, numbers, words (2.3 MB)
-  voice-computer-kar.js   computer voice: কার syllables (3.3 MB, loaded only by that game)
+  voice-computer.js       computer voice: letters, numbers, words (3.5 MB)
+  voice-computer-kar.js   computer voice: কার syllables (5.6 MB, loaded only by that game)
   strokes.js        teacher stroke order shipped with the game (empty for now)
   fonts/            Baloo Da 2 font + its licence (OFL.txt)
   images/icon.png   app icon

@@ -92,6 +92,19 @@
     var starters = L.filter(B.startsWord).length;
     check('at least 38 letters start their word (for Letter Match)', starters >= 38, String(starters));
     check('numbers never count as "starts the word"', !N.some(B.startsWord));
+    // iPhones draw a syllable split into two coloured pieces wrongly (e.g. ম + াছ)
+    var JOIN = /^[ঁ-ঃ়া-্ৗ‌‍]/, split = [];
+    L.filter(B.startsWord).forEach(function (l) {
+      var first = B.firstCluster(l.word), rest = l.word.slice(first.length);
+      if (first.indexOf(l.letter) !== 0 || JOIN.test(rest)) split.push(l.word);
+    });
+    check('the coloured start of a word is a whole syllable (মা|ছ, লে|বু – never ম|াছ)', split.length === 0 &&
+          B.firstCluster('মাছ') === 'মা' && B.firstCluster('লেবু') === 'লে' && B.firstCluster('ক্ষমা') === 'ক্ষ' &&
+          B.firstCluster('ইঁদুর') === 'ইঁ', split.join(' '));
+    var badParts = [];
+    B.WORDS.forEach(function (w) { w.parts.forEach(function (p) { if (JOIN.test(p)) badParts.push(w.word + ':' + p); }); });
+    check('word-game pieces never start with a vowel sign (each piece draws correctly alone)', badParts.length === 0,
+          badParts.join(' '));
     check('ঁ ং ঃ are shown with a no-break space in front (no dotted circle)',
           B.display(byId('chan')).charAt(0) === ' ' && B.display(byId('anu')).length === 2 &&
           B.display(byId('ka')) === 'ক');
@@ -557,15 +570,19 @@
 
     // decode a few clips: real length, not silent
     var AC = window.AudioContext || window.webkitAudioContext;
-    var sample = ['o:letter', 'ka:letter', 'ka:word', 'anu:letter', 'n3:letter', 'text:' + B.WORDS[B.WORDS.length - 1].word];
+    var sample = ['o:letter', 'ka:letter', 'ka:word', 'anu:letter', 'bis:letter', 'chan:letter', 'khta:letter',
+                  'n3:letter', 'text:' + B.WORDS[B.WORDS.length - 1].word];
     var ctx = AC ? new AC() : null;
     var decode = function (key) {
       var b64 = CV[key].split(',')[1], bin = atob(b64), buf = new Uint8Array(bin.length);
       for (var i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+      // the WAV header tells the sample rate (byte 24) – decoding may change it
+      var rate = buf[24] | (buf[25] << 8) | (buf[26] << 16) | (buf[27] << 24);
       return ctx.decodeAudioData(buf.buffer).then(function (audio) {
-        var d = audio.getChannelData(0), peak = 0;
+        var d = audio.getChannelData(0), peak = 0, edge = 0, n = Math.round(audio.sampleRate * 0.01);
         for (var j = 0; j < d.length; j++) peak = Math.max(peak, Math.abs(d[j]));
-        return { key: key, sec: audio.duration, peak: peak };
+        for (j = 0; j < n; j++) edge = Math.max(edge, Math.abs(d[j]), Math.abs(d[d.length - 1 - j]));
+        return { key: key, sec: audio.duration, peak: peak, edge: edge, rate: rate };
       });
     };
     var decoded = ctx ? Promise.all(sample.map(decode)) : Promise.resolve([]);
@@ -573,6 +590,13 @@
       var info = list.map(function (r) { return r.key + ' ' + r.sec.toFixed(2) + 's'; }).join(', ');
       check('clips decode, last 0.2–3 s and are loud (not silent)', list.length === sample.length &&
             list.every(function (r) { return r.sec > 0.2 && r.sec < 3 && r.peak > 0.5; }), info);
+      check('smooth sound: 16 kHz, and every clip starts and ends quietly (no clicks)',
+            list.every(function (r) { return r.rate === 16000 && r.edge < 0.02; }),
+            list.map(function (r) { return r.key + ' ' + r.rate + 'Hz edge ' + r.edge.toFixed(3); }).join(', '));
+      // ং ঃ ঁ ৎ are read by their names: real speech, clearly longer than a short syllable
+      var signs = list.filter(function (r) { return /^(anu|bis|chan|khta):/.test(r.key); });
+      check('ং ঃ ঁ ৎ clips say their names (real speech, ≥ 0.6 s)', signs.length === 4 &&
+            signs.every(function (r) { return r.sec >= 0.6; }), signs.map(function (r) { return r.key + ' ' + r.sec.toFixed(2) + 's'; }).join(', '));
       return playerLogic();
     }).then(function () {
       return B.loadScript('../assets/voice-computer-kar.js');
